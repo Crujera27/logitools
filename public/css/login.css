@@ -1,0 +1,214 @@
+/*
+.____                 .__  __                .__          
+|    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
+|    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
+|    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
+|_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
+        \/    /_____/                                  \/ 
+                         
+        
+    Copyright © 2024 Crujera27 y contribuidores. Todos los derechos reservados.
+    
+    GitHub: https://github.com/Crujera27
+    Web: https://crujera.galnod.com
+    Licencia del proyecto: MIT
+
+*/
+
+
+body {
+  background-color: #1c1e22;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 1200px;
+  margin: 20px;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(to top right, #343a40, #252525);
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.photo-section {
+  flex: 1;
+
+  background-size: cover;
+  background-position: center;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 70%);
+}
+
+.photo-section img {
+  width: 30%;
+  object-fit: cover;
+  margin: 0 auto;
+  display: block;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 70%);
+}
+
+
+.login-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: #252525;
+  clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%);
+  border-left: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-top: 0;
+}
+
+.discord-button {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  background-color: #7289da;
+  border: none;
+  color: #fff;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(114, 137, 218, 0.4);
+  transition: background-color 0.3s ease;
+}
+
+.discord-button:hover {
+  background-color: #677bc4;
+}
+
+.discord-icon {
+  width: 1.5rem;
+  margin-right: 1rem;
+}
+
+.discord-button span {
+  margin-left: 0.5rem;
+}
+
+p {
+  font-size: 1rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.cookie-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background-color: #333;
+  color: #fff;
+  font-size: 1rem;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.cookie-button {
+  background-color: #fff;
+  color: #333;
+  padding: 0.8rem 1.6rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.cookie-banner p {
+  margin: 0;
+}
+
+footer {
+  font-size: 0.8rem;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  color: #9a9b9c;
+  z-index: 10000;
+}
+
+
+/* Intento de compatibilidad para móviles */
+
+
+@media screen and (max-width: 600px) {
+  .container {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .photo-section,
+  .login-section {
+    clip-path: none;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .discord-button {
+    padding: 1rem 1.6rem;
+    margin-top: 1rem;
+  }
+
+  .discord-icon {
+    width: 1rem;
+  }
+
+  .discord-button span {
+    margin-left: 0.3rem;
+  }
+
+  p {
+    font-size: 0.8rem;
+    margin-top: 0.8rem;
+  }
+
+  .cookie-banner {
+    padding: 0.8rem;
+  }
+
+  .cookie-button {
+    padding: 0.6rem 1.2rem;
+    margin-left: 0.8rem;
+  }
+
+  footer {
+    font-size: 0.7rem;
+  }
+}

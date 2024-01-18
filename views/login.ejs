@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Página web oficial del Discord de Logikk. Creador de contenido de Bee Swarm Simulator. Desde aquí puedes controlar varias acciones.">
+    <meta name="keywords" content="list, of, keywords, related, to, your, website">
+    <meta name="author" content="Logikk Media">
+    <meta property="og:title" content="Logikk's Dashboard">
+    <meta property="og:description"
+        content="Página web oficial del Discord de Logikk. Creador de contenido de Bee Swarm Simulator. Desde aquí puedes controlar varias acciones.">
+    <meta property="og:image" content="https://crujera.galnod.com/img/logikk.png">
+    <meta property="og:url" content="https://logikk.galnod.com">
+    <meta property="og:type" content="website">
+    <title>Logikk's Dashboard - Iniciar sesión con Discord</title>
+    <link rel="stylesheet" href="/public/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="photo-section">
+            <img src="https://crujera.galnod.com/img/logikk.png" alt="Logikk's Dashboard Image">
+        </div>
+        <div class="login-section">
+            <h1>Logikk's Dashboard</h1>
+            <h2 class="subtitle">Inicia sesión para continuar</h2>
+            <a href="/auth/discord" class="discord-button">
+                <i class="fa-brands fa-discord discord-icon"></i>
+                <span>Iniciar sesión con Discord</span>
+            </a>
+            <small>
+                <h5>Al utilizar este servicio estás de acuerdo con nuestra <a href="/legal/privacidad">Política de
+                        Privacidad</a> y <a href="/legal/tos">Términos de Servicio</a></h5>
+            </small>
+        </div>
+    </div>
+    <footer>
+        <% if (!devVersion) { %>
+            <p>⚠️ Esta página web utiliza una versión no oficialmente publicada por <a
+                    href="https://crujera.galnod.com">Crujera</a></p>
+            <p>⚠️ versiones pueden ser muy inestables y no están recomendadas para producción.</p>
+            <% } else { %>
+                <p><i><small>Logitools v.<%= version %> developed with ❤️ by <a
+                                    href="https://crujera.galnod.com">Crujera</a></small></i></p>
+                <% } %>
+    </footer>
+</body>
+<script type="text/javascript" id="cookiebanner"
+    src="https://cdnjs.cloudflare.com/ajax/libs/cookie-banner/1.2.2/cookiebanner.min.js" data-height="20px"
+    data-position="top" data-message="Utilizamos cookies para mejorar su experiencia de navegación.">
+    </script>
+
+</html>

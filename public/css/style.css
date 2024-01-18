@@ -1,0 +1,206 @@
+/*
+.____                 .__  __                .__          
+|    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
+|    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
+|    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
+|_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
+        \/    /_____/                                  \/ 
+                         
+        
+    Copyright © 2024 Crujera27 y contribuidores. Todos los derechos reservados.
+    
+    GitHub: https://github.com/Crujera27
+    Web: https://crujera.galnod.com
+    Licencia del proyecto: MIT
+
+*/
+
+
+body {
+    background-color: #1b1e23;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 0;
+    color: #007bff;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    opacity: 0.8;
+    color: #495057;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+th {
+    background-color: #343a40;
+    color: #fff;
+}
+
+.button {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.dashboard-card,
+.dashboard-cardbig,
+.featured-video-card,
+.popular-links-card {
+    background-color: #343a40;
+    padding: 20px;
+    margin-top: 40px;
+    transition: transform 0.3s ease;
+    text-align: center;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-card h2,
+.dashboard-cardbig h2,
+.featured-video-card h2,
+.popular-links-card h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.dashboard-cardbig,
+.featured-video-card,
+.popular-links-card {
+    padding: 30px;
+    margin-top: 60px;
+}
+
+.dashboard-cardbig h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+.featured-video {
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.featured-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+}
+
+.popular-links {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.popular-link {
+    background-color: #343a40;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.popular-links .popular-link {
+    color: white;
+    text-decoration: none;
+}
+
+.popular-links .popular-link:hover {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.notification {
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.notification-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.notification-warning {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.notification-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+@media (min-width: 768px) {
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .dashboard-card,
+    .dashboard-cardbig,
+    .featured-video-card,
+    .popular-links-card {
+        flex: 1;
+        margin: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .featured-video-card {
+        order: -1;
+    }
+}

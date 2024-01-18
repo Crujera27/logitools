@@ -1,0 +1,113 @@
+/*
+.____                 .__  __                .__          
+|    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
+|    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
+|    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
+|_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
+        \/    /_____/                                  \/ 
+                         
+        
+    Copyright © 2024 Crujera27 y contribuidores. Todos los derechos reservados.
+    
+    GitHub: https://github.com/Crujera27/
+    Web: https://crujera.galnod.com
+    Licencia del proyecto: MIT
+
+*/
+
+.navbar {
+    background-color: transparent; 
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    border-radius: 0;
+    transition: background-color 0.3s ease; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    position: fixed;
+    height: 60px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar-dark .navbar-brand, .navbar-dark .navbar-nav .nav-link {
+    color: #fff !important;
+    font-size: 20px;
+    transition: color 0.3s ease;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.navbar-dark .navbar-brand:hover,
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #3498db !important;
+}
+
+
+.navbar-toggler {
+    border-color: #fff;
+}
+
+.navbar-toggler-icon {
+    color: #fff;
+}
+
+.dropdown-menu-right {
+    right: 0;
+    left: auto;
+    background-color: #2c3e50;
+    border: none;
+    color: #ecf0f1;
+}
+
+.dropdown-item {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 16px;
+    border: none;
+}
+
+.dropdown-item:hover {
+    background-color: #1a252f;
+}
+
+.logo-img {
+    height: 30px;
+    margin-right: 8px; 
+}
+
+.navbar:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .navbar-dark .navbar-brand,
+    .navbar-dark .navbar-nav {
+        margin-bottom: 10px;
+    }
+
+    .navbar-dark .navbar-nav {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .navbar-dark .nav-item {
+        margin: 0;
+    }
+
+    .dropdown-menu-right {
+        margin-top: 5px;
+    }
+}

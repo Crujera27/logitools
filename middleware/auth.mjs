@@ -15,20 +15,20 @@
 
 */
 const isAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
-      res.locals.user = req.user;
-      if (!req.user.banned) {
-        return next();
-      } else {
-        if(req.route.path !== '/logout'){
-        res.render('not-approved');
-        }else{
-          return next();
-        }
-      }
+  if (req.isAuthenticated()) {
+    res.locals.user = req.user;
+    if (!req.user.banned) {
+      return next();
     } else {
-      res.redirect('/');
+      if (req.route.path !== '/logout') {
+        res.render('not-approved');
+      } else {
+        return next();
+      }
     }
-  };
-  
+  } else {
+    req.session.returnTo = req.originalUrl;
+    res.redirect('/login');
+  }
+};
   export default isAuthenticated;

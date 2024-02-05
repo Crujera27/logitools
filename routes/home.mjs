@@ -32,5 +32,24 @@ router.get('/dashboard', isAuthenticated, async (req, res) => {
     res.render('index', { user: req.user });
 });
 
+router.get('/history', isAuthenticated, async (req, res) => {
+  try {
+    const userHistory = await executeQuery('SELECT * FROM punishment_history WHERE discord_id = ?', [req.user.discord_id]);
+    res.render('history', { user: req.user, userhistory: userHistory });
+  } catch (error) {
+    console.error('Error fetching user history:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+router.get('/moderation', isAuthenticated, async (req, res) => {
+  res.render('moderation', { user: req.user });
+});
+
+router.get('/support', isAuthenticated, async (req, res) => {
+  res.render('support', { user: req.user, tickets: '' });
+});
+
+
 
 export default router;

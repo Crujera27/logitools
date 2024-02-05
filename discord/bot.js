@@ -1,6 +1,4 @@
-
-
-
+/*
 .____                 .__  __                .__          
 |    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
 |    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
@@ -15,5 +13,14 @@
     Web: https://crujera.galnod.com
     Licencia del proyecto: MIT
 
+*/
 
-    
+require('dotenv').config();
+const ExtendedClient = require('./class/ExtendedClient.js');
+
+const client = new ExtendedClient();
+
+client.start();
+
+process.on('unhandledRejection', console.error);
+process.on('uncaughtException', console.error);

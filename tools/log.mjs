@@ -1,6 +1,4 @@
-
-
-
+/*
 .____                 .__  __                .__          
 |    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
 |    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
@@ -15,5 +13,26 @@
     Web: https://crujera.galnod.com
     Licencia del proyecto: MIT
 
+*/
 
-    
+/**
+ * Logs a message with optional styling.
+ *
+ * @param {string} string - The message to log.
+ * @param {'info' | 'err' | 'warn' | 'done' | undefined} style - The style of the log.
+ */
+const log = (string, style) => {
+    if(style === "info"){
+      console.warn('[INFO] ', string);
+    } else if(style === "err"){
+      console.error('[ERROR] ', string);
+    } else if(style === "warn"){
+      console.warn('[WARN] ', string);
+    } else if(style === "done"){
+      console.log('[OK] ', string);
+    } else {
+      console.log(string);
+    }
+};
+
+export default log;

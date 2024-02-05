@@ -14,7 +14,8 @@
     Licencia del proyecto: MIT
 
 */
-console.log('El asistente de inicio de Logitools está inicializando los paquetes de configuración; esto puede tardar un momento.');
+import log from './tools/log.mjs'
+log('El asistente de inicio de Logitools está inicializando los paquetes de configuración; esto puede tardar un momento.', 'info');
 import express from 'express';
 import passport from 'passport';
 import session from 'express-session';
@@ -22,15 +23,16 @@ import flash from 'express-flash';
 import { Strategy as DiscordStrategy } from 'passport-discord';
 import ejs from 'ejs';
 import executeQuery, { pool } from './tools/mysql.mjs';
+import { applyPunishment, updateExpirationStatus } from './tools/punishment.mjs';
 import path from 'path';
 import fs from 'fs'
 import toml from 'toml';
-console.log('> Cargando desde index.mjs');
+log('> Cargando desde index.mjs', 'info');
 try {
   const watermark = fs.readFileSync('config/watermark.txt', 'utf8');
   console.log(watermark);
 } catch (err) {
-  console.error(`❌> Error al intentar cargar un archivo: ${err.message}`);
+  log(`❌> Error al intentar cargar un archivo: ${err.message}`, 'error');
   process.exit();
 }
 
@@ -143,7 +145,7 @@ const startServer = () => {
       PORT = appConfig.port || 3000,
       BIND_ADDRESS = appConfig.bind_address || '0.0.0.0';
     app.listen(PORT, BIND_ADDRESS, () => {
-      console.log(`Servidor escuchando en http://${BIND_ADDRESS}:${PORT}`);
+      log(`Servidor escuchando en http://${BIND_ADDRESS}:${PORT}`, 'done');
     });
   } catch (error) {
     console.error('Error al intentar leer el archivo de configuraicón: ', error.message);
@@ -151,3 +153,19 @@ const startServer = () => {
   }
 };
 startServer()
+
+const interval = 60 * 60 * 1000;
+
+const runLoop = async () => {
+    while (true) {
+        await updateExpirationStatus();
+        await new Promise(resolve => setTimeout(resolve, interval));
+    }
+};
+runLoop();
+
+const startDiscord = () => {
+  import('./discord/bot.js')
+}
+
+startDiscord()

@@ -1,6 +1,4 @@
-
-
-
+/*
 .____                 .__  __                .__          
 |    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
 |    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
@@ -15,5 +13,23 @@
     Web: https://crujera.galnod.com
     Licencia del proyecto: MIT
 
+*/
 
-    
+const { log } = require("../../functions");
+const ExtendedClient = require('../../class/ExtendedClient.js');
+
+module.exports = {
+    event: 'ready',
+    once: true,
+    /**
+     * 
+     * @param {ExtendedClient} _ 
+     * @param {import('discord.js').Client<true>} client 
+     * @returns 
+     */
+    run: (_, client) => {
+
+        log('Conectado como: ' + client.user.tag, 'done');
+
+    }
+};

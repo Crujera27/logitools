@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Logikk's Dashboard - Soporte</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="/public/css/style.css" />
-</head>
-<body>
- <% include('./inc/navbar.ejs') %>
-  <div class="container mt-5">
-    <h1>
-      ¡Hola, <% if (user.discriminator === "0") { %> <%= user.username %>! <% } else { %> <%= user.username %>#<%= user.discriminator %>! <% } %> ¿Cómo te podemos ayudar?
-    </h1>
+  <head>
+    <title>Logikk's Dashboard - Soporte</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+  <body>
+    <%- include('./inc/navbar.ejs') %>
+    <div class="container mt-5">
+      <h1>
+        ¡Hola, <% if (user.discriminator === "0") { %> <%= user.username %>! <%
+        } else { %> <%= user.username %>#<%= user.discriminator %>! <% } %>
+        ¿Cómo te podemos ayudar?
+      </h1>
 
-    <div class="category">
-      <a href="/support/newticket" class="btn btn-primary">Abrir un nuevo ticket</a>
+      <div class="category">
+        <a href="/support/newticket" class="btn btn-primary"
+          >Abrir un nuevo ticket</a
+        >
+      </div>
     </div>
-
-
-</body>
+    <%- include('./inc/footer.ejs') %>
+  </body>
 </html>

@@ -47,7 +47,8 @@ router.get('/moderation', isAuthenticated, async (req, res) => {
 });
 
 router.get('/support', isAuthenticated, async (req, res) => {
-  res.render('support', { user: req.user, tickets: '' });
+  const userTickets = await executeQuery('SELECT * FROM tickets WHERE user_id = ?', [req.user.id]);
+  res.render('support', { user: req.user, userTickets: userTickets });
 });
 
 

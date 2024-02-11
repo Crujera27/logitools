@@ -1,42 +1,13 @@
-/*
-.____                 .__  __                .__          
-|    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
-|    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
-|    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
-|_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
-        \/    /_____/                                  \/ 
-                         
-        
-    Copyright © 2024 Crujera27 y contribuidores. Todos los derechos reservados.
-    
-    GitHub: https://github.com/Crujera27/
-    Web: https://crujera.galnod.com
-    Licencia del proyecto: MIT
-
-*/
-/*
-.____                 .__  __                .__          
-|    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
-|    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
-|    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
-|_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
-        \/    /_____/                                  \/ 
-                         
-        
-    Copyright © 2024 Crujera27 y contribuidores. Todos los derechos reservados.
-    
-    GitHub: https://github.com/Crujera27/
-    Web: https://crujera.galnod.com
-    Licencia del proyecto: MIT
-
-*/
-
-const { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const ExtendedClient = require('../../../class/ExtendedClient.js');
 const { log } = require('../../../functions.js');
-const toolsPromise = import('../../../../tools/punishment.mjs');
 
-
+let toolsPromise;
+try {
+    toolsPromise = import('../../../../tools/punishment.mjs');
+} catch (error) {
+    console.error('Error importing tools:', error);
+}
 
 module.exports = {
     structure: new SlashCommandBuilder()
@@ -53,74 +24,65 @@ module.exports = {
                 .setRequired(true)
         ),
     run: async (client, interaction) => {
-        const mentionable = interaction.options.getUser('user');
-        const reason = interaction.options.get('reason')?.value || 'No razón proporcionada';
-
-        const targetUser = await interaction.guild.members.cache.get(mentionable.id);
-        if (!targetUser) {
-            await interaction.reply({
-                content: 'El usuario especificado no está en el servidor.',
-                ephemeral: true
-            });
-            return;
-        }
-
-        if (targetUser.bot) {
-            await interaction.reply({
-                content: 'No se puede aplicar la sanción a un bot.',
-                ephemeral: true
-            });
-            return;
-        }
-
-
-        const targetUserRolePosition = targetUser.roles.highest.position;
-        const requestUserRolePosition = interaction.member.roles.highest.position;
-        const botRolePosition = interaction.guild.members.me.roles.highest.position;
-
-        if (targetUserRolePosition >= requestUserRolePosition) {
-            await interaction.reply({
-                content: 'No puede suspender a ese usuario porque tiene el mismo rol o un rol superior al suyo.',
-                ephemeral: true
-            });
-            return;
-        }
-
-        if (targetUserRolePosition >= botRolePosition) {
-            await interaction.reply({
-                content: 'No puedo banear ese usuario porque tiene el mismo rol o un rol superior que yo.',
-                ephemeral: true
-            });
-            return;
-        }
         try {
+            const mentionable = interaction.options.getUser('user');
+            const reason = interaction.options.get('reason')?.value || 'No razón proporcionada';
+
+            const targetUser = await interaction.guild.members.fetch(mentionable);
+
+            if (!targetUser) {
+                await interaction.editReply("Ese usuario no existe en este servidor.");
+                return;
+            }
+
+            if (targetUser.id === interaction.guild.ownerId) {
+                await interaction.editReply("No puedes banear a ese usuario porque es el propietario del servidor.");
+                return;
+            }
+
+            const targetUserRolePosition = targetUser.roles.highest.position; // Highest role of the target user
+            const requestUserRolePosition = interaction.member.roles.highest.position; // Highest role of the user running the cmd
+            const botRolePosition = interaction.guild.members.me.roles.highest.position; // Highest role of the bot
+
+            if (targetUserRolePosition >= requestUserRolePosition) {
+                await interaction.editReply("No puedes banear a ese usuario porque tiene el mismo o un rol más alto que tú.");
+                return;
+            }
+
+            if (targetUserRolePosition >= botRolePosition) {
+                await interaction.editReply("No puedo banear a ese usuario porque tiene el mismo o un rol más alto que yo.");
+                return;
+            }
+
             const tools = await toolsPromise;
             const bannedEmbed = new EmbedBuilder()
                 .setColor()
                 .setTitle('Mensaje de la moderación de Logikk\'s Discord')
-                .setDescription(`Hola, ${targetUser}. Nos ponemos en contacto con usted mediante el presente comunicado para informarle sobre las medidas que se han tomado debido a su conducta.\n\n Sanción impuesta: **Suspensión permanente (Ban)**\nRazón: ${reason}\n\nSi considera que esta sanción ha sido aplicada de forma incorrecta / injusta, puede enviar una solitud de apelación en https://logikk.galnod.com/support\n\n Un saludo, **Departamento de Certidumbre y Seguridad de Logikk's Discord**`)
+                .setDescription(`Hola, ${targetUser}. Nos ponemos en contacto contigo para informarte sobre las medidas que se han tomado debido a tu conducta.\n\n Sanción impuesta: **Suspensión permanente (Ban)**\nRazón: ${reason}\n\nSi consideras que esta sanción ha sido aplicada incorrectamente o de manera injusta, puedes enviar una solicitud de apelación en [este enlace](https://logikk.galnod.com/support).\n\nUn saludo, **Departamento de Certidumbre y Seguridad de Logikk's Discord**`)
                 .setTimestamp();
-        
-            targetUser.send({ embeds: [bannedEmbed] });
-            const punishmentapplied = await tools.applyPunishment(targetUser.id, 'ban', reason, interaction.user.id);
-            
-            if (!punishmentapplied.success) {
+
+            await targetUser.send({ embeds: [bannedEmbed] });
+
+            const punishmentApplied = await tools.applyPunishment(targetUser.id, 'ban', reason, interaction.user.id);
+
+            if (!punishmentApplied.success) {
                 await interaction.reply({
                     content: 'Ha ocurrido un error al intentar registrar la sanción en el historial del usuario.',
                     ephemeral: true
                 });
                 return;
             }
-            const finalreason = reason+'ID Staff: '+interaction.user.id
-            await targetUser.ban({ finalreason });
-            await interaction.reply(`${targetUser}(${targetUser.id}) ha sido suspendido/a **permanentemente** con la razón: \`${reason}\``);
-            return;
+
+            const finalReason = `${reason} | ID del Staff: ${interaction.user.id}`;
+
+            await targetUser.ban({ reason: finalReason });
+            await interaction.reply(`${targetUser.tag} (${targetUser.id}) ha sido suspendido/a **permanentemente** con la razón: \`${reason}\``);
         } catch (error) {
-            log(`There was an error when baning: ${error}`, 'err');
+            log(`Hubo un error al intentar banear: ${error}`, 'err');
             await interaction.reply({
-                content: 'Ha ocurrido un error desconocido al intentar aplicar el ban al usuario.',
+                content: `Ha ocurrido un error desconocido al intentar aplicar el ban al usuario. (${error})`,
                 ephemeral: true
             });
-            return;
         }
-}}
+    }
+};

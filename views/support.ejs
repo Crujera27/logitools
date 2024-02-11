@@ -1,32 +1,56 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Logikk's Dashboard - Soporte</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
-    <link rel="stylesheet" href="/public/css/style.css" />
-  </head>
-  <body>
-    <%- include('./inc/navbar.ejs') %>
-    <div class="container mt-5">
-      <h1>
-        ¡Hola, <% if (user.discriminator === "0") { %> <%= user.username %>! <%
-        } else { %> <%= user.username %>#<%= user.discriminator %>! <% } %>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="/public/css/style.css"/>
+</head>
+<body>
+<%- include('./inc/navbar.ejs') %>
+<div class="container mt-5">
+    <h1>
+        ¡Hola, <% if (user.discriminator === "0") { %>
+            <%= user.username %>!
+        <% } else { %>
+            <%= user.username %>#<%= user.discriminator %>!
+        <% } %>
         ¿Cómo te podemos ayudar?
-      </h1>
+    </h1>
 
-      <div class="category">
-        <a href="/support/newticket" class="btn btn-primary"
-          >Abrir un nuevo ticket</a
-        >
-      </div>
+    <div class="category">
+        <a href="/support/newticket" class="btn btn-primary">Abrir un nuevo ticket</a>
     </div>
-    <%- include('./inc/footer.ejs') %>
-  </body>
+
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Estado del ticket</th>
+            <th scope="col">&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% if (userTickets.length > 0) { %>
+            <% userTickets.forEach((ticket) => { %>
+                <tr>
+                    <td><%= ticket.ticket_id %></td>
+                    <td><%= ticket.ticket_status %></td>
+                    <td>
+                        <a href="/support/view/<%= ticket.ticket_id %>" class="btn btn-primary">Ver ticket</a>
+                    </td>
+                </tr>
+            <% }); %>
+        <% } else { %>
+            <tr>
+                <td colspan="3">
+                    <p>No hemos encontrado ningún ticket a tu nombre.</p>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>
+<%- include('./inc/footer.ejs') %>
+</body>
 </html>

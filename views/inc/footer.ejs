@@ -1,33 +1,72 @@
-<link rel="stylesheet" href="/public/css/footer.css">
+<link rel="stylesheet" href="/public/css/footer.css" />
 <footer class="footer">
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-social">
-                <h4>Redes Sociales</h4>
-                <a href="https://www.youtube.com/c/LogikkYT" class="social-icon"><i class="fa-brands fa-youtube"></i>
-                    YouTube</a>
-                <a href="https://twitter.com/logikk4" class="social-icon"><i class="fa-brands fa-x-twitter"></i>
-                    X.com</a>
-                <a href="https://www.tiktok.com/@logikkyt" class="social-icon"><i class="fa-brands fa-tiktok"></i>
-                    TikTok</a>
-                <a href="https://www.twitch.tv/logikkyt" class="social-icon"><i class="fa-brands fa-twitch"></i>
-                    Twitch</a>
-            </div>
-            <div class="footer-logo">
-                <img src="/public/img/logikk.png" alt="Logo">
-                <p class="logo-caption">Logikk's Dashboard</p>
-            </div>
-            <div class="footer-contact">
-                <h4>Contacto</h4>
-                <p>Email: <a href="mailto:contactologikk@gmail.com"
-                        style="color: lightblue;">contactologikk@gmail.com</a></p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; <%= new Date().getFullYear() %> Logikk's Dashboard. Todos los derechos reservados.</p>
-            <i><small><a href="https://github.com/Crujera27/logitools" style="color: lightblue;">Logitools</a> developed
-                    with ❤️ by
-                    <a href="https://crujera.galnod.com" style="color: plum;">Crujera</a></small></i>
-        </div>
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-social">
+        <h4>Redes Sociales</h4>
+        <% if (app.footer_links.youtube) { %>
+        <a href="<%= app.footer_links.youtube %>" class="social-icon"
+          ><i class="fa-brands fa-youtube"></i> YouTube</a
+        >
+        <% } %> <% if (app.footer_links.xdotcom) { %>
+        <a href="<%= app.footer_links.xdotcom %>" class="social-icon"
+          ><i class="fa-brands fa-x-twitter"></i> X.com</a
+        >
+        <% } %> <% if (app.footer_links.tiktok) { %>
+        <a href="<%= app.footer_links.tiktok %>" class="social-icon"
+          ><i class="fa-brands fa-tiktok"></i> TikTok</a
+        >
+        <% } %> <% if (app.footer_links.twitch) { %>
+        <a href="<%= app.footer_links.twitch %>" class="social-icon"
+          ><i class="fa-brands fa-twitch"></i> Twitch</a
+        >
+        <% } %> <% if (app.footer_links.facebook) { %>
+        <a href="<%= app.footer_links.facebook %>" class="social-icon"
+          ><i class="fa-brands fa-facebook"></i> Facebook</a
+        >
+        <% } %> <% if (app.footer_links.instagram) { %>
+        <a href="<%= app.footer_links.instagram %>" class="social-icon"
+          ><i class="fa-brands fa-instagram"></i> Instagram</a
+        >
+        <% } %> <% if (app.footer_links.linkedin) { %>
+        <a href="<%= app.footer_links.linkedin %>" class="social-icon"
+          ><i class="fa-brands fa-linkedin"></i> LinkedIn</a
+        >
+        <% } %>
+      </div>
+
+      <div class="footer-logo">
+        <img src="/public/img/logikk.png" alt="Logo" />
+        <p class="logo-caption"><%= app.dashboard_name %></p>
+      </div>
+      <div class="footer-contact">
+        <h4>Contacto</h4>
+        <p>
+          Email:
+          <a href="mailto:<%= app.owner_email %>" style="color: lightblue"
+            ><%= app.owner_email %></a
+          >
+        </p>
+      </div>
     </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; <%= new Date().getFullYear() %> <%= app.dashboard_name %>. Todos
+        los derechos reservados.
+      </p>
+      <i
+        ><small
+          ><a
+            href="https://github.com/Crujera27/logitools"
+            style="color: lightblue"
+            >Logitools</a
+          >
+          developed with ❤️ by
+          <a href="https://crujera.galnod.com" style="color: plum"
+            >Crujera</a
+          ></small
+        ></i
+      >
+    </div>
+  </div>
 </footer>

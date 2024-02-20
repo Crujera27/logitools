@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Logikk's Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="../public/js/video.js"></script>
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+
+  <body>
+    <%- include('../inc/staff-navbar.ejs') %>
+    <div class="container mt-5">
+      <h1>Gestor de warns</h1>
+
+      <div class="search-container">
+        <form action="/staff/punishmentmanager" method="get">
+          <input
+            type="text"
+            class="search-box"
+            name="userId"
+            placeholder="ID de usuario"
+          />
+          <button class="button search-button" type="submit">Buscar</button>
+        </form>
+      </div>
+      <% if (done) { %>
+      <div class="notification notification-success">
+        Warn eliminado correctamente. La acción ha sido registrada.
+      </div>
+      <% } %> <% if (error === 'userIdMissing') { %>
+      <div class="notification notification-danger">
+        No has aportado una ID de usuario, por favor introduzca una ID de
+        usuario válida
+      </div>
+      <% } %> <% if (notification !== false) { %>
+        <div class="notification notification-success">
+          Mostrando el historial del usuario con ID de Discord <span style="color:darkslategray;"><%= notification %></span>
+        </div>
+        <% } %>
+
+      <!-- Table to display warns -->
+      <table class="table table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Tipo de sanción</th>
+            <th scope="col">Razón de la sanción</th>
+            <th scope="col">Emitido por</th>
+            <th scope="col">Emitido en</th>
+            <th scope="col">En vigor</th>
+            <th scope="col">Eliminar registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% punishments.forEach((punishment)=> { %>
+          <tr
+            class="<%= (punishment.punishment_type === 'warn_mild') ? 'warn-mild' : (punishment.punishment_type === 'warn_middle') ? 'warn-middle' : (punishment.punishment_type === 'warn_severe') ? 'warn-severe' : (punishment.punishment_type === 'timeout') ? 'timeout' : (punishment.punishment_type === 'ban') ? 'ban' : '' %> <%= punishment.expired ? 'expired' : '' %>"
+          >
+            <td><%= punishment.id %></td>
+            <td>
+              <% if (punishment.punishment_type==='warn_mild' ) { %> Advertencia
+              leve <% } else if (punishment.punishment_type==='warn_middle' ) {
+              %> Advertencia media <% } else if
+              (punishment.punishment_type==='warn_severe' ) { %> Advertencia
+              grave <% } else if (punishment.punishment_type==='timeout' ) { %>
+              Timeout <% } else if (punishment.punishment_type==='ban' ) { %>
+              Ban <% } else { %> <%= punishment.punishment_type %> <% } %>
+            </td>
+            <td><%= punishment.punishment_reason %></td>
+            <td><%= punishment.punishment_issuer %></td>
+            <td><%= punishment.issue_date.toLocaleString() %></td>
+            <td>
+              <% if (punishment.expired===0) { %> Vigente <% } else { %>
+              Expirado <% } %>
+            </td>
+            <td><a class="button" href="/staff/punishmentmanager/revokepunishment?punishmentId=<%= punishment.id %>&userId=<%= punishment.discord_id %>" style="margin: 0;">Revocar</a></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <%- include('../inc/footer.ejs') %>
+  </body>
+</html>

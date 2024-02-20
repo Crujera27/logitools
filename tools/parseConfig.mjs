@@ -14,16 +14,21 @@
     Licencia del proyecto: MIT
 
 */
-const isStaff = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        if(req.user.isStaff=="1"){
-          return next()
-        }else{
-          return res.redirect("/dashboard")
-        }
-    } else {
-      req.session.returnTo = req.originalUrl;
-      res.redirect('/login');
-    }
-  };
-    export default isStaff;
+
+import fs from 'fs';
+import toml from 'toml';
+
+async function parseConfig() {
+  try {
+    const configFile = await fs.promises.readFile('./config/configuration.toml', 'utf-8');
+    const config = toml.parse(configFile);
+    return config;
+  } catch (error) {
+    console.error('Error parsing TOML configuration:', error);
+    throw error; // Re-throw the error to indicate failure in parsing
+  }
+}
+
+export default parseConfig;
+
+

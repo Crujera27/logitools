@@ -7,6 +7,7 @@ module.exports = {
         name: 'help',
         description: 'View all the possible commands!',
         aliases: ['h'],
+        permissions: 'Administrator',
         cooldown: 15000
     },
     /**

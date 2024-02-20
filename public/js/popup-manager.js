@@ -14,16 +14,7 @@
     Licencia del proyecto: MIT
 
 */
-const isStaff = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        if(req.user.isStaff=="1"){
-          return next()
-        }else{
-          return res.redirect("/dashboard")
-        }
-    } else {
-      req.session.returnTo = req.originalUrl;
-      res.redirect('/login');
-    }
-  };
-    export default isStaff;
+function togglePop() {
+    let popup = document.getElementById('popAlert');
+    popup.classList.toggle('active');
+}

@@ -19,17 +19,23 @@ import express from 'express';
 import passport from 'passport';
 import { pjson } from '../tools/pjson.mjs';
 import isAuthenticated from '../middleware/auth.mjs';
+import parseConfig from '../tools/parseConfig.mjs';
 
 const router = express.Router();
 
-router.get('/login', (req, res) => {
-  if (req.isAuthenticated()) {
-    return res.redirect('/dashboard');
+router.get('/login', async (req, res) => {
+  try {
+    const appConfig = await parseConfig();
+
+    res.render('login', {
+      devVersion: true,
+      version: pjson.version,
+      app: appConfig,
+    });
+  } catch (error) {
+    console.error('Error reading/parsing configuration file:', error);
+    res.status(500).send('Internal Server Error');
   }
-  res.render('login', {
-    devVersion: true,
-    version: pjson.version,
-});
 });
 
 

@@ -14,21 +14,43 @@
     Licencia del proyecto: MIT
 
 */
-const isAuthenticated = (req, res, next) => {
+import parseConfig from '../tools/parseConfig.mjs';
+
+const isAuthenticated = async (req, res, next) => {
   if (req.isAuthenticated()) {
     res.locals.user = req.user;
+    try {
+      const appConfig = await parseConfig();
+      res.locals.app = appConfig;
+    } catch (error) {
+      console.error('Error loading app config:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    
     if (!req.user.banned) {
       return next();
     } else {
       if (req.route.path !== '/logout') {
-        res.render('not-approved');
+        return res.render('not-approved');
       } else {
         return next();
       }
     }
   } else {
+    try {
+      const appConfig = await parseConfig();
+      res.locals.app = appConfig;
+    } catch (error) {
+      console.error('Error loading app config:', error);
+      res.status(500).send('Internal Server Error');
+      return;
+    }
+    
     req.session.returnTo = req.originalUrl;
-    res.redirect('/login');
+    return res.redirect('/login');
   }
 };
-  export default isAuthenticated;
+
+
+export default isAuthenticated;

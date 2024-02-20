@@ -1,7 +1,9 @@
 {
   "name": "crujera-logitools",
   "version": "4.0.0",
+  "isBeta": true,
   "description": "",
+  "relasenotes": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsam voluptates ad optio cumque dolorem consectetur quos, mollitia amet labore cupiditate voluptate voluptatem pariatur alias, debitis praesentium reprehenderit? Aliquam, laboriosam tempora!",
   "main": "index.mjs",
   "private": true,
   "scripts": {

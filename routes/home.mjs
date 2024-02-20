@@ -17,6 +17,7 @@
 import express from 'express';
 import isAuthenticated from '../middleware/auth.mjs';
 import executeQuery, { pool } from '../tools/mysql.mjs';
+import { pjson } from '../tools/pjson.mjs';
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/dashboard', isAuthenticated, async (req, res) => {
-    res.render('index', { user: req.user });
+    res.render('index', { user: req.user, isBeta: pjson.isBeta, version: pjson.version });
 });
 
 router.get('/history', isAuthenticated, async (req, res) => {

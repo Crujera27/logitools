@@ -34,12 +34,11 @@ module.exports = {
         guild: "905124554303762552",
     }, 
     messageSettings: {
-        nsfwMessage: "The current channel is not a NSFW channel.",
-        developerMessage: "You are not authorized to use this command.",
-        cooldownMessage: "Slow down buddy! You're too fast to use this command ({cooldown}s).",
-        globalCooldownMessage: "Slow down buddy! This command is on a global cooldown ({cooldown}s).",
-        notHasPermissionMessage: "You do not have the permission to use this command.",
-        notHasPermissionComponent: "You do not have the permission to use this component.",
-        missingDevIDsMessage: "This is a developer only command, but unable to execute due to missing user IDs in configuration file."
+        developerMessage: "No estás autorizado/a a utilizar este comando.",
+        cooldownMessage: "¡Más despacio amigo/a! Eres demasiado rápido/a para usar este comando. ({cooldown}s).",
+        globalCooldownMessage: "¡Más despacio amigo/a! Eres demasiado rápido/a para usar este comando. ({cooldown}s).",
+        notHasPermissionMessage: "No tienes permiso para utilizar este comando.",
+        notHasPermissionComponent: "No tienes permiso para utilizar este componente.",
+        missingDevIDsMessage: "No estás autorizado/a a utilizar este comando."
     }
 };

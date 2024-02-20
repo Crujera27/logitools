@@ -1,49 +1,83 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title><%= app.dashboard_name %> - Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="../public/js/video.js"></script>
+    <script src="../public/js/popup-manager.js"></script>
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
 
-<head>
-  <title>Logikk's Dashboard</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="../public/js/video.js"></script>
-  <link rel="stylesheet" href="/public/css/style.css">
-</head>
-
-<body>
-  <%- include('./inc/navbar.ejs') %>
+  <body>
+    <%- include('./inc/navbar.ejs') %>
+    <section id="popAlert">
+      <aside>
+        <h2>Información importante</h2>
+        <p style="color: black;">Este servidor está utilizando una versión de <a href="https://github.com/Crujera27/logitools" style="color: purple;">Logitools</a> Beta. Intencionada para ámbitos de producción. El software todavía no es el final y todo está sujeto a cambios. Si encuentra bugs, repórtalos en <a style="color: purple;" href="https://github.com/Crujera27/logitools/issues">GitHub</a>.</p>
+        <button type="button" onclick="togglePop()">De acuerdo</button>
+      </aside>
+    </section>
     <div class="container mt-5">
       <% if (user.discriminator==="0" ) { %>
-        <h1>¡Bienvenido/a, <%= user.username %>!</h1>
-        <p>Estás en tu página principal, puedes navegar por ella o utilizar la barra superior para acceder a más
-          recuros.</p>
-        <% } else { %>
-          <h1>¡Bienvenido/a, <%= user.username %>#<%= user.discriminator %>!</h1>
-          <p>Estás en tu página principal, puedes navegar por ella o utilizar la barra superior para acceder a más
-            recuros.</p>
-          <% } %>
+      <h1>¡Bienvenido/a, <%= user.username %>!</h1>
+      <p>
+        Estás en tu página principal, puedes navegar por ella o utilizar la
+        barra superior para acceder a más recuros.
+      </p>
+      <% } else { %>
+      <h1>¡Bienvenido/a, <%= user.username %>#<%= user.discriminator %>!</h1>
+      <p>
+        Estás en tu página principal, puedes navegar por ella o utilizar la
+        barra superior para acceder a más recuros.
+      </p>
+      <% } %>
     </div>
     <div class="container">
       <div class="row">
         <div class="col-12 col-md-6">
           <div class="dashboard-card">
             <h2>¿Qué hay de nuevo?</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-              fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum.</p>
-            <a href="/whats-new" class="button">Leer más</a>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <a href="https://github.com/Crujera27/logitools/releases/tag/v<%= version %>" class="button">Leer más</a>
+
           </div>
         </div>
         <div class="col-12 col-md-6">
           <div class="popular-links-card">
             <h2>Enlaces Populares</h2>
             <div class="popular-links">
-              <a href="https://discord.gg/2kPR5jyhR9" class="popular-link">Servidor de Discord</a>
-              <a href="https://www.youtube.com/@LogikkYT" class="popular-link">YouTube</a>
-              <a href="https://twitter.com/logikk4" class="popular-link">Twitter</a>
-              <a href="https://www.twitch.tv/logikkyt" class="popular-link">Twitch</a>
-              <a href="https://www.youtube.com/watch?v=y8rwf71cO-M" class="popular-link">Vídeo Natro Macro</a>
+              <a href="https://discord.gg/2kPR5jyhR9" class="popular-link"
+                >Servidor de Discord</a
+              >
+              <a href="https://www.youtube.com/@LogikkYT" class="popular-link"
+                >YouTube</a
+              >
+              <a href="https://twitter.com/logikk4" class="popular-link"
+                >Twitter</a
+              >
+              <a href="https://www.twitch.tv/logikkyt" class="popular-link"
+                >Twitch</a
+              >
+              <a
+                href="https://www.youtube.com/watch?v=y8rwf71cO-M"
+                class="popular-link"
+                >Vídeo Natro Macro</a
+              >
             </div>
           </div>
         </div>
@@ -51,7 +85,13 @@
           <div class="featured-video-card">
             <h2>Video promocionado</h2>
             <div class="featured-video">
-              <iframe id="randomVideo" width="854" height="480" frameborder="0" allowfullscreen></iframe>
+              <iframe
+                id="randomVideo"
+                width="854"
+                height="480"
+                frameborder="0"
+                allowfullscreen
+              ></iframe>
             </div>
           </div>
         </div>
@@ -59,8 +99,12 @@
           <div class="popular-links-card">
             <h2>Economía Discord</h2>
             <div class="featured-video">
-              <iframe src="https://unbelievaboat.com/leaderboard/901587289954730004/widget" width="450" height="500"
-                style="border: 0;"></iframe>
+              <iframe
+                src="https://unbelievaboat.com/leaderboard/901587289954730004/widget"
+                width="450"
+                height="500"
+                style="border: 0"
+              ></iframe>
             </div>
           </div>
         </div>
@@ -69,13 +113,21 @@
         <div class="popular-links-card">
           <h2>Niveles Discord</h2>
           <div class="featured-video">
-            <iframe src="https://gdcolon.com/polaris/leaderboard/901587289954730004" width="450" height="500"
-              style="border: 0;"></iframe>
+            <iframe
+              src="https://gdcolon.com/polaris/leaderboard/901587289954730004"
+              width="450"
+              height="500"
+              style="border: 0"
+            ></iframe>
           </div>
         </div>
       </div>
     </div>
     <%- include('./inc/footer.ejs') %>
-</body>
-
+  </body>
+  <% if (isBeta) { %>
+    <script>
+       togglePop()           
+    </script>
+<% } %>
 </html>

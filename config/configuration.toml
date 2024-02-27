@@ -8,7 +8,7 @@
 #        
 #    Copyright © 2024 Crujera27 y contribuidores. Todos los derechos reservados.
 #    
-#    GitHub: https://github.com/Crujera27/
+#    GitHub: https://github.com/Crujera27
 #    Web: https://crujera.galnod.com
 #    Licencia del proyecto: MIT
 
@@ -21,6 +21,9 @@ port = "3000"
 
 [oauth]
 discord_callback = "http://localhost:3000/auth/discord/callback" # URL de callback para el oauth  de Discord
+
+[web]
+server_id="901587289954730004" # ID del servidor para cargar las APIs (Polaris y Unbelievaboat)
 
 [footer_links]
 # Para desactivar, deja la string en blanco, es decir, solamente con las comillas, por ejemplo: youtube=""
@@ -44,3 +47,15 @@ handler_deploy = true
 [discord_development]
 enabled = true
 guild = "905124554303762552" # ID del servidor de desarollo
+
+[punishments]
+limit_warns_mild="3"
+limit_warns_milddle="3"
+limit_warns_severe="3"
+punishment_limit_warn_mild="timeout"
+punishment_limit_warn_mild_duration=""
+punishment_limit_warn_milddle="timeout"
+punishment_limit_warn_milddle_duration=""
+punishment_limit_warn_severe="ban"
+punishment_limit_warn_milddle_severe=""
+reset_cnt_add_nextlvl_warn_on_limit= true # Si está activado una vez que el límite de un warn es superado, se le aplica el warn del siguiente grado (a no ser que sea grave, que es el nivel máximo) y la sanción asociada con superar el límite de warns. Si está desactivado, solamente se le aplica la sanción especificada anteriormente y se reinician los warns del límite superado.

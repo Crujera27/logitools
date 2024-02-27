@@ -25,7 +25,7 @@ async function parseConfig() {
     return config;
   } catch (error) {
     console.error('Error parsing TOML configuration:', error);
-    throw error; // Re-throw the error to indicate failure in parsing
+    throw error;
   }
 }
 

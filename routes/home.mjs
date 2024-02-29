@@ -44,7 +44,9 @@ router.get('/history', isAuthenticated, async (req, res) => {
 });
 
 router.get('/moderation', isAuthenticated, async (req, res) => {
-  res.render('moderation', { user: req.user });
+  const resources = await executeQuery('SELECT * FROM resources');
+  const staffs = await executeQuery('SELECT * FROM users WHERE isStaff = 1');
+  res.render('moderation', { user: req.user, resources: resources, staffs: staffs });
 });
 
 router.get('/support', isAuthenticated, async (req, res) => {

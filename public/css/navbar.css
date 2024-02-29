@@ -66,8 +66,10 @@
     border: none;
 }
 
+
 .dropdown-item:hover {
-    background-color: #1a252f;
+    color: #ffffff; 
+    background-color: #34495e;
 }
 
 .logo-img {

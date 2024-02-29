@@ -132,8 +132,9 @@ passport.deserializeUser((user, done) => {
 import authRoutes from './routes/auth.mjs';
 import homeRoutes from './routes/home.mjs';
 import staffRoutes from './routes/staff.mjs';
+import adminRoutes from './routes/admin.mjs'
 
-const routeModules = [authRoutes, homeRoutes, staffRoutes];
+const routeModules = [authRoutes, homeRoutes, staffRoutes, adminRoutes];
 
 routeModules.forEach((route) => {
   app.use('/', route);

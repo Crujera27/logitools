@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= app.dashboard_name %> - Panel de administración</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+
+  <body>
+    <%- include('../inc/admin-navbar.ejs') %>
+    <div class="container mt-5">
+      <% if (user.discriminator==="0" ) { %>
+      <h1>¡Hola, <%= user.username %>!</h1>
+      <p>
+        Estás en el portal de administración, puedes navegar por ella o utilizar la
+        barra superior para acceder a más recuros o salir de esta zona en las
+        opciones de usuario.
+      </p>
+      <% } else { %>
+      <h1>¡Hola, <%= user.username %>#<%= user.discriminator %>!</h1>
+      <p>
+        Estás en el portal de administración, puedes navegar por ella o utilizar la
+        barra superior para acceder a más recuros o salir de esta zona en las
+        opciones de usuario.
+      </p>
+      <% } %>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="dashboard-card">
+            <h2>¿Qué hay de nuevo? (v<%= version %>)</h2>
+            <p>
+              <%= versionnotes %>
+            </p>
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h2>Información de la instancia</h2>
+          <p>
+            <table style="border: 1;">
+              <tbody>
+              <tr>
+              <td>Nombre de la APP: </td>
+              <td><%= appname %></td>
+              </tr>
+              <tr>
+              <td>Versión de la APP:</td>
+              <td><%= version %></td>
+              </tr>
+              <td>SO del Host:</td>
+              <td><%= ostype %></td>
+              </tr>
+              <td>Version del SO del host</td>
+              <td><%= osrelase %></td>
+              </tr>
+              <td>Hostname del SO del host:</td>
+              <td><%= oshostname %></td>
+              </tr>
+              </tbody>
+              </table>
+          </p>
+        </div>
+      </div>
+        <div class="col-12 col-md-6">
+          <div class="popular-links-card">
+            <h2>Recursos</h2>
+            <div class="popular-links">
+              <a href="https://github.com/Crujera27/logitools" class="popular-link"
+                >GitHub</a
+              >
+              <a href="https://github.com/Crujera27/logitools" class="popular-link"
+                >Documentación</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('../inc/footer.ejs') %>
+  </body>
+</html>

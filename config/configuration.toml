@@ -59,3 +59,7 @@ punishment_limit_warn_milddle_duration=""
 punishment_limit_warn_severe="ban"
 punishment_limit_warn_milddle_severe=""
 reset_cnt_add_nextlvl_warn_on_limit= true # Si está activado una vez que el límite de un warn es superado, se le aplica el warn del siguiente grado (a no ser que sea grave, que es el nivel máximo) y la sanción asociada con superar el límite de warns. Si está desactivado, solamente se le aplica la sanción especificada anteriormente y se reinician los warns del límite superado.
+
+
+[staffpage]
+apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"

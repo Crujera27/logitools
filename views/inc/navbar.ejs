@@ -35,6 +35,9 @@
           <% if (user.isStaff) { %>
             <a class="dropdown-item" href="/staff">Pandel de staff</a>
             <% } %>
+            <% if (user.isAdmin) { %>
+              <a class="dropdown-item" href="/admin">Panel de administración</a>
+              <% } %>
               <a class="dropdown-item" href="/logout">Cerrar sesión</a>
         </div>
       </li>

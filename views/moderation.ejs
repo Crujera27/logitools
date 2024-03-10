@@ -39,7 +39,7 @@
                     <% resources.forEach(resource => { %>
                       <tr>
                         <td><%= resource.name %></td>
-                        <td><a href="<%= resource.link %>">Abrir recurso</a></td>
+                        <td><a href="/moderation/download/<%= resource.id %>">Abrir recurso</a></td>
                       </tr>
                     <% }); %>
                   </tbody>

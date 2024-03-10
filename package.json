@@ -13,6 +13,7 @@
   "author": "Crujera27",
   "license": "MIT",
   "dependencies": {
+    "content-disposition": "^0.5.4",
     "discord.js": "^14.14.1",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
@@ -20,12 +21,14 @@
     "express-flash": "^0.0.2",
     "express-session": "^1.17.3",
     "fs": "^0.0.1-security",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.5",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
     "path": "^0.12.7",
     "pretty-ms": "^9.0.0",
-    "toml": "^3.0.0"
+    "toml": "^3.0.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

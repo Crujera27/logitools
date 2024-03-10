@@ -17,7 +17,13 @@
 const isAdmin = (req, res, next) => {
     if (req.isAuthenticated()) {
         if(req.user.isAdmin=="1"){
+          if(req.user.adminVerifyStatus=="adminVerifyStatus" || req.user.adminVerifyStatus=="progress" && req.url!=="/admin/verify" || req.url=="/admin/verify?verificationCode=*"){
+            return res.redirect('/admin/verify')
+          }else if(req.user.adminVerifyStatus=="locked"){
+            return res.json({code: '403', error: 'Esta cuenta ha sido bloqueada por motivos de seguridad.'})
+          }else{
           return next()
+          }
         }else{
           return res.redirect("/dashboard")
         }
@@ -26,4 +32,4 @@ const isAdmin = (req, res, next) => {
       res.redirect('/login');
     }
   };
-    export default isAdmin;
+export default isAdmin;

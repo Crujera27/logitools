@@ -56,7 +56,7 @@ router.get('/auth/discord/callback',
   passport.authenticate('discord', { failureRedirect: '/' }),
   (req, res) => {
     const redirectTo = req.session.returnTo || '/';
-    delete req.session.returnTo;
+
     res.redirect(redirectTo);
   });
 

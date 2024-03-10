@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= app.dashboard_name %> - Gestor de recursos
+    </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+
+<body>
+    <%- include('../inc/admin-navbar.ejs') %>
+    <div class="container mt-5">
+        <h1>Gestor de recursos</h1>
+
+        <div class="search-container">
+            <form action="/admin/addresource" method="post" enctype="multipart/form-data">
+                <input type="text" class="form-control" name="resourceName" placeholder="Nombre del recurso" required>
+                <input type="file" class="form-control-file" name="resourceFile">
+                <button class="btn btn-primary" type="submit">Agregar recurso</button>
+            </form>
+            
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre del recurso</th>
+                    <th>Descargar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% resources.forEach((resource) => { %>
+                <tr>
+                    <td style="color: white;"><%= resource.id %></td>
+                    <td style="color: white;"><%= resource.name %></td>
+                    <td>
+                        <a href="/admin/download/<%= resource.id %>" class="btn btn-primary">Descargar</a>
+                    </td>
+                    <td>
+                        <form id="deleteForm_<%= resource.id %>" action="/admin/deleteresource/<%= resource.id %>" method="post">
+                            <button class="btn btn-danger delete-btn" type="button" data-resource-id="<%= resource.id %>">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <%- include('../inc/footer.ejs') %>
+</body>
+<script src="/public/js/delete-resource.js"></script>
+</html>

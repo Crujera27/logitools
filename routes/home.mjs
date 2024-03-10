@@ -30,13 +30,13 @@ router.get('/', (req, res) => {
 });
 
 router.get('/dashboard', isAuthenticated, async (req, res) => {
-    res.render('index', { user: req.user, isBeta: pjson.isBeta, version: pjson.version });
+    res.render('index', { isBeta: pjson.isBeta, version: pjson.version });
 });
 
 router.get('/history', isAuthenticated, async (req, res) => {
   try {
     const userHistory = await executeQuery('SELECT * FROM punishment_history WHERE discord_id = ?', [req.user.discord_id]);
-    res.render('history', { user: req.user, userhistory: userHistory });
+    res.render('history', { userhistory: userHistory });
   } catch (error) {
     console.error('Error fetching user history:', error);
     res.status(500).send('Internal Server Error');
@@ -46,10 +46,36 @@ router.get('/history', isAuthenticated, async (req, res) => {
 router.get('/moderation', isAuthenticated, async (req, res) => {
   const resources = await executeQuery('SELECT * FROM resources');
   const staffs = await executeQuery('SELECT * FROM users WHERE isStaff = 1');
-  res.render('moderation', { user: req.user, resources: resources, staffs: staffs });
+  res.render('moderation', { resources: resources, staffs: staffs });
+});
+
+router.get('/moderation/download/:id', isAuthenticated, async (req, res) => {
+  const resourceId = req.params.id;
+  try {
+      const resource = await executeQuery('SELECT * FROM resources WHERE id = ?', [resourceId]);
+      if (resource.length === 0) {
+          return res.status(404).render('error', { error: "Resource not found." });
+      }
+
+      const originalFilename = resource[0].originalname;
+      const filePath = `uploads/${originalFilename}`;
+
+      res.download(filePath, resource[0].link, (err) => {
+          if (err) {
+              console.error(err);
+              res.status(500).render('error', { error: "An error occurred while downloading the resource." });
+          } else {
+              // res.redirect('/moderation');
+          }
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).render('error', { error: "An error occurred while downloading the resource." });
+  }
 });
 
 router.get('/support', isAuthenticated, async (req, res) => {
+  return res.json({code: '403', error: 'Se denegó el acceso al recurso al cual intenta acceder.'})
   const userTickets = await executeQuery('SELECT * FROM tickets WHERE user_id = ?', [req.user.id]);
   res.render('support', { user: req.user, userTickets: userTickets });
 });

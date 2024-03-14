@@ -16,8 +16,20 @@
 owner="Logikk's Discord"
 owner_email="contactologikk@gmail.com"
 dashboard_name="Logikk's Dashboard"
+logo_url="logikk.png"
 bind_address = "localhost" # Solo para configuraciones avanzadas, es recomendado dejarlo a no ser que este enjutando esto en una máquina con múltiples direcciones IP públicas.
 port = "3000"
+
+[login_page]
+html_lang="es"
+html_description="Página web oficial del Discord de Logikk. Creador de contenido de Bee Swarm Simulator. Desde aquí puedes controlar varias acciones."
+html_keywords="logikk, bss, dashboard, discord, bee, swarm, simulator, LogikkYT, logikk4, dash, dis, controll, panel"
+html_author="Logikk Media"
+og_title="Logikk's Dashboard"
+og_description="Página web oficial del Discord de Logikk. Creador de contenido de Bee Swarm Simulator. Desde aquí puedes controlar varias acciones."
+og_image="/public/img/logikk.png"
+og_url="https://logikk.galnod.com"
+
 
 [oauth]
 discord_callback = "http://localhost:3000/auth/discord/callback" # URL de callback para el oauth  de Discord

@@ -232,6 +232,19 @@ th {
     border-color: #bd2130;
 }
 
+.btn-secondary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #0056b3; 
+    border-color: #004d99;
+}
+
+
+
 .table-striped tbody tr.warn-mild {
     background-color: #FFD700;
     color: white;

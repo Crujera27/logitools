@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= app.dashboard_name %> - Gestor de staffs
+    </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+
+<body>
+    <%- include('../inc/admin-navbar.ejs') %>
+    <div class="container mt-5">
+        <h1>Gestor de staffs</h1>
+
+        <div class="search-container">
+            <form action="/admin/addstaff" method="post" enctype="multipart/form-data">
+                <input type="text" class="form-control" name="resourceName" placeholder="ID del staff" required>
+                <button class="btn btn-primary" type="submit">Agregar staff</button>
+            </form>  
+        </div>
+        
+        <div class="search-container mt-3 mb-3">
+            <input type="text" id="live-search" class="form-control" placeholder="Buscar usuario por ID o nombre">
+        </div> 
+
+        <table id="staff-table" class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Rango</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% staffs.forEach((staff) => { %>
+                <tr>
+                    <td style="color: white;"><%= staff.discord_id %></td>
+                    <td style="color: white;"><%= staff.username %></td>
+                    <td style="color: white;"><%= staff.staffrank %></td>
+                    <td>
+                        <a href="/admin/staffmanager/id/<%= staff.discord_id %>" class="btn btn-secondary">Ficha</a>
+                        <a href="/admin/removestaff/<%= staff.discord_id %>" class="btn btn-primary">Eliminar</a>
+                    </td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+    <%- include('../inc/footer.ejs') %>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/public/js/search-user.js"></script>
+</body>
+</html>

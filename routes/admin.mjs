@@ -34,6 +34,16 @@ router.get('/admin/resources', isAuthenticated, isAdmin, async (req, res) => {
     return res.render('admin/resources', {resources: resources});
 })
 
+router.get('/admin/staffmanager', isAuthenticated, isAdmin, async (req, res) => {
+    const staffs = await executeQuery('SELECT * FROM users WHERE isStaff = 1');
+    return res.render('admin/staffmanager', {staffs: staffs});
+})
+
+router.get('/admin/usermanager', isAuthenticated, isAdmin, async (req, res) => {
+    const users = await executeQuery('SELECT * FROM users');
+    return res.render('admin/usermanager', {users: users});
+})
+
 router.post('/admin/addresource', isAuthenticated, isAdmin, upload.single('resourceFile'), async (req, res) => {
     const { resourceName } = req.body;
     const uploadedFile = req.file;

@@ -1,5 +1,8 @@
-#
+# vscode
 .vscode
+
+# uploads content
+uploads/*
 
 # Logs
 logs

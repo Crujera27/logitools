@@ -17,8 +17,6 @@
 const { MessageContextMenuCommandInteraction, ContextMenuCommandBuilder } = require('discord.js');
 const ExtendedClient = require('../../../class/ExtendedClient.js');
 
-// Ensure to use import properly for ES modules
-
 module.exports = {
     structure: new ContextMenuCommandBuilder()
         .setName('Reportar contenido en el mensaje')

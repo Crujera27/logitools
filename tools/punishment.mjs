@@ -59,14 +59,16 @@ const applyPunishment = async (discordId, punishmentType, punishmentReason, puni
 const updateExpirationStatus = async () => {
     try {
         const sql = `
-            UPDATE punishment_history
-            SET expired = CASE
-                WHEN punishment_type = 'warn_severe' THEN 0
-                WHEN punishment_type = 'warn_mild' AND DATE_ADD(issue_date, INTERVAL 1 MONTH) < NOW() THEN 1
-                WHEN punishment_type = 'warn_middle' AND DATE_ADD(issue_date, INTERVAL 3 MONTH) < NOW() THEN 1
-                ELSE 0
-            END
-        `;
+        UPDATE punishment_history
+        SET expired = CASE
+            WHEN punishment_type = 'warn_severe' THEN 0
+            WHEN punishment_type = 'warn_mild' AND DATE_ADD(issue_date, INTERVAL 1 MONTH) < NOW() THEN 1
+            WHEN punishment_type = 'warn_middle' AND DATE_ADD(issue_date, INTERVAL 3 MONTH) < NOW() THEN 1
+            ELSE 0
+        END
+        WHERE expired = 0
+    `;
+    
 
         await executeQuery(sql);
 
@@ -79,4 +81,46 @@ const updateExpirationStatus = async () => {
     }
 };
 
-export { applyPunishment, updateExpirationStatus };
+/**
+ * Get a user's punishments from the database
+ *
+ * @param {number} discordId - Discord ID of the user.
+ * @returns {object} - Object containing the user's punishments or an error message.
+ */
+const getUserVigentPunishments = async (discordId) => {
+    try {
+        const sql = `SELECT * FROM punishment_history WHERE discord_id = ? AND expired = '0'`;
+        const punishments = await executeQuery(sql, [discordId]);
+        
+        return { success: true, punishments };
+    } catch (error) {
+        log('Error retrieving user punishments: ' + error, 'error');
+        return { success: false, message: 'Error retrieving user punishments.' };
+    }
+};
+
+/**
+ * Update expiration status of punishments for a specific user and punishment type
+ *
+ * @param {number} discordId - Discord ID of the user.
+ * @param {string} punishmentType - Type of punishment to update expiration status for.
+ * @returns {object} - Object indicating the success or failure of the operation.
+ */
+const updateExpirationStatusByUserAndType = async (discordId, punishmentType) => {
+    try {
+        const sql = `
+            UPDATE punishment_history
+            SET expired = 1
+            WHERE discord_id = ? AND punishment_type = ? AND expired = 0
+        `;
+        await executeQuery(sql, [discordId, punishmentType]);
+        log(`Expiration status for ${punishmentType} punishments of user ${discordId} updated successfully.`, 'done');
+        return { success: true, message: `Expiration status for ${punishmentType} punishments of user ${discordId} updated successfully.` };
+    } catch (error) {
+        log(`Error updating expiration status for ${punishmentType} punishments of user ${discordId}: ${error}`, 'error');
+        return { success: false, message: `Error updating expiration status for ${punishmentType} punishments of user ${discordId}.` };
+    }
+};
+
+
+export { applyPunishment, updateExpirationStatus, getUserVigentPunishments, updateExpirationStatusByUserAndType };

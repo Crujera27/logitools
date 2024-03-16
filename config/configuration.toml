@@ -64,10 +64,11 @@ guild = "905124554303762552" # ID del servidor de desarollo
 limit_warns_mild="3"
 limit_warns_milddle="3"
 limit_warns_severe="3"
+# DE AQUÍ PARA DEBAJO NO FUNCIONA DE MOMENTO
 punishment_limit_warn_mild="timeout"
-punishment_limit_warn_mild_duration=""
+punishment_limit_warn_mild_duration="3d"
 punishment_limit_warn_milddle="timeout"
-punishment_limit_warn_milddle_duration=""
+punishment_limit_warn_milddle_duration="7d"
 punishment_limit_warn_severe="ban"
 punishment_limit_warn_milddle_severe=""
 reset_cnt_add_nextlvl_warn_on_limit= true # Si está activado una vez que el límite de un warn es superado, se le aplica el warn del siguiente grado (a no ser que sea grave, que es el nivel máximo) y la sanción asociada con superar el límite de warns. Si está desactivado, solamente se le aplica la sanción especificada anteriormente y se reinician los warns del límite superado.

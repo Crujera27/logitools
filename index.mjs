@@ -144,7 +144,7 @@ routeModules.forEach((route) => {
 const startServer = async () => {
   try {
     const parseConfigModule = (
-      await import("../../../../tools/parseConfig.mjs")
+      await import("./tools/parseConfig.mjs")
     ).default;
     const parseConfig = await parseConfigModule;
     const appConfig = await parseConfig();

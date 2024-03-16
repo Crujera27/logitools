@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios from 'axios';
+import parseConfigModule from "../tools/parseConfig.mjs";
 
 async function sendEmbedWithDetails(webhookUrl, embedDetails) {
     try {
@@ -10,7 +11,7 @@ async function sendEmbedWithDetails(webhookUrl, embedDetails) {
             fields: embedDetails.fields || [],
             timestamp: embedDetails.timestamp || new Date(),
             footer: {
-                text: embedDetails.footer || 'Sent via Discord.js'
+                text: embedDetails.footer || `© ${new Date().getFullYear()} Logitools Software`
             }
         };
 
@@ -26,19 +27,18 @@ async function sendEmbedWithDetails(webhookUrl, embedDetails) {
 
 async function sendLog(action, moderator, user, reason) {
     try {
-        const parseConfigModule = (await import("../tools/parseConfig.mjs")).default;
         const parseConfig = await parseConfigModule();
-        
+
         const embedDetails = {
             title: 'Registro de la moderación',
             description: `Acción: ${action} \nModerador: <@${moderator}>(${moderator})\nUsuario: <@${user}>(${user})\nRazón: ${reason}`,
             color: 0xff0000,
             timestamp: new Date(),
         };
-        await sendEmbedWithDetails( parseConfig.discord.modlog_webhook, embedDetails);
+        await sendEmbedWithDetails(parseConfig.discord.modlog_webhook, embedDetails);
     } catch (error) {
         console.error('Error sending log:', error);
     }
 }
 
-module.exports = sendLog;
+export default sendLog;

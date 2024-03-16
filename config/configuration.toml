@@ -51,7 +51,7 @@ linkedin=""
 [discord]
 handler_prefix = "lt!"
 handler_deploy = true
-modlog_webhook = "https://discord.com/api/webhooks/1218641527593500772/Nv0yzYL9NcJq5mt-U7GrlOAnUex7we-cGgDwA_LTJiDdntxpMDVfeUO0MKauK6psSjHb"
+modlog_webhook = ""
 [discord_handler_commands]
   prefix = true
   slash = true

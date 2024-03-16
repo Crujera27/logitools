@@ -141,20 +141,26 @@ routeModules.forEach((route) => {
 });
 
 
-const startServer = () => {
+const startServer = async () => {
   try {
-    const { app: appConfig = {} } = toml.parse(fs.readFileSync('./config/configuration.toml', 'utf-8')),
-      PORT = appConfig.port || 3000,
-      BIND_ADDRESS = appConfig.bind_address || '0.0.0.0';
+    const parseConfigModule = (
+      await import("../../../../tools/parseConfig.mjs")
+    ).default;
+    const parseConfig = await parseConfigModule;
+    const appConfig = await parseConfig();
+    const PORT = appConfig.port || 3000;
+    const BIND_ADDRESS = appConfig.bind_address || '0.0.0.0';
     app.listen(PORT, BIND_ADDRESS, () => {
-      log(`Servidor escuchando en http://${BIND_ADDRESS}:${PORT}`, 'done');
+      console.log(`Server listening at http://${BIND_ADDRESS}:${PORT}`);
     });
   } catch (error) {
-    console.error('Error al intentar leer el archivo de configuraicón: ', error.message);
+    console.error('Error occurred while trying to read the configuration file:', error.message);
     process.exit(1);
   }
 };
-startServer()
+
+startServer();
+
 
 const interval = 60 * 60 * 1000;
 

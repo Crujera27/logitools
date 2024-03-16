@@ -59,6 +59,7 @@ handler_deploy = true
 [discord_development]
 enabled = true
 guild = "905124554303762552" # ID del servidor de desarollo
+developers = "905124554303762552" # IDs de los desarolladores
 
 [punishments]
 limit_warns_mild="3"

@@ -10,7 +10,7 @@
 #    
 #    GitHub: https://github.com/Crujera27
 #    Web: https://crujera.galnod.com
-#    Licencia del proyecto: MIT
+#    Licencia del proyecto: CC BY-NC-ND 4.0
 
 
 owner="Logikk's Discord"
@@ -51,6 +51,7 @@ linkedin=""
 [discord]
 handler_prefix = "lt!"
 handler_deploy = true
+modlog_webhook = "https://discord.com/api/webhooks/1218641527593500772/Nv0yzYL9NcJq5mt-U7GrlOAnUex7we-cGgDwA_LTJiDdntxpMDVfeUO0MKauK6psSjHb"
 [discord_handler_commands]
   prefix = true
   slash = true
@@ -59,7 +60,7 @@ handler_deploy = true
 [discord_development]
 enabled = true
 guild = "905124554303762552" # ID del servidor de desarollo
-developers = "905124554303762552" # IDs de los desarolladores
+developers = "451765453988298764" # IDs de los desarolladores
 
 [punishments]
 limit_warns_mild="3"

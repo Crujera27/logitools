@@ -22,6 +22,7 @@ import isStaff from '../middleware/staff.mjs';
 import toml from 'toml';
 import fs from 'fs';
 import os from 'os'
+import sendLog from '../tools/discordlog.mjs'
 
 const router = express.Router();
 
@@ -55,6 +56,7 @@ router.get('/staff/punishmentmanager/revokepunishment', isAuthenticated, isStaff
     return res.status(400).json({ error: 'ID de la sanción inválida' });
   }
   try {
+    await sendLog('Registro eliminado', req.user.discord_id, userId, `ID: ${punishmentId}`);
     await executeQuery('DELETE FROM punishment_history WHERE id = ?', [punishmentId]);
     res.redirect(`/staff/punishmentmanager?done=true&userId=${userId}`);
   } catch (error) {

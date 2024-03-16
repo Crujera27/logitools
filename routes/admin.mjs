@@ -25,6 +25,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { dirname } from 'path';
+import sendLog from '../tools/discordlog.mjs'
 import { v4 as uuidv4 } from 'uuid';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
@@ -73,6 +74,7 @@ router.post('/admin/staffmanager/setrank/:id', isAuthenticated, isAdmin, async (
         const { id } = req.params;
         const { staffRank } = req.body;
         const updateQuery = 'UPDATE users SET staffrank = ? WHERE isStaff = 1 AND discord_id = ?';
+        await sendLog('Rango establecido', req.user.discord_id, id, `Acción realizada a través del panel de administración (SM)`);
         await executeQuery(updateQuery, [staffRank, id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
@@ -85,6 +87,7 @@ router.post('/admin/staffmanager/suspend/:id', isAuthenticated, isAdmin, async (
     try {
         const { id } = req.params;
         const updateQuery = 'UPDATE users SET banned = 1 WHERE discord_id = ?';
+        await sendLog('Cuenta suspendida (dashboard)', req.user.discord_id, id, `Acción realizada a través del panel de administración (SM)`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
@@ -97,6 +100,7 @@ router.post('/admin/staffmanager/unsuspend/:id', isAuthenticated, isAdmin, async
     try {
         const { id } = req.params;
         const updateQuery = 'UPDATE users SET banned = 0 WHERE discord_id = ?';
+        await sendLog('Cuenta dessuspendida (dashboard)', req.user.discord_id, id, `Acción realizada a través del panel de administración (SM)`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
@@ -109,6 +113,7 @@ router.post('/admin/staffmanager/addadmin/:id', isAuthenticated, isAdmin, async 
     try {
         const { id } = req.params;
         const updateQuery = 'UPDATE users SET isAdmin = 1 WHERE discord_id = ?';
+        await sendLog('Administrador añadido', req.user.discord_id, id, `Acción realizada a través del panel de administración`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
@@ -121,6 +126,7 @@ router.post('/admin/staffmanager/removeadmin/:id', isAuthenticated, isAdmin, asy
     try {
         const { id } = req.params;
         const updateQuery = 'UPDATE users SET isAdmin = 0 WHERE discord_id = ?';
+        await sendLog('Administrador eliminado', req.user.discord_id, id, `Acción realizada a través del panel de administración`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
@@ -133,6 +139,7 @@ router.post('/admin/staffmanager/removestaff/:id', isAuthenticated, isAdmin, asy
     try {
         const { id } = req.params;
         const updateQuery = 'UPDATE users SET isStaff = 0, isAdmin = 0 WHERE discord_id = ?';
+        await sendLog('Staff eliminado', req.user.discord_id, id, `Acción realizada a través del panel de administración`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager');
     } catch (error) {
@@ -158,6 +165,7 @@ router.post('/admin/staffmanager/addstaff', isAuthenticated, isAdmin, async (req
             return res.redirect('/admin/staffmanager');
         }
         const updateQuery = 'UPDATE users SET isStaff = 1 WHERE discord_id = ?';
+        await sendLog('Staff añadido', req.user.discord_id, id, `Acción realizada a través del panel de administración`);
         await executeQuery(updateQuery, [discord_id]);
         return res.redirect('/admin/staffmanager');
     } catch (error) {
@@ -184,6 +192,7 @@ router.post('/admin/usermanager/suspend/:id', isAuthenticated, isAdmin, async (r
     try {
         const { id } = req.params;
         const updateQuery = 'UPDATE users SET banned = 1 WHERE discord_id = ?';
+        await sendLog('Cuenta suspendida (dashboard)', req.user.discord_id, id, `Acción realizada a través del panel de administración (UM)`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/usermanager');
     } catch (error) {
@@ -196,6 +205,7 @@ router.post('/admin/usermanager/unsuspend/:id', isAuthenticated, isAdmin, async 
     try {
         const { id } = req.params;
         const updateQuery = 'UPDATE users SET banned = 0 WHERE discord_id = ?';
+        await sendLog('Cuenta dessuspendida (dashboard)', req.user.discord_id, id, `Acción realizada a través del panel de administración (UM)`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/usermanager');
     } catch (error) {

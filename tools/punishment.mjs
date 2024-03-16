@@ -16,6 +16,7 @@
 */
 import executeQuery, { pool } from './mysql.mjs';
 import log from './log.mjs';
+import sendLog from './discordlog.mjs'
 
 // Import sendLog using dynamic import and await
 async function applyPunishment(discordId, punishmentType, punishmentReason, punishmentIssuer) {
@@ -38,10 +39,7 @@ async function applyPunishment(discordId, punishmentType, punishmentReason, puni
             VALUES (?, ?, ?, ?, NOW())
         `;
         await executeQuery(sql, [discordId, punishmentType, punishmentReason, punishmentIssuer]);
-
-        // Dynamic import of sendLog and await
-        const sendLogModule = await import('./discordlog.js')
-        await sendLogModule.sendLog(punishmentType, punishmentIssuer, discordId, punishmentReason);
+        await sendLog(punishmentType, punishmentIssuer, discordId, punishmentReason);
 
         return { success: true, message: 'Sanción aplicada con éxito.' };
     } catch (error) {

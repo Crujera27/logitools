@@ -457,3 +457,33 @@ section#popAlert aside button[type=button]:hover {
     transform: translateY(-2px);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
+/* View user */
+
+.user-info-container {
+    background-color: #343a40;
+    color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+
+.user-info-container h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.back-button-container {
+    margin-top: 20px;
+}
+
+.back-button-container .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.back-button-container .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}

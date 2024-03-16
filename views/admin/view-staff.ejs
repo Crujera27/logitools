@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        <%= app.dashboard_name %> - Ficha de staff
+    </title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+
+<body>
+    <%- include('../inc/admin-navbar.ejs') %>
+    <div class="container mt-5">
+        <h1>Ficha de staff</h1>
+
+        <div class="user-info-container mt-3">
+            <h3>ID: <%= staff.discord_id %></h3>
+            <h3>Nombre: <%= staff.username %></h3>
+            <h3>Rango: <%= staff.staffrank %></h3>
+            <h3>Fecha de creación (dashboard): <%= new Date(staff.created_at).toLocaleString() %></h3>
+            <h3>Administrador/a: <%= staff.isAdmin ? 'Sí' : 'No' %></h3>
+            <h3>Estado: <%= staff.banned ? 'Suspendido/a' : 'Activo' %></h3>
+            <form action="/admin/staffmanager/setrank/<%= staff.discord_id %>" method="post" class="mt-3">
+                <div class="form-group">
+                    <label for="staffRank">Nuevo Rango:</label>
+                    <input type="text" class="form-control" id="staffRank" name="staffRank" placeholder="Ingrese el nuevo rango">
+                </div>
+                <button type="submit" class="btn btn-secondary">Actualizar rango</button>
+            </form>
+            <% if (user.discord_id !== staff.discord_id) { %>
+                <form action="<%= staff.isAdmin ? '/admin/staffmanager/removeadmin/' + staff.discord_id : '/admin/staffmanager/addadmin/' + staff.discord_id %>" method="post" class="mt-3">
+                    <button type="submit" class="btn btn-danger"">
+                        <%= staff.isAdmin ? 'Quitar Admin' : 'Hacer Admin' %>
+                    </button>
+                </form>
+                <% if (staff.banned) { %>
+                    <form action="/admin/staffmanager/unsuspend/<%= staff.discord_id %>" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-primary">Rehabilitar acceso</button>
+                    </form>
+                <% } else { %>
+                    <form action="/admin/staffmanager/suspend/<%= staff.discord_id %>" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-primary">Restringir acceso</button>
+                    </form>
+                <% } %>
+            <% } %>
+            <% if (user.discord_id !== staff.discord_id) { %>
+                <form action="/admin/staffmanager/removestaff/<%= staff.discord_id %>" method="post" class="mt-3">
+                    <button type="submit" class="btn btn-danger">Eliminar staff</button>
+                </form>
+                <% } %>
+        </div>
+
+        <div class="back-button-container mt-3">
+            <a href="/admin/staffmanager" class="btn btn-primary">Volver al gestor de staffs</a>
+        </div>
+    </div>
+    <%- include('../inc/footer.ejs') %>
+    <!-- Bootstrap and jQuery Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+
+</html>

@@ -11,7 +11,7 @@
     
     GitHub: https://github.com/Crujera27
     Web: https://crujera.galnod.com
-    Licencia del proyecto: MIT
+    Licencia del proyecto: CC BY-NC-ND 4.0
 
 */
 $(document).ready(function() {

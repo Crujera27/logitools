@@ -11,23 +11,14 @@
     
     GitHub: https://github.com/Crujera27/
     Web: https://crujera.galnod.com
-    Licencia del proyecto: MIT
+    Licencia del proyecto: CC BY-NC-ND 4.0
 
 */
 import executeQuery, { pool } from './mysql.mjs';
-import log from './log.mjs'
+import log from './log.mjs';
 
-/**
- * Stores a punishment in the database
- *
- * @param {number} discordId - Discord ID of the offender.
- * @param {string} punishmentType -  Punishment type (warn_mild, warn_middle, warn_severe, timeout, ban)
- * @param {text} punishmentReason - Reason to store in the DB for the punishment.
- * @param {number} punishmentIssuer - Discord ID of the staff member who issued the punishment.
- * @returns {bolean} - The result of the operation: true = successful, false = unsuccessful
- */
-
-const applyPunishment = async (discordId, punishmentType, punishmentReason, punishmentIssuer) => {
+// Import sendLog using dynamic import and await
+async function applyPunishment(discordId, punishmentType, punishmentReason, punishmentIssuer) {
     try {
         let expirationDate;
         if (punishmentType === 'warn_mild') {
@@ -46,17 +37,20 @@ const applyPunishment = async (discordId, punishmentType, punishmentReason, puni
             INSERT INTO punishment_history (discord_id, punishment_type, punishment_reason, punishment_issuer, issue_date)
             VALUES (?, ?, ?, ?, NOW())
         `;
-
         await executeQuery(sql, [discordId, punishmentType, punishmentReason, punishmentIssuer]);
+
+        // Dynamic import of sendLog and await
+        const sendLogModule = await import('./discordlog.js')
+        await sendLogModule.sendLog(punishmentType, punishmentIssuer, discordId, punishmentReason);
 
         return { success: true, message: 'Sanción aplicada con éxito.' };
     } catch (error) {
-        log('Error al aplicar la sanción:'+error, 'error');
+        log('Error al aplicar la sanción: ' + error, 'error');
         return { success: false, message: 'Error al aplicar la sanción.' };
     }
-};
+}
 
-const updateExpirationStatus = async () => {
+async function updateExpirationStatus() {
     try {
         const sql = `
         UPDATE punishment_history
@@ -68,45 +62,27 @@ const updateExpirationStatus = async () => {
         END
         WHERE expired = 0
     `;
-    
-
         await executeQuery(sql);
-
         log('El estado de vencimiento de las sanciones se actualizó exitosamente.', 'done');
-
         return { success: true, message: 'Expiration status updated successfully.' };
     } catch (error) {
-        log('Error al intentar actualizar los estados de vencimiento de las sanciones:'+error, 'error');
+        log('Error al intentar actualizar los estados de vencimiento de las sanciones: ' + error, 'error');
         return { success: false, message: 'Error updating expiration status.' };
     }
-};
+}
 
-/**
- * Get a user's punishments from the database
- *
- * @param {number} discordId - Discord ID of the user.
- * @returns {object} - Object containing the user's punishments or an error message.
- */
-const getUserVigentPunishments = async (discordId) => {
+async function getUserVigentPunishments(discordId) {
     try {
         const sql = `SELECT * FROM punishment_history WHERE discord_id = ? AND expired = '0'`;
         const punishments = await executeQuery(sql, [discordId]);
-        
         return { success: true, punishments };
     } catch (error) {
         log('Error retrieving user punishments: ' + error, 'error');
         return { success: false, message: 'Error retrieving user punishments.' };
     }
-};
+}
 
-/**
- * Update expiration status of punishments for a specific user and punishment type
- *
- * @param {number} discordId - Discord ID of the user.
- * @param {string} punishmentType - Type of punishment to update expiration status for.
- * @returns {object} - Object indicating the success or failure of the operation.
- */
-const updateExpirationStatusByUserAndType = async (discordId, punishmentType) => {
+async function updateExpirationStatusByUserAndType(discordId, punishmentType) {
     try {
         const sql = `
             UPDATE punishment_history
@@ -120,7 +96,6 @@ const updateExpirationStatusByUserAndType = async (discordId, punishmentType) =>
         log(`Error updating expiration status for ${punishmentType} punishments of user ${discordId}: ${error}`, 'error');
         return { success: false, message: `Error updating expiration status for ${punishmentType} punishments of user ${discordId}.` };
     }
-};
-
+}
 
 export { applyPunishment, updateExpirationStatus, getUserVigentPunishments, updateExpirationStatusByUserAndType };

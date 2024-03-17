@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "isBeta": true,
   "description": "",
-  "relasenotes": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsam voluptates ad optio cumque dolorem consectetur quos, mollitia amet labore cupiditate voluptate voluptatem pariatur alias, debitis praesentium reprehenderit? Aliquam, laboriosam tempora!",
+  "relasenotes": " Carga de avatares de Discord, nuevo banner de cookies, nueva manera en la que los warns expiran, nueva pantalla de login, rutas más bonita, uso de MJS (en la mayoría del código), formato de fecha en los warns, avatar en la zona de staffs, configuración de la app en toml, mejora en la UI web, compatibilidad (débil) con móvil, página de staffs dinámica, sistema de recursos en DB, aplicar sanción al superar límite de ciertos warns y más.",
   "main": "index.mjs",
   "private": true,
   "scripts": {

@@ -15,6 +15,7 @@
 
 */
 import parseConfig from '../tools/parseConfig.mjs';
+import log from '../tools/log.mjs';
 
 const isAuthenticated = async (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -23,7 +24,7 @@ const isAuthenticated = async (req, res, next) => {
       const appConfig = await parseConfig();
       res.locals.app = appConfig;
     } catch (error) {
-      console.error('Error loading app config:', error);
+      log(`Error loading app config: ${error}`, 'err');
       res.status(500).send('Internal Server Error');
       return;
     }
@@ -42,7 +43,7 @@ const isAuthenticated = async (req, res, next) => {
       const appConfig = await parseConfig();
       res.locals.app = appConfig;
     } catch (error) {
-      console.error('Error loading app config:', error);
+      log(`Error loading app config: ${error}`, 'err');
       res.status(500).send('Internal Server Error');
       return;
     }

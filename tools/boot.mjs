@@ -16,11 +16,11 @@
 */
 
 const fs = require('fs');
-
+import log from './log.mjs';
 
 
 console.log('> Cargando archivo index.js');
 import('../index').catch(error => {
-    console.error(`❌> Error al cargar index.js: ${error.message}`);
+    log(`❌> Error al cargar index.js: ${error.message}`, 'err');
     process.exit();
 });

@@ -20,6 +20,10 @@ logo_url="logikk.png"
 bind_address = "localhost" # Solo para configuraciones avanzadas, es recomendado dejarlo a no ser que este enjutando esto en una máquina con múltiples direcciones IP públicas.
 port = "3000"
 
+[pterodactyl]
+enabled = true
+log_msg = "pterodactyl, bot started"
+
 [login_page]
 html_lang="es"
 html_description="Página web oficial del Discord de Logikk. Creador de contenido de Bee Swarm Simulator. Desde aquí puedes controlar varias acciones."

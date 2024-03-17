@@ -18,6 +18,7 @@ import express from 'express';
 import isAuthenticated from '../middleware/auth.mjs';
 import executeQuery, { pool } from '../tools/mysql.mjs';
 import { pjson } from '../tools/pjson.mjs';
+import log from '../tools/log.mjs';
 
 const router = express.Router();
 
@@ -30,7 +31,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/dashboard', isAuthenticated, async (req, res) => {
-    res.render('index', { isBeta: pjson.isBeta, version: pjson.version });
+    res.render('index', { isBeta: pjson.isBeta, version: pjson.version, relasenotes: pjson.relasenotes });
 });
 
 router.get('/history', isAuthenticated, async (req, res) => {
@@ -38,7 +39,7 @@ router.get('/history', isAuthenticated, async (req, res) => {
     const userHistory = await executeQuery('SELECT * FROM punishment_history WHERE discord_id = ?', [req.user.discord_id]);
     res.render('history', { userhistory: userHistory });
   } catch (error) {
-    console.error('Error fetching user history:', error);
+    log(`Error fetching user history: ${error}`, 'err');
     res.status(500).send('Internal Server Error');
   }
 });
@@ -62,14 +63,14 @@ router.get('/moderation/download/:id', isAuthenticated, async (req, res) => {
 
       res.download(filePath, resource[0].link, (err) => {
           if (err) {
-              console.error(err);
+              log(err, 'err');
               res.status(500).render('error', { error: "An error occurred while downloading the resource." });
           } else {
               // res.redirect('/moderation');
           }
       });
   } catch (error) {
-      console.error(error);
+      log(error, 'err');
       res.status(500).render('error', { error: "An error occurred while downloading the resource." });
   }
 });

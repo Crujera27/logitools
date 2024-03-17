@@ -17,6 +17,7 @@
 
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import log from './log.mjs';
 
 dotenv.config();
 
@@ -34,7 +35,7 @@ const executeQuery = async (sql, params = []) => {
     const [rows, fields] = await connection.execute(sql, params);
     return rows;
   } catch (error) {
-    console.error('Error executing query:', error);
+    log(`Error executing query ${error}`, 'err');
     throw error;
   } finally {
     connection.release();

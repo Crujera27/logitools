@@ -1,5 +1,6 @@
 import axios from 'axios';
 import parseConfigModule from "../tools/parseConfig.mjs";
+import log from './log.mjs';
 
 async function sendEmbedWithDetails(webhookUrl, embedDetails) {
     try {
@@ -20,7 +21,7 @@ async function sendEmbedWithDetails(webhookUrl, embedDetails) {
         });
         return response.data;
     } catch (error) {
-        console.error('Error sending log:', error);
+        log(`Error sending log: ${error}`, 'err');
         throw error;
     }
 }
@@ -37,7 +38,7 @@ async function sendLog(action, moderator, user, reason) {
         };
         await sendEmbedWithDetails(parseConfig.discord.modlog_webhook, embedDetails);
     } catch (error) {
-        console.error('Error sending log:', error);
+        log(`Error sending log: ${error}`, 'err');
     }
 }
 

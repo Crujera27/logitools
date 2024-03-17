@@ -20,6 +20,7 @@ import passport from 'passport';
 import { pjson } from '../tools/pjson.mjs';
 import isAuthenticated from '../middleware/auth.mjs';
 import parseConfig from '../tools/parseConfig.mjs';
+import log from '../tools/log.mjs';
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ router.get('/login', async (req, res) => {
       app: appConfig,
     });
   } catch (error) {
-    console.error('Error reading/parsing configuration file:', error);
+    log(`Error reading/parsing configuration file: ${error}`, 'err');
     res.status(500).send('Internal Server Error');
   }
 });
@@ -43,7 +44,7 @@ router.get('/login', async (req, res) => {
 router.get('/logout', isAuthenticated, (req, res) => {
   req.logout((err) => {
     if (err) {
-      console.error('Error en logout:', err);
+      log(`Error en logout: ${err}`, 'err');
       return res.status(500).send('500 | Internal Server Error');
     }
     res.redirect('/');

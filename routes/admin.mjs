@@ -30,6 +30,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+import log from '../tools/log.mjs';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
@@ -64,7 +65,7 @@ router.get('/admin/staffmanager/id/:id', isAuthenticated, isAdmin, async (req, r
         const staff = await executeQuery('SELECT * FROM users WHERE isStaff = 1 AND discord_id = ?', [req.params.id]);
         return res.render('admin/view-staff', { staff: staff[0] });
     } catch (error) {
-        console.error('Error fetching staff members:', error);
+        log(`Error fetching staff members: ${error}`, 'err');
         return res.status(500).send('Internal Server Error');
     }
 });
@@ -78,7 +79,7 @@ router.post('/admin/staffmanager/setrank/:id', isAuthenticated, isAdmin, async (
         await executeQuery(updateQuery, [staffRank, id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
-        console.error('Error updating staff rank:', error);
+        log(`Error updating staff rank: ${error}`, 'err');
         return res.status(500).json({error: 'Internal Server Error'});
     }
 });
@@ -91,7 +92,7 @@ router.post('/admin/staffmanager/suspend/:id', isAuthenticated, isAdmin, async (
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
-        console.error('Error suspending user:', error);
+        log(`Error suspending user: ${error}`, 'err');
         return res.status(500).json({error: 'Internal Server Error'});
     }
 });
@@ -104,7 +105,7 @@ router.post('/admin/staffmanager/unsuspend/:id', isAuthenticated, isAdmin, async
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
-        console.error('Error unsuspending user:', error);
+        log(`Error unsuspending user: ${error}`, 'err');
         return res.status(500).json({error: 'Internal Server Error'});
     }
 });
@@ -117,7 +118,7 @@ router.post('/admin/staffmanager/addadmin/:id', isAuthenticated, isAdmin, async 
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
-        console.error('Error adding admin user:', error);
+        log(`Error adding admin user: ${error}`, 'err');
         return res.status(500).json({error: 'Internal Server Error'});
     }
 });
@@ -130,7 +131,7 @@ router.post('/admin/staffmanager/removeadmin/:id', isAuthenticated, isAdmin, asy
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
-        console.error('Error removing admin user:', error);
+        log(`Error removing admin user: ${error}`, 'err');
         return res.status(500).json({error: 'Internal Server Error'});
     }
 });
@@ -143,7 +144,7 @@ router.post('/admin/staffmanager/removestaff/:id', isAuthenticated, isAdmin, asy
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager');
     } catch (error) {
-        console.error('Error removing staff member:', error);
+        log(`Error removing staff user: ${error}`, 'err');
         return res.status(500).send('Internal Server Error');
     }
 });
@@ -169,7 +170,7 @@ router.post('/admin/staffmanager/addstaff', isAuthenticated, isAdmin, async (req
         await executeQuery(updateQuery, [discord_id]);
         return res.redirect('/admin/staffmanager');
     } catch (error) {
-        console.error('Error updating user status:', error);
+        log(`Error updating user status: ${error}`, 'err');
         return res.status(500).send('Internal Server Error');
     }
 });
@@ -196,7 +197,7 @@ router.post('/admin/usermanager/suspend/:id', isAuthenticated, isAdmin, async (r
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/usermanager');
     } catch (error) {
-        console.error('Error suspending user:', error);
+        log(`Error suspending user: ${error}`, 'err');
         return res.status(500).json({error: 'Internal Server Error'});
     }
 });
@@ -209,7 +210,7 @@ router.post('/admin/usermanager/unsuspend/:id', isAuthenticated, isAdmin, async 
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/usermanager');
     } catch (error) {
-        console.error('Error unsuspending user:', error);
+        log(`Error unsuspending user: ${error}`, 'err');
         return res.status(500).json({error: 'Internal Server Error'});
     }
 });
@@ -266,14 +267,14 @@ router.get('/admin/download/:id', isAuthenticated, isAdmin, async (req, res) => 
 
         res.download(filePath, resource[0].link, (err) => {
             if (err) {
-                console.error(err);
+                log(err, 'err');
                 res.status(500).render('error', { error: "An error occurred while downloading the resource." });
             } else {
                 // res.redirect('/admin/resources');
             }
         });
     } catch (error) {
-        console.error(error);
+        log(error, 'err');
         res.status(500).render('error', { error: "An error occurred while downloading the resource." });
     }
 });

@@ -151,10 +151,13 @@ const startServer = async () => {
     const PORT = appConfig.port || 3000;
     const BIND_ADDRESS = appConfig.bind_address || '0.0.0.0';
     app.listen(PORT, BIND_ADDRESS, () => {
-      console.log(`Server listening at http://${BIND_ADDRESS}:${PORT}`);
+      log(`Servidor escuchando en http://${BIND_ADDRESS}:${PORT}`, 'info');
     });
+    if(appConfig.pterodactyl.enabled == true){
+      console.log(appConfig.pterodactyl.log_msg)
+    }
   } catch (error) {
-    console.error('Error occurred while trying to read the configuration file:', error.message);
+    log(`Error occurred while trying to read the configuration file: ${error.message}`, 'err');
     process.exit(1);
   }
 };

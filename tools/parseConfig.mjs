@@ -17,6 +17,7 @@
 
 import fs from 'fs';
 import toml from 'toml';
+import log from './log.mjs';
 
 async function parseConfig() {
   try {
@@ -24,7 +25,7 @@ async function parseConfig() {
     const config = toml.parse(configFile);
     return config;
   } catch (error) {
-    console.error('Error parsing TOML configuration:', error);
+    log(`Error parsing TOML configuration: ${error}`, 'err');
     throw error;
   }
 }

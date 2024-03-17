@@ -22,6 +22,7 @@ import isStaff from '../middleware/staff.mjs';
 import toml from 'toml';
 import fs from 'fs';
 import os from 'os'
+import log from '../tools/log.mjs';
 import sendLog from '../tools/discordlog.mjs'
 
 const router = express.Router();
@@ -42,7 +43,7 @@ router.get('/staff/punishmentmanager', isAuthenticated, isStaff, async (req, res
         const results = await executeQuery('SELECT * FROM punishment_history WHERE discord_id = ?', [userId]);
         return res.render('staff/punishmentmanager', { punishments: results, error: null, done: req.query.done, notification: userId });
     } catch (error) {
-        console.error(error);
+        log(error, err);
         return res.status(500).json({ error: '500 | Server Error' });
     }
 });
@@ -60,7 +61,7 @@ router.get('/staff/punishmentmanager/revokepunishment', isAuthenticated, isStaff
     await executeQuery('DELETE FROM punishment_history WHERE id = ?', [punishmentId]);
     res.redirect(`/staff/punishmentmanager?done=true&userId=${userId}`);
   } catch (error) {
-    console.error(error);
+    log(error, 'err');
     return res.status(500).json({ error: '500 | Server Error' });
   }
 });

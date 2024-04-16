@@ -36,6 +36,9 @@ async function sendLog(action, moderator, user, reason) {
             color: 0xff0000,
             timestamp: new Date(),
         };
+        if(parseConfig.modlog_webhook==false){
+            return;
+        }
         await sendEmbedWithDetails(parseConfig.discord.modlog_webhook, embedDetails);
     } catch (error) {
         log(`Error sending log: ${error}`, 'err');

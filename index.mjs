@@ -22,19 +22,21 @@ import session from 'express-session';
 import flash from 'express-flash';
 import { Strategy as DiscordStrategy } from 'passport-discord';
 import ejs from 'ejs';
-import executeQuery, { pool } from './tools/mysql.mjs';
-import { applyPunishment, updateExpirationStatus } from './tools/punishment.mjs';
 import path from 'path';
 import fs from 'fs'
 import toml from 'toml';
-log('> Cargando desde index.mjs', 'info');
+import { postbootchecks } from './tools/bootchecks.mjs'
+import executeQuery, { pool } from './tools/mysql.mjs';
+import { applyPunishment, updateExpirationStatus } from './tools/punishment.mjs';
+log('> Booting from index.mjs', 'info');
 try {
-  const watermark = fs.readFileSync('config/watermark.txt', 'utf8');
-  console.log(watermark);
+  console.log(fs.readFileSync('config/asccii/watermark.txt', 'utf8'));
 } catch (err) {
   log(`❌> Error al intentar cargar un archivo: ${err.message}`, 'error');
   process.exit();
 }
+log('> Cargando desde index.mjs', 'info');
+await postbootchecks()
 
 
 const app = express();
@@ -141,7 +143,7 @@ routeModules.forEach((route) => {
 });
 
 
-const startServer = async () => {
+const startWebServer = async () => {
   try {
     const parseConfigModule = (
       await import("./tools/parseConfig.mjs")
@@ -162,18 +164,18 @@ const startServer = async () => {
   }
 };
 
-startServer();
+startWebServer();
 
 
 const interval = 60 * 60 * 1000;
 
-const runLoop = async () => {
+const punishmentloop = async () => {
     while (true) {
         await updateExpirationStatus();
         await new Promise(resolve => setTimeout(resolve, interval));
     }
 };
-runLoop();
+punishmentloop();
 
 const startDiscord = () => {
   import('./discord/bot.js')

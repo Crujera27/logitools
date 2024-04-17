@@ -93,6 +93,26 @@ sudo apt install git
 git --version
 ```
 
+### Install MariaDB
+
+1. Setup the MariaDB repo
+
+*MariaDB repo setup script can be skipped on Ubuntu 22.04*
+```bash
+sudo curl -sS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+```
+
+2. Update repositories list
+
+```bash
+sudo apt update
+```
+
+3. Install MariaDB Server
+```bash
+apt -y install mariadb-server
+```
+
 ### Clone the latest source code
 
 
@@ -114,10 +134,64 @@ tar -xvf <filename>.tar.gz
 npm install
 ```
 
-4. Import the database from database.sql
-5. Rename .env.example to .env and fill the data.
-6. Fill in the required data in the config/configuration.toml
-7. Start the app
+
+# Database Configuration
+
+
+1. Login into the MariaDB Server
+
+```bash
+mysql -u root -p
+```
+
+2. Create the DB user
+
+**Remember to change 'mysupersecretpassword' below to be a unique password**
+```sql
+CREATE USER 'logitools'@'127.0.0.1' IDENTIFIED BY 'mysupersecretpassword';
+```
+
+3. Create the DB
+
+```sql
+CREATE DATABASE logitools;
+```
+
+4. Set permissions for the user
+```sql
+GRANT ALL PRIVILEGES ON logitools.* TO 'logitools'@'127.0.0.1' WITH GRANT OPTION;
+```
+
+5. Leave MariaDB CLI
+
+```sql
+exit
+```
+
+
+### Getting the app ready
+
+1. Rename .env.example to .env and fill the data.
+2. Fill in the required data in the config/configuration.toml
+3. Start the app
 ```bash
 npm run start
 ```
+
+
+### Running the APP with [PM2](https://www.npmjs.com/package/pm2)
+
+
+1. Install pm2 via npm
+
+```bash
+sudo npm install pm2 -g
+```
+
+2. Run the app with pm2
+
+
+```bash
+pm2 --name Logitools start npm -- start
+```
+

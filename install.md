@@ -114,9 +114,10 @@ tar -xvf <filename>.tar.gz
 npm install
 ```
 
-4. Rename .env.example to .env and fill the data.
-5. Fill in the required data in the config/configuration.toml
-6. Start the app
+4. Import the database from database.sql
+5. Rename .env.example to .env and fill the data.
+6. Fill in the required data in the config/configuration.toml
+7. Start the app
 ```bash
 npm run start
 ```

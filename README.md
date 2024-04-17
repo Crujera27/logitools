@@ -8,4 +8,4 @@ Logitools is a moderation bot designed for Discord, equipped with a user-friendl
 
 ## Installation Guide
 
-Oficial documentation can be readen [here](./install.md)
+Official documentation can be redden [here](./install.md).

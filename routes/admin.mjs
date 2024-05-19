@@ -110,6 +110,32 @@ router.post('/admin/staffmanager/unsuspend/:id', isAuthenticated, isAdmin, async
     }
 });
 
+router.post('/admin/staffmanager/hidestaff/:id', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateQuery = 'UPDATE users SET hideInStaff = 1 WHERE discord_id = ?';
+        await sendLog('Cuenta ocultada del apartado de moderación', req.user.discord_id, id, `Acción realizada a través del panel de administración (SM)`);
+        await executeQuery(updateQuery, [id]);
+        return res.redirect('/admin/staffmanager/id/' + id);
+    } catch (error) {
+        log(`Error suspending user: ${error}`, 'err');
+        return res.status(500).json({error: 'Internal Server Error'});
+    }
+});
+
+router.post('/admin/staffmanager/unhidestaff/:id', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updateQuery = 'UPDATE users SET hideInStaff = 0 WHERE discord_id = ?';
+        await sendLog('Cuenta desocultada del apartado de moderación', req.user.discord_id, id, `Acción realizada a través del panel de administración (SM)`);
+        await executeQuery(updateQuery, [id]);
+        return res.redirect('/admin/staffmanager/id/' + id);
+    } catch (error) {
+        log(`Error unsuspending user: ${error}`, 'err');
+        return res.status(500).json({error: 'Internal Server Error'});
+    }
+});
+
 router.post('/admin/staffmanager/addadmin/:id', isAuthenticated, isAdmin, async (req, res) => {
     try {
         const { id } = req.params;

@@ -44,6 +44,15 @@
                         <button type="submit" class="btn btn-primary">Restringir acceso</button>
                     </form>
                 <% } %>
+                <% if (!staff.hideInStaff) { %>
+                    <form action="/admin/staffmanager/hidestaff/<%= staff.discord_id %>" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-primary">Ocultar usuario</button>
+                    </form>
+                <% } else { %>
+                    <form action="/admin/staffmanager/unhidestaff/<%= staff.discord_id %>" method="post" class="mt-3">
+                        <button type="submit" class="btn btn-primary">Desocultar usuario</button>
+                    </form>
+                <% } %>                
             <% } %>
             <% if (user.discord_id !== staff.discord_id) { %>
                 <form action="/admin/staffmanager/removestaff/<%= staff.discord_id %>" method="post" class="mt-3">

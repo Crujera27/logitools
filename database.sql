@@ -20,7 +20,7 @@
 -- Table structure for table `disciplinary_records`
 --
 
-CREATE TABLE `disciplinary_records` (
+CREATE TABLE IF NOT EXISTS `disciplinary_records` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `offender_discord_id` int(255) NOT NULL,
   `issuer_discord_id` int(255) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `disciplinary_records` (
 -- Table structure for table `punishment_history`
 --
 
-CREATE TABLE `punishment_history` (
+CREATE TABLE IF NOT EXISTS `punishment_history` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `discord_id` varchar(255) NOT NULL,
   `punishment_type` enum('warn_mild','warn_middle','warn_severe','timeout','ban') NOT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE `punishment_history` (
 -- Table structure for table `resources`
 --
 
-CREATE TABLE `resources` (
+CREATE TABLE IF NOT EXISTS `resources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `link` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `resources` (
 -- Table structure for table `tickets`
 --
 
-CREATE TABLE `tickets` (
+CREATE TABLE IF NOT EXISTS `tickets` (
   `user_id` int(11) NOT NULL,
   `ticket_id` int(11) NOT NULL,
   `ticket_status` varchar(20) NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE `tickets` (
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `discord_id` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
@@ -95,5 +95,6 @@ CREATE TABLE `users` (
   `staffrank` text CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `isAdmin` tinyint(1) NOT NULL DEFAULT 0,
   `adminVerifyStatus` enum('unverified','progress','locked','verified') CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'unverified',
+  `hideInStaff` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

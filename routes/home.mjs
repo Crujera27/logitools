@@ -46,7 +46,7 @@ router.get('/history', isAuthenticated, async (req, res) => {
 
 router.get('/moderation', isAuthenticated, async (req, res) => {
   const resources = await executeQuery('SELECT * FROM resources');
-  const staffs = await executeQuery('SELECT * FROM users WHERE isStaff = 1');
+  const staffs = await executeQuery('SELECT * FROM users WHERE isStaff = 1 AND hideInStaff = 0');
   res.render('moderation', { resources: resources, staffs: staffs });
 });
 

@@ -27,7 +27,7 @@
     Website: https://crujera.galnod.com
 
 */
--- SQL FOR LOGITOOLS BETA v.4.0.0 (16/03/20224)
+-- SQL FOR LOGITOOLS BETA v.4.0.0 (19/05/20224)
 --
 -- Table structure for table `disciplinary_records`
 --

@@ -273,6 +273,3 @@ npm run dev
 ### Conclusion
 
 You have now successfully set up the development environment for the Logitools application. You can begin developing new features or fixing issues as needed. Remember to follow best practices and maintain clear documentation of your changes.
-```
-
-This documentation provides a step-by-step guide for setting up the development environment based on the provided instructions, ensuring clarity and completeness.

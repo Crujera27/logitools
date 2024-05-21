@@ -78,7 +78,7 @@ router.get('/admin/staffmanager/id/:id', isAuthenticated, isAdmin, async (req, r
         return res.render('admin/view-staff', { staff: staff[0] });
     } catch (error) {
         log(`Error fetching staff members: ${error}`, 'err');
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -92,7 +92,7 @@ router.post('/admin/staffmanager/setrank/:id', isAuthenticated, isAdmin, async (
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error updating staff rank: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -105,7 +105,7 @@ router.post('/admin/staffmanager/suspend/:id', isAuthenticated, isAdmin, async (
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error suspending user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -118,7 +118,7 @@ router.post('/admin/staffmanager/unsuspend/:id', isAuthenticated, isAdmin, async
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error unsuspending user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -131,7 +131,7 @@ router.post('/admin/staffmanager/hidestaff/:id', isAuthenticated, isAdmin, async
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error suspending user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -144,7 +144,7 @@ router.post('/admin/staffmanager/unhidestaff/:id', isAuthenticated, isAdmin, asy
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error unsuspending user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -157,7 +157,7 @@ router.post('/admin/staffmanager/addadmin/:id', isAuthenticated, isAdmin, async 
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error adding admin user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -170,7 +170,7 @@ router.post('/admin/staffmanager/removeadmin/:id', isAuthenticated, isAdmin, asy
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error removing admin user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -183,7 +183,7 @@ router.post('/admin/staffmanager/removestaff/:id', isAuthenticated, isAdmin, asy
         return res.redirect('/admin/staffmanager');
     } catch (error) {
         log(`Error removing staff user: ${error}`, 'err');
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -209,7 +209,7 @@ router.post('/admin/staffmanager/addstaff', isAuthenticated, isAdmin, async (req
         return res.redirect('/admin/staffmanager');
     } catch (error) {
         log(`Error updating user status: ${error}`, 'err');
-        return res.status(500).send('Internal Server Error');
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -236,7 +236,7 @@ router.post('/admin/usermanager/suspend/:id', isAuthenticated, isAdmin, async (r
         return res.redirect('/admin/usermanager');
     } catch (error) {
         log(`Error suspending user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -249,7 +249,7 @@ router.post('/admin/usermanager/unsuspend/:id', isAuthenticated, isAdmin, async 
         return res.redirect('/admin/usermanager');
     } catch (error) {
         log(`Error unsuspending user: ${error}`, 'err');
-        return res.status(500).json({error: 'Internal Server Error'});
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
@@ -297,7 +297,7 @@ router.get('/admin/download/:id', isAuthenticated, isAdmin, async (req, res) => 
     try {
         const resource = await executeQuery('SELECT * FROM resources WHERE id = ?', [resourceId]);
         if (resource.length === 0) {
-            return res.status(404).render('error', { error: "Resource not found." });
+            return res.status(404).render('error', { error : 'HTTP 404 - Recurso no encontrado.'});
         }
 
         const originalFilename = resource[0].originalname;
@@ -306,14 +306,14 @@ router.get('/admin/download/:id', isAuthenticated, isAdmin, async (req, res) => 
         res.download(filePath, resource[0].link, (err) => {
             if (err) {
                 log(err, 'err');
-                res.status(500).render('error', { error: "An error occurred while downloading the resource." });
+                return res.status(500).render('error', { error : 'Ha ocurrido un error al intentar descargar el recurso.'});
             } else {
                 // res.redirect('/admin/resources');
             }
         });
     } catch (error) {
         log(error, 'err');
-        res.status(500).render('error', { error: "An error occurred while downloading the resource." });
+        return res.status(500).render('error', { error : 'Ha ocurrido un error al intentar descargar el recurso.'});
     }
 });
 

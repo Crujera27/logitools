@@ -52,7 +52,7 @@ router.get('/history', isAuthenticated, async (req, res) => {
     res.render('history', { userhistory: userHistory });
   } catch (error) {
     log(`Error fetching user history: ${error}`, 'err');
-    res.status(500).send('Internal Server Error');
+    return res.status(500).render('error', { error : 'Ha ocurrido un error al intentar descargar el recurso.'});
   }
 });
 
@@ -67,7 +67,7 @@ router.get('/moderation/download/:id', isAuthenticated, async (req, res) => {
   try {
       const resource = await executeQuery('SELECT * FROM resources WHERE id = ?', [resourceId]);
       if (resource.length === 0) {
-          return res.status(404).render('error', { error: "Resource not found." });
+        return res.status(404).render('error', { error : 'HTTP 404 - Recirso no encontrado'});
       }
 
       const originalFilename = resource[0].originalname;
@@ -76,21 +76,15 @@ router.get('/moderation/download/:id', isAuthenticated, async (req, res) => {
       res.download(filePath, resource[0].link, (err) => {
           if (err) {
               log(err, 'err');
-              res.status(500).render('error', { error: "An error occurred while downloading the resource." });
+              return res.status(500).render('error', { error : 'HTTP 500 - Ha ocurrido un error al intentar descargar el recurso.'});
           } else {
               // res.redirect('/moderation');
           }
       });
   } catch (error) {
       log(error, 'err');
-      res.status(500).render('error', { error: "An error occurred while downloading the resource." });
+      return res.status(500).render('error', { error : 'HTTP 500 - Ha ocurrido un error al intentar descargar el recurso.'});
   }
-});
-
-router.get('/support', isAuthenticated, async (req, res) => {
-  return res.json({code: '403', error: 'Se denegó el acceso al recurso al cual intenta acceder.'})
-  const userTickets = await executeQuery('SELECT * FROM tickets WHERE user_id = ?', [req.user.id]);
-  res.render('support', { user: req.user, userTickets: userTickets });
 });
 
 

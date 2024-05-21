@@ -57,17 +57,17 @@ router.get('/staff/punishmentmanager', isAuthenticated, isStaff, async (req, res
         return res.render('staff/punishmentmanager', { punishments: results, error: null, done: req.query.done, notification: userId });
     } catch (error) {
         log(error, err);
-        return res.status(500).json({ error: '500 | Server Error' });
+        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error'});
     }
 });
 
 router.get('/staff/punishmentmanager/revokepunishment', isAuthenticated, isStaff, async (req, res) => {
   const { punishmentId, userId } = req.query;
   if (!userId) {
-    return res.status(400).json({ error: 'La URL ha sido manipulada. Las acciones han sido registradas' });
+    return res.status(400).render('error', { error : 'HTTP 400 - Bad request'});
   }
   if (!punishmentId || isNaN(punishmentId)) {
-    return res.status(400).json({ error: 'ID de la sanción inválida' });
+    return res.status(400).render('error', { error : 'HTTP 400 - Bad request'});
   }
   try {
     await sendLog('Registro eliminado', req.user.discord_id, userId, `ID: ${punishmentId}`);
@@ -75,7 +75,7 @@ router.get('/staff/punishmentmanager/revokepunishment', isAuthenticated, isStaff
     res.redirect(`/staff/punishmentmanager?done=true&userId=${userId}`);
   } catch (error) {
     log(error, 'err');
-    return res.status(500).json({ error: '500 | Server Error' });
+    return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error'});
   }
 });
 

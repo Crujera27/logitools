@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= app.dashboard_name %> - Moderación</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+
+  <body>
+    <%- include('../inc/navbar.ejs') %>
+    <div class="container mt-5">
+      <h1>Mis tickets</h1>
+      <p>
+        Aquí puede ver sus tickets con la moderación del Discord.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Estado</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% tickets.forEach(ticket => { %>
+          <tr>
+            <td><%= ticket.ticket_id %></td>
+            <td><%= ticket.ticket_status %></td>
+            <td>
+              <a href="/support/view/<%= ticket.ticket_id %>">Ver ticket</a>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <%- include('../inc/footer.ejs') %>
+  </body>
+</html>

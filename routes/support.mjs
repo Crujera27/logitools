@@ -26,22 +26,17 @@
     Website: https://crujera.galnod.com
 
 */
-const isAdmin = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        if(req.user.isAdmin=="1"){
-          if(req.user.adminVerifyStatus=="adminVerifyStatus" || req.user.adminVerifyStatus=="progress" && req.url!=="/admin/verify" || req.url=="/admin/verify?verificationCode=*"){
-            return res.redirect('/admin/verify')
-          }else if(req.user.adminVerifyStatus=="locked"){
-            return res.status(403).render('error', { error : 'HTTP 403 - Esta cuenta ha sido bloqueada por motivos de seguridad.'});
-          }else{
-          return next()
-          }
-        }else{
-          return res.redirect("/dashboard")
-        }
-    } else {
-      req.session.returnTo = req.originalUrl;
-      res.redirect('/login');
-    }
-  };
-export default isAdmin;
+import express from 'express';
+import isAuthenticated from '../middleware/auth.mjs';
+import executeQuery, { pool } from '../tools/mysql.mjs';
+import { pjson } from '../tools/pjson.mjs';
+import log from '../tools/log.mjs';
+const router = express.Router();
+
+
+router.get('/support', isAuthenticated, async (req, res) => {
+    const myTickets = await executeQuery('SELECT * FROM tickets WHERE user_id = ?', [req.user.id]);
+    return res.render('tickets/index', { user: req.user, tickets: myTickets});
+})
+
+export default router;

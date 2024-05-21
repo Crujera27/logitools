@@ -1,12 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error</title>
-</head>
-<body>
-    <h1>Error</h1>
-    <p><%= error %></p>
-</body>
+<html>
+  <head>
+    <title><%= app.dashboard_name %> - Error</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/public/css/style.css" />
+  </head>
+
+  <body>
+    <%- include('./inc/navbar.ejs') %>
+    <div class="container mt-5">
+        <h1>Error</h1>
+        <h4><%= error %></h4>
+    </div>
+    <%- include('./inc/footer.ejs') %>
+  </body>
 </html>

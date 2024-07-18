@@ -119,10 +119,8 @@ module.exports = {
       }
 
       // Check warns
-      const parseConfigModule = (
-        await import("../../../../tools/parseConfig.mjs")
-      ).default;
-      const parseConfig = await parseConfigModule;
+      const parseConfigModule = await import("../../../../tools/parseConfig.mjs");
+      const parseConfig = parseConfigModule.default;
       const appConfig = await parseConfig();
 
       const checkPunishments = await tools.getUserVigentPunishments(target.id);
@@ -144,7 +142,8 @@ module.exports = {
             target.id,
             "warn_mild"
           );
-          if (appConfig.reset_cnt_add_nextlvl_warn_on_limit == true) {
+          console.log(await appConfig.punishments.reset_cnt_add_nextlvl_warn_on_limit)
+          if (appConfig.punishments.reset_cnt_add_nextlvl_warn_on_limit == true) {
             await tools.applyPunishment(
               target.id,
               "warn_middle",
@@ -186,7 +185,7 @@ module.exports = {
             target.id,
             "warn_middle"
           );
-          if (appConfig.reset_cnt_add_nextlvl_warn_on_limit == true) {
+          if (appConfig.punishments.reset_cnt_add_nextlvl_warn_on_limit == true) {
             await tools.applyPunishment(
               target.id,
               "warn_severe",
@@ -222,7 +221,7 @@ module.exports = {
           }
           return;
         }
-        if (warnsgrave.length >= appConfig.punishments.limit_warns_severe) {
+        if (warnsgrave.length >= appConfig.punishments.reset_cnt_add_nextlvl_warn_on_limit) {
           await tools.updateExpirationStatusByUserAndType(
             target.id,
             "warn_severe"

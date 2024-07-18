@@ -67,7 +67,7 @@ linkedin=""
 [discord]
 handler_prefix = "lt!"
 handler_deploy = true
-modlog_webhook = ""
+modlog_webhook = "https://discord.com/api/webhooks/1242533340125597817/NB96eEONZr4y5ZATFF-2tVpQjgiWyYjlg_GEJ9Ds-NvE6-hMl6M-G_U-0QPpGEdh462O"
 [discord_handler_commands]
   prefix = true
   slash = true
@@ -82,7 +82,7 @@ developers = "451765453988298764" # IDs de los desarolladores
 limit_warns_mild="3"
 limit_warns_milddle="3"
 limit_warns_severe="3"
-# DE AQUÍ PARA DEBAJO NO FUNCIONA DE MOMENTO
+# DE AQUÍ PARA DEBAJO NO FUNCIONA DE MOMENTO (solamente para la sección de punishments)
 punishment_limit_warn_mild="timeout"
 punishment_limit_warn_mild_duration="3d"
 punishment_limit_warn_milddle="timeout"
@@ -94,3 +94,10 @@ reset_cnt_add_nextlvl_warn_on_limit= true # Si está activado una vez que el lí
 
 [staffpage]
 apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"
+
+
+[ai]
+enabled=false
+assistant_name="" # Se le informa al modelo en el proceso de carga de cuál es su nombre (mensaje enviado como sistema)
+ollama_host=""
+ollama_model="llama3" # Default: mistral. Otras recomendaciones: mistrallite (32k de tokens en contexto), (llama3 15T tokens en contexto)

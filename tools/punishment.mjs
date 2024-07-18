@@ -41,7 +41,8 @@ async function applyPunishment(discordId, punishmentType, punishmentReason, puni
             expirationDate = new Date();
             expirationDate.setMonth(expirationDate.getMonth() + 3);
         } else if (punishmentType === 'warn_severe') {
-            expirationDate = null;
+            expirationDate = new Date();
+            expirationDate.setMonth(expirationDate.getMonth() + 6);
         } else {
             expirationDate = null;
         }
@@ -65,9 +66,9 @@ async function updateExpirationStatus() {
         const sql = `
         UPDATE punishment_history
         SET expired = CASE
-            WHEN punishment_type = 'warn_severe' THEN 0
             WHEN punishment_type = 'warn_mild' AND DATE_ADD(issue_date, INTERVAL 1 MONTH) < NOW() THEN 1
             WHEN punishment_type = 'warn_middle' AND DATE_ADD(issue_date, INTERVAL 3 MONTH) < NOW() THEN 1
+            WHEN punishment_type = 'warn_severe' AND DATE_ADD(issue_date, INTERVAL 6 MONTH) < NOW() THEN 1
             ELSE 0
         END
         WHERE expired = 0

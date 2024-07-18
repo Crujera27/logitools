@@ -27,12 +27,29 @@
 
 */
 
-const fs = require('fs');
+import fs from 'fs';
 import log from './log.mjs';
-
+import { boot as ollama} from './ollama.mjs';
+try {
+    const parseConfigModule = (
+      await import("./parseConfig.mjs")
+    ).default;
+    const parseConfig = await parseConfigModule;
+    var appConfig = await parseConfig();
+} catch (error) {
+    log(`❌> Error al intentar cargar la configuración: ${error.message}`, 'err');
+    process.exit();
+}
+/* Disabled for now
+if(appConfig.ai.enabled) {
+    log('El asistente de inicio de Logitools está inicializando los paquetes de configuración; esto puede tardar un momento.', 'info');
+    await ollama()
+}
+*/
 
 console.log('> Cargando archivo index.js');
-import('../index').catch(error => {
+await import('../index.mjs').catch(error => {
     log(`❌> Error al cargar index.js: ${error.message}`, 'err');
     process.exit();
+
 });

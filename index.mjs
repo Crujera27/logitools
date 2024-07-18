@@ -26,6 +26,7 @@
     Website: https://crujera.galnod.com
 
 */
+
 import log from './tools/log.mjs'
 log('El asistente de inicio de Logitools está inicializando los paquetes de configuración; esto puede tardar un momento.', 'info');
 import express from 'express';

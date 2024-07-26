@@ -199,12 +199,11 @@ router.post('/admin/staffmanager/addstaff', isAuthenticated, isAdmin, async (req
         }
         const staffQuery = 'SELECT isStaff FROM users WHERE discord_id = ?';
         const [existingStaff] = await executeQuery(staffQuery, [discord_id]);
-
-        if (existingStaff && existingStaff.isStaff === 1) {
+        if (existingStaff && existingStaff.isStaff === "1") {
             return res.redirect('/admin/staffmanager');
         }
         const updateQuery = 'UPDATE users SET isStaff = 1 WHERE discord_id = ?';
-        await sendLog('Staff añadido', req.user.discord_id, id, `Acción realizada a través del panel de administración`);
+        await sendLog('Staff añadido', req.user.discord_id, discord_id, `Acción realizada a través del panel de administración`);
         await executeQuery(updateQuery, [discord_id]);
         return res.redirect('/admin/staffmanager');
     } catch (error) {

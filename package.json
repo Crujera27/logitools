@@ -13,7 +13,7 @@
   "author": "Crujera27",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.1",
+    "axios": "^1.7.4",
     "content-disposition": "^0.5.4",
     "discord.js": "^14.15.2",
     "dotenv": "^16.4.5",

@@ -68,9 +68,26 @@ router.get('/auth/discord', passport.authenticate('discord'));
 router.get('/auth/discord/callback',
   passport.authenticate('discord', { failureRedirect: '/' }),
   (req, res) => {
-    const redirectTo = req.session.returnTo || '/';
+    const redirectUrl = req.cookies.redirectTo || '/dashboard';
+    
+    const isValidRedirect = (url) => {
+      return (
+        url.startsWith('/') && 
+        !url.includes('://') && 
+        !url.includes('\\') &&
+        !url.includes('..') &&
+        url.indexOf('/') === 0
+      );
+    };
 
-    res.redirect(redirectTo);
-  });
+    res.clearCookie('redirectTo');
+
+    if (redirectUrl && isValidRedirect(redirectUrl)) {
+      res.redirect(redirectUrl);
+    } else {
+      res.redirect('/dashboard');
+    }
+  }
+);
 
 export default router;

@@ -54,14 +54,17 @@ const isAuthenticated = async (req, res, next) => {
     try {
       const appConfig = await parseConfig();
       res.locals.app = appConfig;
+      // Set redirect cookie with 5 minute expiration
+      res.cookie('redirectTo', req.originalUrl, { 
+        maxAge: 300000, // 5 minutes
+        httpOnly: true
+      });
+      return res.redirect('/login');
     } catch (error) {
       log(`Error loading app config: ${error}`, 'err');
       res.status(500).send('Internal Server Error');
       return;
     }
-    
-    req.session.returnTo = req.originalUrl;
-    return res.redirect('/login');
   }
 };
 

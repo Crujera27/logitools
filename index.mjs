@@ -41,6 +41,7 @@ import toml from 'toml';
 import { postbootchecks } from './tools/bootchecks.mjs'
 import executeQuery, { pool } from './tools/mysql.mjs';
 import { applyPunishment, updateExpirationStatus } from './tools/punishment.mjs';
+import cookieParser from 'cookie-parser';
 log('> Booting from index.mjs', 'info');
 try {
   console.log(fs.readFileSync('config/asccii/watermark.txt', 'utf8'));
@@ -66,6 +67,7 @@ app.set('view engine', 'ejs');
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 const BASE_PATH = path.resolve();
 app.use('/public', express.static(path.join(BASE_PATH, 'public')));

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= app.dashboard_name %> - Cuenta suspendida</title>
+    <title><%= app.dashboard_name %> - <%= t.pages.suspended_account %></title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -18,8 +18,8 @@
   <body>
     <%- include('./inc/navbar.ejs') %>
     <div class="container mt-5">
-        <h1>Cuenta suspendida</h1>
-        <h4>Esta cuenta ha sido suspendida debido a una violación de los términos de servicio del dashboard.</h4>
+        <h1><%= t.pages.suspended_account %></h1>
+        <h4><%= t.pages.suspended_message %></h4>
     </div>
     <%- include('./inc/footer.ejs') %>
   </body>

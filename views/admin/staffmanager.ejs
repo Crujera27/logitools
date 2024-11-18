@@ -3,7 +3,7 @@
 
 <head>
     <title>
-        <%= app.dashboard_name %> - Gestor de staffs
+        <%= app.dashboard_name %> - <%= t.pages.staff_manager %>
     </title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -13,29 +13,29 @@
 <body>
     <%- include('../inc/admin-navbar.ejs') %>
     <div class="container mt-5">
-        <h1>Gestor de staffs</h1>
+        <h1><%= t.pages.staff_manager %></h1>
 
         <div class="search-container">
             <form action="/admin/staffmanager/addstaff" method="post">
                 <div class="form-group">
-                    <label for="discord_id">ID del usuario</label>
-                    <input type="text" class="form-control" id="discord_id" name="discord_id" placeholder="Ingrese el ID del usuario" required>
+                    <label for="discord_id"><%= t.form.user_id %></label>
+                    <input type="text" class="form-control" id="discord_id" name="discord_id" placeholder="<%= t.form.user_id_placeholder %>" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Agregar staff</button>
+                <button type="submit" class="btn btn-primary"><%= t.form.add_staff %></button>
             </form>
         </div>
         
         <div class="search-container mt-3 mb-3">
-            <input type="text" id="live-search" class="form-control" placeholder="Buscar staff por ID o nombre">
+            <input type="text" id="live-search" class="form-control" placeholder="<%= t.form.search_staff %>">
         </div> 
 
         <table id="staff-table" class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Rango</th>
-                    <th>Acciones</th>
+                    <th><%= t.table.id %></th>
+                    <th><%= t.table.name %></th>
+                    <th><%= t.table.rank %></th>
+                    <th><%= t.table.actions %></th>
                 </tr>
             </thead>
             <tbody>
@@ -45,7 +45,7 @@
                     <td style="color: white;"><%= staff.username %></td>
                     <td style="color: white;"><%= staff.staffrank %></td>
                     <td>
-                        <a href="/admin/staffmanager/id/<%= staff.discord_id %>" class="btn btn-secondary">Ficha</a>
+                        <a href="/admin/staffmanager/id/<%= staff.discord_id %>" class="btn btn-secondary"><%= t.table.profile %></a>
                     </td>
                 </tr>
                 <% }) %>

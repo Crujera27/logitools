@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= app.dashboard_name %> - Error</title>
+    <title><%= app.dashboard_name %> - <%= t.pages.error %></title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -16,7 +16,7 @@
   <body>
     <%- include('./inc/navbar.ejs') %>
     <div class="container mt-5">
-        <h1>Error</h1>
+        <h1><%= t.pages.error %></h1>
         <h4><%= error %></h4>
     </div>
     <%- include('./inc/footer.ejs') %>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= app.dashboard_name %> - Dashboard</title>
+    <title><%= app.dashboard_name %> - <%= t.pages.dashboard %></title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -19,65 +19,43 @@
     <%- include('./inc/navbar.ejs') %>
     <section id="popAlert">
       <aside>
-        <h2>Información importante</h2>
-        <p style="color: black;">Este servidor está utilizando una versión de <a href="https://github.com/Crujera27/logitools" style="color: purple;">Logitools</a> Beta. Intencionada para ámbitos de producción. El software todavía no es el final y todo está sujeto a cambios. Si encuentra bugs, repórtalos en <a style="color: purple;" href="https://github.com/Crujera27/logitools/issues">GitHub</a>.</p>
-        <button type="button" onclick="togglePop()">De acuerdo</button>
+        <h2><%= t.alerts.beta_title %></h2>
+        <p style="color: black;"><%- t.alerts.beta_message.replace('{link}', '<a href="https://github.com/Crujera27/logitools" style="color: purple;">Logitools</a>').replace('{github}', '<a style="color: purple;" href="https://github.com/Crujera27/logitools/issues">GitHub</a>') %></p>
+        <button type="button" onclick="togglePop()"><%= t.alerts.beta_accept %></button>
       </aside>
     </section>
     <div class="container mt-5">
       <% if (user.discriminator==="0" ) { %>
-      <h1>¡Bienvenido/a, <%= user.username %>!</h1>
-      <p>
-        Estás en tu página principal, puedes navegar por ella o utilizar la
-        barra superior para acceder a más recuros.
-      </p>
+        <h1><%= t.pages.welcome_user.replace('{username}', user.username) %></h1>
       <% } else { %>
-      <h1>¡Bienvenido/a, <%= user.username %>#<%= user.discriminator %>!</h1>
-      <p>
-        Estás en tu página principal, puedes navegar por ella o utilizar la
-        barra superior para acceder a más recuros.
-      </p>
+        <h1><%= t.pages.welcome_user.replace('{username}', `${user.username}#${user.discriminator}`) %></h1>
       <% } %>
+      <p><%= t.pages.welcome_message %></p>
     </div>
     <div class="container">
       <div class="row">
         <div class="col-12 col-md-6">
           <div class="dashboard-card">
-            <h2>¿Qué hay de nuevo?</h2>
-            <p>
-              <%- relasenotes %>
-            </p>
-            <a href="https://github.com/Crujera27/logitools/releases/tag/v<%= version %>" class="button">Leer más</a>
-
+            <h2><%= t.sections.whats_new %></h2>
+            <p><%- relasenotes %></p>
+            <a href="https://github.com/Crujera27/logitools/releases/tag/v<%= version %>" class="button"><%= t.sections.read_more %></a>
           </div>
         </div>
         <div class="col-12 col-md-6">
           <div class="popular-links-card">
-            <h2>Enlaces Populares</h2>
+            <h2><%= t.sections.popular_links %></h2>
             <div class="popular-links">
-              <a href="https://discord.gg/2kPR5jyhR9" class="popular-link"
-                >Servidor de Discord</a
-              >
-              <a href="https://www.youtube.com/@LogikkYT" class="popular-link"
-                >YouTube</a
-              >
-              <a href="https://twitter.com/logikk4" class="popular-link"
-                >Twitter</a
-              >
-              <a href="https://www.twitch.tv/logikkyt" class="popular-link"
-                >Twitch</a
-              >
-              <a
-                href="https://www.youtube.com/watch?v=y8rwf71cO-M"
-                class="popular-link"
-                >Vídeo Natro Macro</a
-              >
+              <a href="https://discord.gg/2kPR5jyhR9" class="popular-link">Servidor de Discord</a>
+              <a href="https://www.youtube.com/@LogikkYT" class="popular-link">YouTube</a>
+              <a href="https://twitter.com/logikk4" class="popular-link">Twitter</a>
+              <a href="https://www.twitch.tv/logikkyt" class="popular-link">Twitch</a>
+              <a href="https://www.youtube.com/watch?v=y8rwf71cO-M" class="popular-link">Vídeo Natro Macro</a>
             </div>
           </div>
         </div>
         <div class="col-12">
           <div class="featured-video-card">
-            <h2>Video promocionado</h2>
+            <h2><%= t.sections.featured_video %></h2>
             <div class="featured-video">
               <iframe
                 id="randomVideo"
@@ -92,7 +70,7 @@
         <div class="col-12">
           <% if (app.web.server_id) { %>
             <div class="popular-links-card">
-              <h2>Economía Discord</h2>
+              <h2><%= t.sections.discord_economy %></h2>
               <div class="featured-video">
                 <iframe
                   src="https://unbelievaboat.com/leaderboard/<%= app.web.server_id %>/widget"
@@ -108,7 +86,7 @@
         <div class="col-12">
           <% if (app.web.server_id) { %>
             <div class="popular-links-card">
-              <h2>Niveles Discord</h2>
+              <h2><%= t.sections.discord_levels %></h2>
               <div class="featured-video">
                 <iframe
                   src="https://gdcolon.com/polaris/leaderboard/<%= app.web.server_id %>"

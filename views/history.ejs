@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title><%= app.dashboard_name %> - Mi historial</title>
+    <title><%= app.dashboard_name %> - <%= t.pages.history %></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/public/css/style.css">
@@ -11,17 +11,17 @@
 <body>
     <%- include('./inc/navbar.ejs') %>
         <div class="container">
-            <h2 class="text-center mb-4">Mi historial</h2>
+            <h2 class="text-center mb-4"><%= t.pages.history %></h2>
             <% if (userhistory.length> 0) { %>
                 <table class="table table-striped">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Tipo de sanción</th>
-                            <th scope="col">Razón de la sanción</th>
-                            <th scope="col">Emitido por</th>
-                            <th scope="col">Emitido en</th>
-                            <th scope="col">En vigor</th>
+                            <th scope="col"><%= t.table.id %></th>
+                            <th scope="col"><%= t.table.punishment_type %></th>
+                            <th scope="col"><%= t.table.reason %></th>
+                            <th scope="col"><%= t.table.issued_by %></th>
+                            <th scope="col"><%= t.table.issued_at %></th>
+                            <th scope="col"><%= t.table.status %></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,19 +37,7 @@
                                     <%= punishment.id %>
                                 </td>
                                 <td>
-                                    <% if (punishment.punishment_type==='warn_mild' ) { %>
-                                        Advertencia leve
-                                        <% } else if (punishment.punishment_type==='warn_middle' ) { %>
-                                            Advertencia media
-                                            <% } else if (punishment.punishment_type==='warn_severe' ) { %>
-                                                Advertencia grave
-                                                <% } else if (punishment.punishment_type==='timeout' ) { %>
-                                                    Timeout
-                                                    <% } else if (punishment.punishment_type==='ban' ) { %>
-                                                        Ban
-                                                        <% } else { %>
-                                                            <%= punishment.punishment_type %>
-                                                                <% } %>
+                                    <%= t.punishments[punishment.punishment_type] || punishment.punishment_type %>
                                 </td>
                                 <td>
                                     <%= punishment.punishment_reason %>
@@ -61,11 +49,7 @@
                                     <%= punishment.issue_date.toLocaleString() %>
                                 </td>
                                 <td>
-                                    <% if (punishment.expired===0) { %>
-                                        Vigente
-                                        <% } else { %>
-                                            Expirado
-                                            <% } %>
+                                    <%= punishment.expired === 0 ? t.punishments.active : t.punishments.expired %>
                                 </td>
                             </tr>
                             <% }) %>
@@ -73,11 +57,10 @@
                 </table>
                 <% } else { %>
                     &nbsp;
-                    <p>No hay ningún registro en tu historial.</p>
+                    <p><%= t.pages.no_history %></p>
                     <% } %>
         </div>
         <%- include('./inc/footer.ejs') %>
 </body>
-
 
 </html>

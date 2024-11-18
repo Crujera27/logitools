@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title><%= app.dashboard_name %> - Moderación</title>
+    <title><%= app.dashboard_name %> - <%= t.pages.moderation %></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/public/css/style.css">
@@ -11,35 +11,35 @@
 <body>
     <%- include('./inc/navbar.ejs') %>
         <div class="container mt-5">
-            <h1>Nuestro equipo</h1>
-            <p>Gracias a todos los integrantes/as de nuestro equipo de staff. Haciendo del servidor un mejor lugar.</p>
+            <h1><%= t.pages.staff_title %></h1>
+            <p><%= t.pages.staff_description %></p>
             <div class="staff-card-container">
                 <% staffs.forEach(function(staff) { %>
                     <div class="staff-card">
                         <img src="https://cdn.discordapp.com/avatars/<%= staff.discord_id %>/<%= staff.avatar_uuid %>.png" alt="<%= staff.username %>">
                         <div class="staff-card-content">
-                            <h3><i class="fa-solid fa-id-card-clip"></i> Nombre: <span style="color: black;"><%= staff.username %></span></h3>
-                            <p><i class="fa-solid fa-briefcase"></i> Cargo: <span style="color: black;"><%= staff.staffrank %></span></p>
+                            <h3><i class="fa-solid fa-id-card-clip"></i> <%= t.staff.name %>: <span style="color: black;"><%= staff.username %></span></h3>
+                            <p><i class="fa-solid fa-briefcase"></i> <%= t.staff.role %>: <span style="color: black;"><%= staff.staffrank %></span></p>
                         </div>
                     </div>
                 <% }); %>
             </div>
-            <h3 style="margin: 15px;">¿Quieres formar parte de este maravilloso equipo de la moderación? <a href="<%= app.staffpage.apply_link %>" style="color: lightblue;">Aplica ahora</a></h3>
+            <h3 style="margin: 15px;"><%= t.pages.join_staff %> <a href="<%= app.staffpage.apply_link %>" style="color: lightblue;"><%= t.pages.apply_now %></a></h3>
             <% if (resources.length > 0) { %>
-            <h1>Recursos de la moderación</h1>
-            <p>Documentos, enlaces y herramientas proporcionadas por el equipo de moderación de manera pública.</p>
+            <h1><%= t.pages.resources_title %></h1>
+            <p><%= t.pages.resources_description %></p>
                 <table>
                   <thead>
                     <tr>
-                      <th>Nombre</th>
-                      <th>Link</th>
+                      <th><%= t.table.name %></th>
+                      <th><%= t.table.link %></th>
                     </tr>
                   </thead>
                   <tbody>
                     <% resources.forEach(resource => { %>
                       <tr>
                         <td><%= resource.name %></td>
-                        <td><a href="/moderation/download/<%= resource.id %>">Abrir recurso</a></td>
+                        <td><a href="/moderation/download/<%= resource.id %>"><%= t.table.open_resource %></a></td>
                       </tr>
                     <% }); %>
                   </tbody>

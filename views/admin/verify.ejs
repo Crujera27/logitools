@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= app.dashboard_name %> - Verifica tu identidad</title>
+    <title><%= app.dashboard_name %> - <%= t.pages.verify %></title>
     <link rel="stylesheet" href="/public/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <div class="verification-box">
-            <h2>Verifica tu identidad</h2>
+            <h2><%= t.verify.title %></h2>
             <form id="verificationForm">
-                <label for="verificationCode">Código de verificación:</label>
+                <label for="verificationCode"><%= t.verify.verification_code %>:</label>
                 <input type="text" id="verificationCode" name="verificationCode" required>
-                <button type="submit" class="button">Verificar</button>
+                <button type="submit" class="button"><%= t.verify.verify_button %></button>
                 <div class="additional-info">
-                    <p><i class="fa-solid fa-info"></i> Estás a punto de acceder a un recurso administrativo de <span style="color: plum;">Logidash</span>, por motivos de seguridad, debes verificar tu identidad.</p>
-                    <p><i class="fa-solid fa-user-tie"></i> Actualmente, estás conectado como <span style="color: plum;"><%= user.username %></span>.</p>
+                    <p><i class="fa-solid fa-info"></i> <%= t.verify.security_message.replace('{dashboard}', '<span style="color: plum;">Logidash</span>') %></p>
+                    <p><i class="fa-solid fa-user-tie"></i> <%= t.verify.logged_as.replace('{username}', `<span style="color: plum;">${user.username}</span>`) %></p>
                 </div>
             </form>
         </div>

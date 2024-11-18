@@ -14,11 +14,9 @@
     <meta property="og:image" content="<%= app.login_page.og_image %>">
     <meta property="og:url" content="<%= app.login_page.og_url %>">
     <meta property="og:type" content="website">
-    <title><%= app.dashboard_name %> - Iniciar sesión con Discord</title>
+    <title><%= app.dashboard_name %> - <%= t.login.title %></title>
     <link rel="stylesheet" href="/public/css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-    </style>
 </head>
 
 <body>
@@ -28,31 +26,28 @@
         </div>
         <div class="login-section">
             <h1><%= app.dashboard_name %></h1>
-            <h2 class="subtitle">Inicia sesión para continuar</h2>
+            <h2 class="subtitle"><%= t.login.subtitle %></h2>
             <a href="/auth/discord" class="discord-button">
                 <i class="fa-brands fa-discord discord-icon"></i>
-                <span>Iniciar sesión con Discord</span>
+                <span><%= t.login.login_with_discord %></span>
             </a>
             <small>
-                <h5>Al utilizar este servicio estás de acuerdo con nuestra <a href="/public/legal/Política de Privacidad.pdf">Política de
-                        Privacidad</a> y <a href="/public/legal/Términos de Servicio.pdf">Términos de Servicio</a></h5>
+                <h5><%= t.login.privacy_terms %> <a href="/public/legal/Política de Privacidad.pdf"><%= t.login.privacy_policy %></a> <%= t.login.and %> <a href="/public/legal/Términos de Servicio.pdf"><%= t.login.terms_of_service %></a></h5>
             </small>
         </div>
     </div>
     <footer>
         <% if (!devVersion) { %>
-            <p>⚠️ Esta página web utiliza una versión no oficialmente publicada por <a
-                    href="https://crujera.galnod.com">Crujera</a></p>
-            <p>⚠️ versiones pueden ser muy inestables y no están recomendadas para producción.</p>
-            <% } else { %>
-                <p><i><small>Logitools v.<%= version %> developed with ❤️ by <a
-                                    href="https://crujera.galnod.com">Crujera</a></small></i></p>
-                <% } %>
+            <p>⚠️ <%= t.login.dev_warning %> <a href="https://crujera.galnod.com">Crujera</a></p>
+            <p>⚠️ <%= t.login.dev_unstable %></p>
+        <% } else { %>
+            <p><i><small>Logitools v.<%= version %> <%= t.login.developed_by %> <a href="https://crujera.galnod.com">Crujera</a></small></i></p>
+        <% } %>
     </footer>
 </body>
 <script type="text/javascript" id="cookiebanner"
     src="https://cdnjs.cloudflare.com/ajax/libs/cookie-banner/1.2.2/cookiebanner.min.js" data-height="20px"
-    data-position="top" data-message="Utilizamos cookies para mejorar su experiencia de navegación.">
-    </script>
+    data-position="top" data-message="<%= t.login.cookies_message %>">
+</script>
 
 </html>

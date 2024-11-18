@@ -100,4 +100,4 @@ apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"
 enabled=false
 assistant_name="" # Se le informa al modelo en el proceso de carga de cuál es su nombre (mensaje enviado como sistema)
 ollama_host=""
-ollama_model="llama3" # Default: mistral. Otras recomendaciones: mistrallite (32k de tokens en contexto), (llama3 15T tokens en contexto)
+ollama_model="dolphin-mistral" # Default: dolphin-mistral. Puedes consultar una lista completa en https://ollama.com/search

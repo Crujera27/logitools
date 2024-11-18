@@ -254,6 +254,70 @@ router.post('/admin/usermanager/unsuspend/:id', isAuthenticated, isAdmin, async 
 
 /* End User Manager */
 
+/* Automod Configuration */
+router.get('/admin/automod', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const settings = await executeQuery('SELECT * FROM automod_settings ORDER BY category, setting_name');
+        const groupedSettings = settings.reduce((acc, setting) => {
+            if (!acc[setting.category]) {
+                acc[setting.category] = [];
+            }
+            acc[setting.category].push(setting);
+            return acc;
+        }, {});
+        
+        return res.render('admin/automod', { 
+            settings: groupedSettings,
+            user: req.user,
+            version: pjson.version,
+            versionnotes: pjson.relasenotes,
+            appname: pjson.name,
+            osrelase: os.release(),
+            oshostname: os.hostname(),
+            ostype: os.type()
+        });
+    } catch (error) {
+        log(`Error loading automod settings: ${error}`, 'err');
+        return res.status(500).render('error', { error: 'Error loading automod settings' });
+    }
+});
+
+router.post('/admin/automod/update', isAuthenticated, isAdmin, async (req, res) => {
+    try {
+        const updates = Object.entries(req.body).map(async ([name, value]) => {
+            // Validate and sanitize the value based on setting_type
+            const [setting] = await executeQuery('SELECT setting_type FROM automod_settings WHERE setting_name = ?', [name]);
+            let sanitizedValue = value;
+            
+            if (setting.setting_type === 'boolean') {
+                sanitizedValue = value === 'true' ? 'true' : 'false';
+            } else if (setting.setting_type === 'number') {
+                sanitizedValue = parseInt(value) || 0;
+            } else if (setting.setting_type === 'json') {
+                try {
+                    JSON.parse(value);
+                    sanitizedValue = value;
+                } catch (e) {
+                    sanitizedValue = '[]';
+                }
+            }
+
+            return executeQuery(
+                'UPDATE automod_settings SET setting_value = ? WHERE setting_name = ?',
+                [sanitizedValue, name]
+            );
+        });
+
+        await Promise.all(updates);
+        await sendLog('Automod settings updated', req.user.discord_id, 'SYSTEM', 'Settings updated via admin panel');
+        
+        res.redirect('/admin/automod');
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('error', { error: 'Error updating automod settings' });
+    }
+});
+
 router.post('/admin/addresource', isAuthenticated, isAdmin, upload.single('resourceFile'), async (req, res) => {
     const { resourceName } = req.body;
     const uploadedFile = req.file;

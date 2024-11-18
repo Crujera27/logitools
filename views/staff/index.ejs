@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= app.dashboard_name %> - Portal de staffs</title>
+    <title><%= app.dashboard_name %> - <%= t.pages.staff_portal %></title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -17,32 +17,20 @@
     <%- include('../inc/staff-navbar.ejs') %>
     <div class="container mt-5">
       <% if (user.discriminator==="0" ) { %>
-      <h1>¡Hola, <%= user.username %>!</h1>
-      <p>
-        Estás en el portal de staffs, puedes navegar por ella o utilizar la
-        barra superior para acceder a más recuros o salir de esta zona en las
-        opciones de usuario.
-      </p>
+      <h1><%= t.pages.staff_greeting.replace('{username}', user.username) %></h1>
+      <p><%= t.pages.staff_welcome_message %></p>
       <% } else { %>
-      <h1>¡Hola, <%= user.username %>#<%= user.discriminator %>!</h1>
-      <p>
-        Estás en el portal de staffs, puedes navegar por ella o utilizar la
-        barra superior para acceder a más recuros o salir de esta zona en las
-        opciones de usuario.
-      </p>
+      <h1><%= t.pages.staff_greeting.replace('{username}', `${user.username}#${user.discriminator}`) %></h1>
+      <p><%= t.pages.staff_welcome_message %></p>
       <% } %>
     </div>
   </div>
   <div class="col-12 col-md-6">
     <div class="popular-links-card">
-      <h2>Recursos</h2>
+      <h2><%= t.sections.resources %></h2>
       <div class="popular-links">
-        <a href="https://github.com/Crujera27/logitools" class="popular-link"
-          >GitHub</a
-        >
-        <a href="https://github.com/Crujera27/logitools" class="popular-link"
-          >Documentación</a
-        >
+        <a href="https://github.com/Crujera27/logitools" class="popular-link">GitHub</a>
+        <a href="https://github.com/Crujera27/logitools" class="popular-link"><%= t.sections.documentation %></a>
       </div>
     </div>
   </div>

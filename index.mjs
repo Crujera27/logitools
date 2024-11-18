@@ -42,6 +42,7 @@ import { postbootchecks } from './tools/bootchecks.mjs'
 import executeQuery, { pool } from './tools/mysql.mjs';
 import { applyPunishment, updateExpirationStatus } from './tools/punishment.mjs';
 import cookieParser from 'cookie-parser';
+import { localeMiddleware } from './middleware/locale.mjs';
 log('> Booting from index.mjs', 'info');
 try {
   console.log(fs.readFileSync('config/asccii/watermark.txt', 'utf8'));
@@ -69,6 +70,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(localeMiddleware);
 const BASE_PATH = path.resolve();
 app.use('/public', express.static(path.join(BASE_PATH, 'public')));
 

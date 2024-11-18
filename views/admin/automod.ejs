@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= app.dashboard_name %> - <%= t.pages.automod %></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="/public/css/style.css" />
+</head>
+
+<body>
+    <%- include('../inc/admin-navbar.ejs') %>
+    <div class="container mt-5">
+        <h1><%= t.pages.automod_title %></h1>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <form method="POST" action="/admin/automod/update">
+                    <% Object.entries(settings).forEach(([category, categorySettings]) => { %>
+                        <div class="dashboard-card mb-4">
+                            <h3 class="text-capitalize"><%= category %></h3>
+                            <% categorySettings.forEach(setting => { %>
+                                <div class="mb-3">
+                                    <label class="form-label"><%= setting.setting_description %></label>
+                                    <% if (setting.setting_type === 'boolean') { %>
+                                        <select name="<%= setting.setting_name %>" class="form-select">
+                                            <option value="true" <%= setting.setting_value === 'true' ? 'selected' : '' %>><%= t.form.activated %></option>
+                                            <option value="false" <%= setting.setting_value === 'false' ? 'selected' : '' %>><%= t.form.deactivated %></option>
+                                        </select>
+                                    <% } else if (setting.setting_type === 'number') { %>
+                                        <input type="number" name="<%= setting.setting_name %>" value="<%= setting.setting_value %>" class="form-control">
+                                    <% } else if (setting.setting_type === 'json') { %>
+                                        <textarea name="<%= setting.setting_name %>" class="form-control" rows="3"><%= setting.setting_value %></textarea>
+                                        <small class="form-text text-muted"><%= t.help_text.json_format %></small>
+                                    <% } else if (setting.setting_name.includes('url') || setting.setting_name.includes('domain')) { %>
+                                        <input type="text" 
+                                               name="<%= setting.setting_name %>" 
+                                               value="<%= setting.setting_value %>" 
+                                               class="form-control"
+                                               placeholder="example.com"
+                                        >
+                                        <small class="form-text text-muted"><%= t.help_text.domain_format %></small>
+                                    <% } else { %>
+                                        <input type="text" name="<%= setting.setting_name %>" value="<%= setting.setting_value %>" class="form-control">
+                                    <% } %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% }); %>
+                    <button type="submit" class="btn btn-primary"><%= t.form.save %></button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <%- include('../inc/footer.ejs') %>
+</body>
+</html>

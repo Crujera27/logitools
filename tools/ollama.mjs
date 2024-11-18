@@ -1,4 +1,3 @@
-
 import fs from 'fs';
 import log  from './log.mjs';
 import { Ollama }  from 'ollama';
@@ -15,10 +14,11 @@ try {
 const llama = new Ollama({ host: appConfig.ai.ollama_host || 'http://127.0.0.1:11434'});
 
 async function chat(msg, role){
-    await llama.chat({
-        model: appConfig.ai.model || 'mistral',
+    const response = await llama.chat({
+        model: appConfig.ai.model || 'dolphin-mistral',
         messages: [{ role: role, content: msg }],
-    })
+    });
+    return response;
 }
 
 async function boot(){

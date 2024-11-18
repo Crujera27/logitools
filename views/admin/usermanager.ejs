@@ -3,7 +3,7 @@
 
 <head>
     <title>
-        <%= app.dashboard_name %> - Gestor de usuarios
+        <%= app.dashboard_name %> - <%= t.pages.user_manager %>
     </title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -14,17 +14,17 @@
 <body>
     <%- include('../inc/admin-navbar.ejs') %>
     <div class="container mt-5">
-        <h1>Gestor de usuarios</h1>
+        <h1><%= t.pages.user_manager %></h1>
         <div class="search-container mt-3 mb-3">
-            <input type="text" id="live-search" class="form-control" placeholder="Buscar usuario por ID o nombre">
+            <input type="text" id="live-search" class="form-control" placeholder="<%= t.form.search_user %>">
         </div>
         <table id="user-table" class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Es staff</th>
-                    <th>Acciones</th>
+                    <th><%= t.table.id %></th>
+                    <th><%= t.table.name %></th>
+                    <th><%= t.table.is_staff %></th>
+                    <th><%= t.table.actions %></th>
                 </tr>
             </thead>
             <tbody>
@@ -37,16 +37,16 @@
                         <div class="btn-group" role="group" aria-label="User actions">
                             <% if (user.banned) { %>
                                 <form action="/admin/usermanager/unsuspend/<%= user.discord_id %>" method="post" class="mt-3">
-                                    <button type="submit" class="btn btn-primary">Rehabilitar acceso</button>
+                                    <button type="submit" class="btn btn-primary"><%= t.buttons.unsuspend %></button>
                                 </form>
                             <% } else { %>
                                 <form action="/admin/usermanager/suspend/<%= user.discord_id %>" method="post" class="mt-3">
-                                    <button type="submit" class="btn btn-primary">Restringir acceso</button>
+                                    <button type="submit" class="btn btn-primary"><%= t.buttons.suspend %></button>
                                 </form>
                             <% } %>
                         </div>
                         <div class="btn-group" role="group" aria-label="User actions">
-                            <a href="/staff/punishmentmanager?userId=<%= user.discord_id %>" class="btn btn-secondary">Ver warns</a>
+                            <a href="/staff/punishmentmanager?userId=<%= user.discord_id %>" class="btn btn-secondary"><%= t.table.view_warns %></a>
                         </div>
                     </td>
                 </tr>

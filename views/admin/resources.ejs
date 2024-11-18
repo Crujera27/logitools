@@ -3,7 +3,7 @@
 
 <head>
     <title>
-        <%= app.dashboard_name %> - Gestor de recursos
+        <%= app.dashboard_name %> - <%= t.pages.resource_manager %>
     </title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -13,13 +13,13 @@
 <body>
     <%- include('../inc/admin-navbar.ejs') %>
     <div class="container mt-5">
-        <h1>Gestor de recursos</h1>
+        <h1><%= t.pages.resource_manager %></h1>
 
         <div class="search-container">
             <form action="/admin/addresource" method="post" enctype="multipart/form-data">
-                <input type="text" class="form-control" name="resourceName" placeholder="Nombre del recurso" required>
+                <input type="text" class="form-control" name="resourceName" placeholder="<%= t.form.resource_name %>" required>
                 <input type="file" class="form-control-file" name="resourceFile">
-                <button class="btn btn-primary" type="submit">Agregar recurso</button>
+                <button class="btn btn-primary" type="submit"><%= t.form.add_resource %></button>
             </form>
             
         </div>
@@ -27,10 +27,10 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Nombre del recurso</th>
-                    <th>Descargar</th>
-                    <th>Eliminar</th>
+                    <th><%= t.table.id %></th>
+                    <th><%= t.table.resource_name %></th>
+                    <th><%= t.table.download %></th>
+                    <th><%= t.table.delete %></th>
                 </tr>
             </thead>
             <tbody>
@@ -39,11 +39,11 @@
                     <td style="color: white;"><%= resource.id %></td>
                     <td style="color: white;"><%= resource.name %></td>
                     <td>
-                        <a href="/admin/download/<%= resource.id %>" class="btn btn-primary">Descargar</a>
+                        <a href="/admin/download/<%= resource.id %>" class="btn btn-primary"><%= t.table.download %></a>
                     </td>
                     <td>
                         <form id="deleteForm_<%= resource.id %>" action="/admin/deleteresource/<%= resource.id %>" method="post">
-                            <button class="btn btn-danger delete-btn" type="button" data-resource-id="<%= resource.id %>">Eliminar</button>
+                            <button class="btn btn-danger delete-btn" type="button" data-resource-id="<%= resource.id %>"><%= t.table.delete %></button>
                         </form>
                     </td>
                 </tr>

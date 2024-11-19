@@ -42,11 +42,11 @@ const SPAM_TIME_WINDOW = 5000; // 5 seconds
 const MESSAGE_HISTORY = new Map(); // Store recent messages
 const CAPS_THRESHOLD = 0.7; // 70% caps trigger
 const MAX_MENTIONS = 3;
-const URL_WHITELIST = ['discord.com', 'github.com']; // Add trusted domains
+const URL_allowlist = ['discord.com', 'github.com']; // Add trusted domains
 
 let filterCache = {
     patterns: [],
-    whitelist: [],
+    allowlist: [],
     lastUpdate: 0
 };
 
@@ -60,13 +60,13 @@ async function updateFilterCache() {
     const [patterns] = await executeQuery(
         'SELECT pattern, type, severity FROM filter_patterns WHERE is_active = TRUE'
     );
-    const [whitelist] = await executeQuery(
-        'SELECT domain FROM filter_whitelist WHERE is_active = TRUE'
+    const [allowlist] = await executeQuery(
+        'SELECT domain FROM filter_allowlist WHERE is_active = TRUE'
     );
 
     filterCache = {
         patterns: patterns,
-        whitelist: whitelist.map(w => w.domain),
+        allowlist: allowlist.map(w => w.domain),
         lastUpdate: Date.now()
     };
 
@@ -99,7 +99,7 @@ function hasExcessiveMentions(message) {
 function containsUnsafeUrl(content) {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     const urls = content.match(urlRegex) || [];
-    return urls.some(url => !URL_WHITELIST.some(safe => url.includes(safe)));
+    return urls.some(url => !URL_allowlist.some(safe => url.includes(safe)));
 }
 
 async function checkViolations(content, message) {
@@ -141,8 +141,8 @@ async function checkViolations(content, message) {
         return { type: 'mentions', severity: 'middle' };
     }
     
-    // URL check using whitelist from DB
-    if (containsUnsafeUrl(content, filters.whitelist)) {
+    // URL check using allowlist from DB
+    if (containsUnsafeUrl(content, filters.allowlist)) {
         return { type: 'url', severity: 'middle' };
     }
 

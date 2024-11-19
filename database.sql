@@ -56,8 +56,8 @@ CREATE TABLE IF NOT EXISTS `filter_patterns` (
 
 -- Data exporting was unselected.
 
--- Dumping structure for table s84_logitoolsUSA.filter_whitelist
-CREATE TABLE IF NOT EXISTS `filter_whitelist` (
+-- Dumping structure for table s84_logitoolsUSA.filter_allowlist
+CREATE TABLE IF NOT EXISTS `filter_allowlist` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `domain` varchar(255) NOT NULL,
   `is_active` tinyint(1) DEFAULT 1,
@@ -163,7 +163,7 @@ INSERT IGNORE INTO `automod_settings`
 ('timeout_duration', '300', 'Duración del timeout en segundos', 'actions', 'number'),
 ('exempt_roles', '[]', 'IDs de roles exentos del automod', 'general', 'json'),
 ('blocked_words', '[]', 'Lista de palabras bloqueadas', 'filters', 'json'),
-('url_whitelist', '[]', 'Lista blanca de URLs permitidas', 'filters', 'json'),
+('url_allowlist', '[]', 'Lista blanca de URLs permitidas', 'filters', 'json'),
 ('spam_sensitivity', '3', 'Nivel de sensibilidad anti-spam (1-5)', 'limits', 'number'),
 ('caps_percentage', '70', 'Porcentaje máximo de mayúsculas permitido', 'limits', 'number'),
 ('enable_antiflood', 'true', 'Activar protección contra flood', 'filters', 'boolean'),

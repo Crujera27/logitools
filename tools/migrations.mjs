@@ -120,7 +120,7 @@ const applyMigration = async (migration, current, total) => {
       ['timeout_duration', '300', 'Duración del timeout en segundos', 'actions', 'number'],
       ['exempt_roles', '[]', 'IDs de roles exentos del automod', 'general', 'json'],
       ['blocked_words', '[]', 'Lista de palabras bloqueadas', 'filters', 'json'],
-      ['url_whitelist', '[]', 'Lista blanca de URLs permitidas', 'filters', 'json'],
+      ['url_allowlist', '[]', 'Lista blanca de URLs permitidas', 'filters', 'json'],
       ['spam_sensitivity', '3', 'Nivel de sensibilidad anti-spam (1-5)', 'limits', 'number'],
       ['caps_percentage', '70', 'Porcentaje máximo de mayúsculas permitido', 'limits', 'number'],
       ['enable_antiflood', 'true', 'Activar protección contra flood', 'filters', 'boolean'],

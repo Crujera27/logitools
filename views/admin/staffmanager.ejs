@@ -1,60 +1,64 @@
 <!DOCTYPE html>
-<html>
-
+<html class="h-100">
 <head>
-    <title>
-        <%= app.dashboard_name %> - <%= t.pages.staff_manager %>
-    </title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <title><%= app.dashboard_name %> - <%= t.pages.staff_manager %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link rel="stylesheet" href="/public/css/style.css" />
 </head>
-
-<body>
+<body class="d-flex flex-column h-100">
     <%- include('../inc/admin-navbar.ejs') %>
-    <div class="container mt-5">
-        <h1><%= t.pages.staff_manager %></h1>
+    <main class="flex-shrink-0">
+        <div class="container mt-5">
+            <h1 class="mb-4"><%= t.pages.staff_manager %></h1>
 
-        <div class="search-container">
-            <form action="/admin/staffmanager/addstaff" method="post">
-                <div class="form-group">
-                    <label for="discord_id"><%= t.form.user_id %></label>
-                    <input type="text" class="form-control" id="discord_id" name="discord_id" placeholder="<%= t.form.user_id_placeholder %>" required>
+            <div class="card bg-dark mb-4">
+                <div class="card-body">
+                    <form action="/admin/staffmanager/addstaff" method="post">
+                        <div class="form-group">
+                            <label for="discord_id" class="form-label"><%= t.form.user_id %></label>
+                            <input type="text" class="form-control" id="discord_id" name="discord_id" 
+                                   placeholder="<%= t.form.user_id_placeholder %>" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3"><%= t.form.add_staff %></button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-primary"><%= t.form.add_staff %></button>
-            </form>
+            </div>
+            
+            <div class="mb-4">
+                <input type="text" id="live-search" class="form-control" 
+                       placeholder="<%= t.form.search_staff %>">
+            </div>
+
+            <div class="table-responsive">
+                <table id="staff-table" class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th><%= t.table.id %></th>
+                            <th><%= t.table.name %></th>
+                            <th><%= t.table.rank %></th>
+                            <th><%= t.table.actions %></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% staffs.forEach((staff) => { %>
+                        <tr>
+                            <td><%= staff.discord_id %></td>
+                            <td><%= staff.username %></td>
+                            <td><%= staff.staffrank %></td>
+                            <td>
+                                <a href="/admin/staffmanager/id/<%= staff.discord_id %>" 
+                                   class="btn btn-secondary"><%= t.table.profile %></a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        
-        <div class="search-container mt-3 mb-3">
-            <input type="text" id="live-search" class="form-control" placeholder="<%= t.form.search_staff %>">
-        </div> 
-
-        <table id="staff-table" class="table">
-            <thead>
-                <tr>
-                    <th><%= t.table.id %></th>
-                    <th><%= t.table.name %></th>
-                    <th><%= t.table.rank %></th>
-                    <th><%= t.table.actions %></th>
-                </tr>
-            </thead>
-            <tbody>
-                <% staffs.forEach((staff) => { %>
-                <tr>
-                    <td style="color: white;"><%= staff.discord_id %></td>
-                    <td style="color: white;"><%= staff.username %></td>
-                    <td style="color: white;"><%= staff.staffrank %></td>
-                    <td>
-                        <a href="/admin/staffmanager/id/<%= staff.discord_id %>" class="btn btn-secondary"><%= t.table.profile %></a>
-                    </td>
-                </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
-    <%- include('../inc/footer.ejs') %>
-
+    </main>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/public/js/search-user.js"></script>
 </body>
 </html>

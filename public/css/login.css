@@ -27,200 +27,227 @@
 
 */
 
-
 body {
-  background-color: #1c1e22;
-  color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+    background: linear-gradient(135deg, #0f172a, #1e293b, #1a1f35);
+    background-size: 400% 400%;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
 }
 
-.container {
-  display: flex;
-  flex-direction: column;
-  width: 90%;
-  max-width: 1200px;
-  margin: 20px;
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(to top right, #343a40, #252525);
-  border-radius: 15px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+.background-shapes .shape {
+    position: absolute;
+    filter: blur(100px);
+    opacity: 0.5;
+    border-radius: 50%;
 }
 
-.photo-section {
-  flex: 1;
-
-  background-size: cover;
-  background-position: center;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 70%);
+.background-shapes .shape:nth-child(1) {
+    background: #4f46e5;
+    width: 400px;
+    height: 400px;
+    top: -200px;
+    right: -200px;
+    animation: float 8s ease-in-out infinite;
 }
 
-.photo-section img {
-  width: 30%;
-  object-fit: cover;
-  margin: 0 auto;
-  display: block;
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 70%);
+.background-shapes .shape:nth-child(2) {
+    background: #7289da;
+    width: 300px;
+    height: 300px;
+    bottom: -150px;
+    left: -150px;
+    animation: float 6s ease-in-out infinite;
 }
 
-
-.login-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  background-color: #252525;
-  clip-path: polygon(0 20%, 100% 0, 100% 100%, 0 100%);
-  border-left: none;
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-h1 {
-  font-size: 2rem;
-  margin-top: 0;
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
-h2 {
-  font-size: 1.5rem;
-  margin-top: 0;
+.btn-discord {
+    background: linear-gradient(135deg, #7289da, #5b6ebd);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-.discord-button {
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  background-color: #7289da;
-  border: none;
-  color: #fff;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(114, 137, 218, 0.4);
-  transition: background-color 0.3s ease;
+.btn-discord:hover {
+    background: linear-gradient(135deg, #5b6ebd, #4c5aa1);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(114, 137, 218, 0.2);
 }
 
-.discord-button:hover {
-  background-color: #677bc4;
+.hover-float {
+    transition: transform 0.3s ease;
 }
 
-.discord-icon {
-  width: 1.5rem;
-  margin-right: 1rem;
+.hover-float:hover {
+    transform: translateY(-5px);
 }
 
-.discord-button span {
-  margin-left: 0.5rem;
+.hover-scale {
+    transition: transform 0.3s ease;
 }
 
-p {
-  font-size: 1rem;
-  margin-top: 1rem;
-  text-align: center;
+.hover-scale:hover {
+    transform: scale(1.02);
 }
 
-.cookie-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem;
-  background-color: #333;
-  color: #fff;
-  font-size: 1rem;
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.4);
+.hover-link {
+    color: #7289da;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    position: relative;
 }
 
-.cookie-button {
-  background-color: #fff;
-  color: #333;
-  padding: 0.8rem 1.6rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-left: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+.hover-link:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: -2px;
+    left: 0;
+    background: #7289da;
+    transition: width 0.3s ease;
 }
 
-.cookie-banner p {
-  margin: 0;
-}
-
-footer {
-  font-size: 0.8rem;
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  color: #9a9b9c;
-  z-index: 10000;
-}
-
-
-/* Intento de compatibilidad para móviles */
-
-
-@media screen and (max-width: 600px) {
-  .container {
+.hover-link:hover:after {
     width: 100%;
-    border-radius: 0;
-  }
+}
 
-  .photo-section,
-  .login-section {
-    clip-path: none;
-  }
+.fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
 
-  h1 {
-    font-size: 1.5rem;
-  }
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
 
-  h2 {
-    font-size: 1.2rem;
-  }
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
 
-  .discord-button {
-    padding: 1rem 1.6rem;
-    margin-top: 1rem;
-  }
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
-  .discord-icon {
-    width: 1rem;
-  }
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-  .discord-button span {
-    margin-left: 0.3rem;
-  }
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
-  p {
-    font-size: 0.8rem;
-    margin-top: 0.8rem;
-  }
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-  .cookie-banner {
-    padding: 0.8rem;
-  }
+.animate-bg {
+    animation: gradientShift 30s ease-in-out infinite; /* Changed from 15s to 30s */
+}
 
-  .cookie-button {
-    padding: 0.6rem 1.2rem;
-    margin-left: 0.8rem;
-  }
+.animate-in {
+    animation: fadeIn 1s ease-out;
+}
 
-  footer {
-    font-size: 0.7rem;
-  }
+.animate-up {
+    animation: slideUp 0.8s ease-out;
+}
+
+.animate-up-delayed {
+    animation: slideUp 0.8s ease-out 0.3s backwards;
+}
+
+.stagger-animate > * {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.stagger-animate > *:nth-child(1) { animation-delay: 0.2s; }
+.stagger-animate > *:nth-child(2) { animation-delay: 0.4s; }
+.stagger-animate > *:nth-child(3) { animation-delay: 0.6s; }
+
+.stagger-animate-delayed > * {
+    opacity: 0;
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.stagger-animate-delayed > *:nth-child(1) { animation-delay: 0.8s; }
+.stagger-animate-delayed > *:nth-child(2) { animation-delay: 1s; }
+
+.crujera-link {
+    color: #9b6dff !important;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.crujera-link:hover {
+    color: #7c4dff !important;
+    text-decoration: none;
+}
+
+.crujera-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: #9b6dff;
+    transition: width 0.3s ease;
+}
+
+.crujera-link:hover::after {
+    width: 100%;
+}
+
+a {
+    color: #7289da;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #677bc4;
+    text-decoration: underline;
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.card-body {
+    color: white;
 }

@@ -2,60 +2,37 @@
 <html>
   <head>
     <title><%= app.dashboard_name %> - <%= t.pages.punishment_manager %></title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
     <link rel="stylesheet" href="/public/css/style.css" />
   </head>
 
-  <body>
+  <body class="bg-dark text-light">
     <%- include('../inc/staff-navbar.ejs') %>
     <div class="container mt-5">
-      <h1><%= t.pages.warn_manager %></h1>
+      <h1 class="display-4 mb-4"><%= t.pages.warn_manager %></h1>
 
-      <div class="search-container">
-        <form action="/staff/punishmentmanager" method="get">
-          <input
-            type="text"
-            class="search-box"
-            name="userId"
-            placeholder="<%= t.form.user_id %>"
-          />
-          <button class="button search-button" type="submit"><%= t.form.search %></button>
-        </form>
-      </div>
-      <% if (done) { %>
-      <div class="notification notification-success">
-        <%= t.notifications.warn_removed %>
-      </div>
-      <% } %> <% if (error === 'userIdMissing') { %>
-      <div class="notification notification-danger">
-        <%= t.notifications.missing_user_id %>
-      </div>
-      <% } %> <% if (notification !== false) { %>
-        <div class="notification notification-success">
-          <%= t.notifications.showing_history.replace('{id}', notification) %>
+      <div class="card bg-secondary mb-4">
+        <div class="card-body">
+          <form action="/staff/punishmentmanager" method="get" class="d-flex gap-2">
+            <input type="text" class="form-control" name="userId" placeholder="<%= t.form.user_id %>">
+            <button class="btn btn-primary" type="submit"><%= t.form.search %></button>
+          </form>
         </div>
-        <% } %>
+      </div>
 
-      <table class="table table-striped">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col"><%= t.table.id %></th>
-            <th scope="col"><%= t.table.punishment_type %></th>
-            <th scope="col"><%= t.table.reason %></th>
-            <th scope="col"><%= t.table.issued_by %></th>
-            <th scope="col"><%= t.table.issued_at %></th>
-            <th scope="col"><%= t.table.status %></th>
-            <th scope="col"><%= t.table.delete_record %></th>
-          </tr>
-        </thead>
-        <tbody>
+      <% if (done) { %>
+        <div class="alert alert-success"><%= t.notifications.warn_removed %></div>
+      <% } %>
+      <% if (error === 'userIdMissing') { %>
+        <div class="alert alert-danger"><%= t.notifications.missing_user_id %></div>
+      <% } %>
+      <% if (notification !== false) { %>
+        <div class="alert alert-success"><%= t.notifications.showing_history.replace('{id}', notification) %></div>
+      <% } %>
+
+      <div class="table-responsive">
+        <table class="table table-dark table-hover">
           <% punishments.forEach((punishment)=> { %>
           <tr
             class="<%= (punishment.punishment_type === 'warn_mild') ? 'warn-mild' : (punishment.punishment_type === 'warn_middle') ? 'warn-middle' : (punishment.punishment_type === 'warn_severe') ? 'warn-severe' : (punishment.punishment_type === 'timeout') ? 'timeout' : (punishment.punishment_type === 'ban') ? 'ban' : '' %> <%= punishment.expired ? 'expired' : '' %>"
@@ -69,9 +46,9 @@
             <td><a class="button" href="/staff/punishmentmanager/revokepunishment?punishmentId=<%= punishment.id %>&userId=<%= punishment.discord_id %>" style="margin: 0;"><%= t.buttons.revoke %></a></td>
           </tr>
           <% }) %>
-        </tbody>
-      </table>
+        </table>
+      </div>
     </div>
-    <%- include('../inc/footer.ejs') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

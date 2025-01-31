@@ -7,20 +7,20 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
@@ -49,6 +49,25 @@
 .navbar-dark .navbar-brand:hover {
     background: rgba(255, 255, 255, 0.1);
     transform: translateY(-1px);
+}
+
+/* Enhanced Badge Styling */
+.navbar-brand .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(45deg, #dc3545, #ff4757);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover .badge {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 .navbar-dark .navbar-nav .nav-link {

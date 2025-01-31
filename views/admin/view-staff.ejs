@@ -29,6 +29,14 @@
                             <label for="staffRank" class="form-label"><%= t.staff_profile.new_rank %>:</label>
                             <input type="text" class="form-control" id="staffRank" name="staffRank" placeholder="<%= t.staff_profile.new_rank_placeholder %>">
                         </div>
+                        <div class="mb-3">
+                            <label for="position" class="form-label"><%= t.staff_profile.position %></label>
+                            <input type="number" class="form-control" id="position" name="position" 
+                                   value="<%= staff.position || 999 %>"
+                                   min="1" max="999"
+                                   placeholder="<%= t.staff_profile.position_placeholder %>">
+                            <small class="text-muted"><%= t.form.position_help %></small>
+                        </div>
                         <button type="submit" class="btn btn-secondary"><%= t.staff_profile.update_rank %></button>
                     </form>
                     <% if (user.discord_id !== staff.discord_id) { %>

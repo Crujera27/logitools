@@ -7,20 +7,20 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
@@ -38,12 +38,11 @@
   --text-secondary: rgba(255, 255, 255, 0.95);
   --link-color: #6ea8fe;
   --link-hover: #8bb9fe;
-  /* Updated warning colors for better contrast */
-  --warn-mild: rgba(255, 193, 7, 0.8);    /* More saturated yellow */
-  --warn-middle: rgba(255, 77, 77, 0.8);  /* Brighter red */
-  --warn-severe: rgba(220, 53, 69, 0.8);  /* Bootstrap danger red */
-  --timeout: rgba(253, 126, 20, 0.8);     /* Bootstrap warning orange */
-  --ban: rgba(33, 37, 41, 0.95);          /* Darker black */
+  --warn-mild: rgba(255, 193, 7, 0.8); 
+  --warn-middle: rgba(255, 77, 77, 0.8);
+  --warn-severe: rgba(220, 53, 69, 0.8);
+  --timeout: rgba(253, 126, 20, 0.8); 
+  --ban: rgba(33, 37, 41, 0.95);
   --expired-opacity: 0.7;
   --expired-overlay: rgba(0, 0, 0, 0.6);
 }
@@ -57,10 +56,10 @@ body {
   background-color: var(--primary-dark);
   color: var(--text-light);
   padding-top: 4.5rem; 
-  margin-bottom: 0; /* Remove footer margin */
+  margin-bottom: 0; 
 }
 
-/* Ensure dark backgrounds everywhere */
+/* Ensures dark backgrounds everywhere */
 body, 
 .container,
 .verification-box,
@@ -805,6 +804,40 @@ textarea.form-control {
     font-weight: 600;
 }
 
+/* Title Badge Overrides */
+.display-4 {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: var(--text-light) !important;
+}
+
+.display-4 .badge {
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    vertical-align: middle;
+    margin-left: 15px;
+    min-width: 100px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--secondary-dark);
+}
+
+/* Status Badge Colors with Better Contrast */
+.display-4 .badge.bg-success {
+    background: #198754 !important;
+    color: #ffffff !important;
+    border: 1px solid #13633e;
+    text-shadow: none;
+}
+
+.display-4 .badge.bg-secondary {
+    background: #6c757d !important;
+    color: #ffffff !important;
+    border: 1px solid #565e64;
+    text-shadow: none;
+}
+
 .lead {
     font-size: 1.2rem;
     opacity: 0.9;
@@ -1199,5 +1232,244 @@ html {
 
 .resources-card .btn i {
     font-size: 1.2rem;
+}
+
+/* Enhanced Badge Styles */
+.badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+    text-shadow: none;
+    letter-spacing: 0.3px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Status badges */
+.badge.bg-success {
+    background-color: #198754 !important;
+    color: #fff !important;
+    box-shadow: 0 2px 4px rgba(25, 135, 84, 0.2);
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #fff !important;
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+    box-shadow: 0 2px 4px rgba(255, 193, 7, 0.2);
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+}
+
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+    color: #fff !important;
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+}
+
+/* Connection status badge specific styles */
+#connectionStatus {
+    font-size: 0.8rem;
+    padding: 0.5em 1em;
+    min-width: 120px;
+    text-align: center;
+}
+
+#connectionStatus i {
+    font-size: 0.9rem;
+}
+
+/* Message count badge */
+.badge.rounded-pill {
+    padding: 0.35em 0.65em;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+/* Hover effects */
+.badge:not(.bg-secondary):hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Badge animations */
+@keyframes badgePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.badge.bg-success.pulse {
+    animation: badgePulse 2s infinite;
+}
+
+/* Status indicators in tables */
+.table .badge {
+    min-width: 85px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+/* Dark theme specific adjustments */
+.dark-mode .badge {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Override any conflicting styles */
+.badge.bg-success,
+.badge.bg-secondary,
+.badge.bg-warning,
+.badge.bg-danger,
+.badge.bg-primary {
+    text-shadow: none !important;
+    font-weight: 600 !important;
+}
+
+/* Message Content Styles */
+.message-content {
+    background-color: var(--secondary-dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-light);
+}
+
+/* Staff Message Styles */
+.message-content.staff-message {
+    background-color: rgba(13, 110, 253, 0.1);
+    border-color: rgba(13, 110, 253, 0.2);
+}
+
+/* Improved Badge Contrast */
+.badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+    text-shadow: none !important;
+}
+
+/* Status Badge Colors with Better Contrast */
+.badge.bg-success {
+    background-color: #198754 !important;
+    color: #ffffff !important;
+    border: 1px solid #13633e;
+}
+
+.badge.bg-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+    border: 1px solid #565e64;
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000000 !important;
+    border: 1px solid #d39e00;
+    font-weight: 700;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+    border: 1px solid #bd2130;
+}
+
+.badge.bg-primary {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+    border: 1px solid #0a58ca;
+}
+
+/* Username and Text Color Improvements */
+.message .username {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-muted {
+    color: #9da9b5 !important;
+}
+
+/* Table Cell Text Colors */
+.table-dark td {
+    color: #ffffff !important;
+}
+
+.table-dark .text-muted {
+    color: #9da9b5 !important;
+}
+
+/* Status Text in Tables */
+.ticket-status {
+    font-weight: 600;
+}
+
+/* Better contrast for links in dark theme */
+.dashboard-card a:not(.btn),
+.staff-card a:not(.btn) {
+    color: #8bb9fe;
+    text-decoration: none;
+}
+
+.dashboard-card a:not(.btn):hover,
+.staff-card a:not(.btn):hover {
+    color: #a8ccff;
+    text-decoration: underline;
+}
+
+/* Title Area Badge Styles */
+.display-4 .badge#ticketCount {
+    background-color: #0d6efd !important;
+    color: #ffffff !important;
+    border: 1px solid #0a58ca;
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    margin-left: 15px;
+    vertical-align: middle;
+    min-width: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: none;
+}
+
+.display-4 #connectionStatus {
+    font-size: 1rem !important;
+    padding: 0.5em 1em;
+    margin-left: 15px;
+    vertical-align: middle;
+    min-width: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: none;
+    border-width: 1px;
+}
+
+/* Fix for gradient text not affecting badges */
+.display-4 {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: var(--text-light) !important;
 }
 

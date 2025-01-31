@@ -8,20 +8,20 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
@@ -141,6 +141,18 @@ CREATE TABLE IF NOT EXISTS `users` (
   `hideInStaff` tinyint(4) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS `user_settings` (
+  `discord_id` varchar(255) NOT NULL,
+  `language` varchar(10) DEFAULT 'en',
+  `compact_mode` tinyint(1) DEFAULT 0,
+  `email_notifications` tinyint(1) DEFAULT 1,
+  `discord_notifications` tinyint(1) DEFAULT 1,
+  `hide_profile` tinyint(1) DEFAULT 0,
+  `hide_stats` tinyint(1) DEFAULT 0,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`discord_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS `automod_settings` (
   `setting_name` varchar(50) NOT NULL,

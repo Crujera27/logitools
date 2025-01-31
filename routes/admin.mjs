@@ -7,20 +7,20 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
@@ -67,7 +67,7 @@ router.get('/admin/resources', isAuthenticated, isAdmin, async (req, res) => {
 /* Staff Manager */
 
 router.get('/admin/staffmanager', isAuthenticated, isAdmin, async (req, res) => {
-    const staffs = await executeQuery('SELECT * FROM users WHERE isStaff = 1');
+    const staffs = await executeQuery('SELECT * FROM users WHERE isStaff = 1 ORDER BY position ASC, username ASC');
     return res.render('admin/staffmanager', {staffs: staffs});
 })
 
@@ -85,10 +85,10 @@ router.get('/admin/staffmanager/id/:id', isAuthenticated, isAdmin, async (req, r
 router.post('/admin/staffmanager/setrank/:id', isAuthenticated, isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const { staffRank } = req.body;
-        const updateQuery = 'UPDATE users SET staffrank = ? WHERE isStaff = 1 AND discord_id = ?';
+        const { staffRank, position } = req.body;
+        const updateQuery = 'UPDATE users SET staffrank = ?, position = ? WHERE isStaff = 1 AND discord_id = ?';
         await sendLog('Rango establecido', req.user.discord_id, id, `Acción realizada a través del panel de administración (SM)`);
-        await executeQuery(updateQuery, [staffRank, id]);
+        await executeQuery(updateQuery, [staffRank, position || 999, id]);
         return res.redirect('/admin/staffmanager/id/' + id);
     } catch (error) {
         log(`Error updating staff rank: ${error}`, 'err');
@@ -378,6 +378,69 @@ router.get('/admin/download/:id', isAuthenticated, isAdmin, async (req, res) => 
         log(error, 'err');
         return res.status(500).render('error', { error : 'Ha ocurrido un error al intentar descargar el recurso.'});
     }
+});
+
+// Video management routes
+router.get('/admin/videos', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const videos = await executeQuery('SELECT * FROM featured_videos');
+    const [setting] = await executeQuery('SELECT setting_value FROM feature_settings WHERE setting_name = ?', ['enable_featured_videos']);
+    res.render('admin/videos', { 
+      videos,
+      settings: {
+        enable_featured_videos: setting?.setting_value || 'false'
+      }
+    });
+  } catch (error) {
+    log(`Error fetching videos: ${error}`, 'err');
+    res.status(500).render('error', { error: 'Failed to load videos' });
+  }
+});
+
+router.post('/admin/videos/add', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const { url } = req.body;
+    await executeQuery('INSERT INTO featured_videos (url) VALUES (?)', [url]);
+    res.redirect('/admin/videos');
+  } catch (error) {
+    log(`Error adding video: ${error}`, 'err');
+    res.status(500).render('error', { error: 'Failed to add video' });
+  }
+});
+
+router.post('/admin/videos/delete/:id', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    await executeQuery('DELETE FROM featured_videos WHERE id = ?', [req.params.id]);
+    res.redirect('/admin/videos');
+  } catch (error) {
+    log(`Error deleting video: ${error}`, 'err');
+    res.status(500).render('error', { error: 'Failed to delete video' });
+  }
+});
+
+router.post('/admin/videos/toggle', isAuthenticated, isAdmin, async (req, res) => {
+  try {
+    const enabled = req.body.enable_featured_videos === 'true';
+    await executeQuery(
+      'UPDATE feature_settings SET setting_value = ? WHERE setting_name = ?',
+      [enabled ? 'true' : 'false', 'enable_featured_videos']
+    );
+    res.redirect('/admin/videos');
+  } catch (error) {
+    log(`Error toggling videos: ${error}`, 'err');
+    res.status(500).render('error', { error: 'Failed to update setting' });
+  }
+});
+
+router.get('/', isAuthenticated, isAdmin, async (req, res) => {
+    const os = await si.osInfo();
+    res.render('admin/index', {
+        version: pjson.version,
+        appname: "Logitools",
+        ostype: os.platform,
+        osrelase: os.release,
+        oshostname: os.hostname
+    });
 });
 
 export default router;

@@ -7,25 +7,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="/public/css/style.css">
 </head>
-
 <body>
     <%- include('../inc/navbar.ejs') %>
     
     <div class="container mt-5">
         <div class="row mb-4">
             <div class="col-12">
-                <h1 class="display-4 mb-3"><%= t.pages.tickets %></h1>
-                <p class="lead"><%= t.pages.tickets_description %></p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="display-4"><%= t.pages.tickets %></h1>
+                        <p class="lead"><%= t.pages.tickets_description %></p>
+                    </div>
+                    <a href="/support/new" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i><%= t.tickets.create_new %>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="dashboard-card p-4">
+        <div class="dashboard-card">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2 class="mb-0"><%= t.tickets.all_tickets %></h2>
                 <div class="btn-group">
-                    <button class="btn btn-outline-secondary" onclick="filterTickets('all')"><%= t.tickets.filter_all %></button>
-                    <button class="btn btn-outline-success" onclick="filterTickets('open')"><%= t.tickets.filter_open %></button>
-                    <button class="btn btn-outline-secondary" onclick="filterTickets('closed')"><%= t.tickets.filter_closed %></button>
+                    <button class="btn btn-outline-secondary active" onclick="filterTickets('all')">
+                        <i class="fas fa-list me-2"></i><%= t.tickets.filter_all %>
+                    </button>
+                    <button class="btn btn-outline-success" onclick="filterTickets('open')">
+                        <i class="fas fa-envelope-open me-2"></i><%= t.tickets.filter_open %>
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="filterTickets('closed')">
+                        <i class="fas fa-envelope me-2"></i><%= t.tickets.filter_closed %>
+                    </button>
                 </div>
             </div>
 
@@ -33,7 +45,7 @@
                 <table class="table table-dark table-hover align-middle">
                     <thead>
                         <tr>
-                            <th scope="col"># <%= t.tickets.id %></th>
+                            <th scope="col"><%= t.tickets.id %></th>
                             <th scope="col"><%= t.tickets.subject %></th>
                             <th scope="col"><%= t.tickets.created_at %></th>
                             <th scope="col"><%= t.tickets.status %></th>
@@ -43,23 +55,41 @@
                     <tbody>
                         <% if (!tickets || tickets.length === 0) { %>
                             <tr>
-                                <td colspan="5" class="text-center py-4">
-                                    <i class="fas fa-ticket-alt fa-2x mb-3 text-muted"></i>
-                                    <p class="mb-0"><%= t.tickets.no_tickets %></p>
-                                    <a href="/support/new" class="btn btn-primary mt-3">
-                                        <i class="fas fa-plus me-2"></i><%= t.tickets.create_new %>
-                                    </a>
+                                <td colspan="5" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <i class="fas fa-ticket-alt fa-3x mb-3 text-muted"></i>
+                                        <p class="mb-3"><%= t.tickets.no_tickets %></p>
+                                        <a href="/support/new" class="btn btn-primary">
+                                            <i class="fas fa-plus me-2"></i><%= t.tickets.create_new %>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         <% } else { %>
                             <% tickets.forEach(ticket => { %>
-                                <tr class="ticket-row" data-status="<%= ticket.ticket_status %>">
-                                    <td><%= ticket.ticket_id %></td>
-                                    <td><%= ticket.subject || t.tickets.no_subject %></td>
-                                    <td><%= new Date(ticket.created_at).toLocaleDateString() %></td>
+                                <tr class="ticket-row" data-status="<%= ticket.status %>">
                                     <td>
-                                        <span class="badge bg-<%= ticket.ticket_status === 'open' ? 'success' : 'secondary' %>">
-                                            <%= ticket.ticket_status %>
+                                        <span class="ticket-id"><%= ticket.ticket_id %></span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="me-2"><%= ticket.subject || t.tickets.no_subject %></span>
+                                            <% if (ticket.message_count > 0) { %>
+                                                <span class="badge bg-primary rounded-pill">
+                                                    <%= ticket.message_count %>
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span title="<%= new Date(ticket.created_at).toLocaleString() %>">
+                                            <%= new Date(ticket.created_at).toLocaleDateString() %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<%= ticket.status === 'open' ? 'success' : 'secondary' %>">
+                                            <i class="fas fa-<%= ticket.status === 'open' ? 'envelope-open' : 'envelope' %> me-1"></i>
+                                            <%= t.tickets[`status_${ticket.status}`] %>
                                         </span>
                                     </td>
                                     <td class="text-end">
@@ -73,20 +103,21 @@
                     </tbody>
                 </table>
             </div>
-
-            <% if (tickets && tickets.length > 0) { %>
-                <div class="text-end mt-4">
-                    <a href="/support/new" class="btn btn-primary">
-                        <i class="fas fa-plus me-2"></i><%= t.tickets.create_new %>
-                    </a>
-                </div>
-            <% } %>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function filterTickets(status) {
+            // Update active button state
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(status)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Filter tickets
             const rows = document.querySelectorAll('.ticket-row');
             rows.forEach(row => {
                 if (status === 'all' || row.dataset.status === status) {

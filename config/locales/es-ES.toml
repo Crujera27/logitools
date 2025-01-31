@@ -1,3 +1,29 @@
+# .____                 .__  __                .__          
+# |    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
+# |    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
+# |    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
+# |_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
+#        \/    /_____/                                  \/ 
+#                         
+#        
+#    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+#
+#    This program is free software: you can redistribute it and/or modify  
+#    it under the terms of the GNU Affero General Public License as published by  
+#    the Free Software Foundation, either version 3 of the License, or  
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,  
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License  
+#    along with this program. If not, see <https://www.gnu.org/licenses/>.
+#    
+#    GitHub: https://github.com/Crujera27/
+#    Website: https://crujera.galnod.com
+
 [buttons]
 save = "Guardar"
 back = "Volver"
@@ -11,6 +37,7 @@ new_ticket = "Abrir un nuevo ticket"
 view_ticket = "Ver ticket"
 suspend = "Restringir acceso"
 unsuspend = "Rehabilitar acceso"
+save_changes = "Guardar cambios"
 
 [titles]
 dashboard = "Panel de Control"
@@ -54,6 +81,14 @@ active = "Vigente"
 expired = "Expirado"
 banned = "Baneado"
 unbanned = "No baneado"
+connected = "Conectado"
+connecting = "Conectando..."
+disconnected = "Desconectado"
+reconnecting = "Intentando reconectar..."
+connection_lost = "Conexión perdida"
+session_inactive = "Sesión inactiva"
+inactive = "Inactivo"
+inactive_message = "Desconectado por inactividad"
 
 [punishments] 
 warn = "Advertencia"
@@ -82,7 +117,7 @@ internal_error = "Error interno del servidor"
 
 [validation]
 required = "Este campo es obligatorio"
-invalid_url = "URL no válida"
+invalid_url = "La URL debe ser una URL de YouTube (embed)"
 invalid_number = "Número no válido"
 min_length = "Longitud mínima: {0} caracteres"
 max_length = "Longitud máxima: {0} caracteres"
@@ -139,6 +174,7 @@ staff_manager = "Gestor de staffs"
 user_manager = "Gestor de usuarios"
 verify = "Verifica tu identidad"
 staff_profile = "Ficha de staff"
+settings = "Configuración"
 
 [staff_profile]
 id = "ID"
@@ -162,6 +198,8 @@ status_suspended = "Suspendido/a"
 status_active = "Activo"
 yes = "Sí"
 no = "No"
+position = "Posición"
+position_placeholder = "Introduce posición (1-999)"
 
 [verify]
 title = "Verifica tu identidad"
@@ -178,10 +216,12 @@ staff_panel = "Panel de staff"
 admin_panel = "Panel de administración"
 logout = "Cerrar sesión"
 toggle_nav = "Toggle navigation"
+settings = "Mi configuración"
 
 [staff]
 name = "Nombre"
 role = "Cargo"
+member = "Miembro del staff"
 
 [table]
 name = "Nombre"
@@ -240,6 +280,8 @@ host_name = "Hostname del SO del host"
 beta_title = "Información importante"
 beta_message = "Este servidor está utilizando una versión de {link} Beta. Intencionada para ámbitos de producción. El software todavía no es el final y todo está sujeto a cambios. Si encuentra bugs, repórtalos en {github}."
 beta_accept = "De acuerdo"
+settings_saved = "Configuración guardada correctamente"
+settings_error = "Error al guardar la configuración"
 
 [form]
 user_id = "ID de usuario"
@@ -253,6 +295,8 @@ user_id_placeholder = "Ingrese el ID del usuario"
 add_staff = "Agregar staff"
 search_staff = "Buscar staff por ID o nombre"
 search_user = "Buscar usuario por ID o nombre"
+position = "Posición"
+position_help = "Los números más bajos aparecen primero (1-999)"
 
 [help_text]
 json_format = "Introduce las URLs en formato JSON: [\"example.com\", \"example.org\"]"
@@ -282,6 +326,18 @@ automod_settings = "Configuración de Automod"
 staff_panel = "Panel de staff"
 close_admin_panel = "Cerrar panel de administración"
 logout = "Cerrar sesión"
+video_manager = "Gestor de videos"
+
+[settings]
+interface = "Interfaz"
+language = "Idioma"
+compact_mode = "Modo compacto"
+notifications = "Notificaciones"
+email_notifications = "Notificaciones por email"
+discord_notifications = "Notificaciones de Discord"
+privacy = "Privacidad"
+hide_profile = "Ocultar perfil"
+hide_stats = "Ocultar estadísticas"
 
 [tickets]
 all_tickets = "Todos los Tickets"
@@ -297,3 +353,18 @@ no_tickets = "No se encontraron tickets"
 no_subject = "Sin asunto"
 create_new = "Crear Nuevo Ticket"
 view = "Ver"
+message = "Mensaje"
+reply = "Respuesta"
+send = "Enviar"
+create_description = "Describe tu problema o consulta lo más detalladamente posible"
+ticket_id = "ID del Ticket"
+user = "Usuario"
+close_ticket = "Cerrar Ticket"
+staff_reply = "Respuesta del Staff"
+view_ticket = "Ver Ticket"
+auto_refresh = "Actualización Automática"
+search_placeholder = "Buscar tickets..."
+messages = "Mensajes"
+submit = "Enviar Ticket"
+status_open = "Abierto"
+status_closed = "Cerrado"

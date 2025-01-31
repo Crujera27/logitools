@@ -29,13 +29,14 @@
                         <% } %>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog"></i> <%= t.navigation.settings %></a></li>
                         <% if (user.isStaff) { %>
-                            <li><a class="dropdown-item" href="/staff"><%= t.navigation.staff_panel %></a></li>
+                            <li><a class="dropdown-item" href="/staff"><i class="fas fa-shield-alt"></i> <%= t.navigation.staff_panel %></a></li>
                         <% } %>
                         <% if (user.isAdmin) { %>
-                            <li><a class="dropdown-item" href="/admin"><%= t.navigation.admin_panel %></a></li>
+                            <li><a class="dropdown-item" href="/admin"><i class="fas fa-user-shield"></i> <%= t.navigation.admin_panel %></a></li>
                         <% } %>
-                        <li><a class="dropdown-item" href="/logout"><%= t.navigation.logout %></a></li>
+                        <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i> <%= t.navigation.logout %></a></li>
                     </ul>
                 </li>
             </ul>

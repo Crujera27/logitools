@@ -7,20 +7,20 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
@@ -82,6 +82,34 @@ body {
     border-radius: 12px;
     font-weight: 600;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-discord.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.btn-discord .btn-content,
+.btn-discord .btn-loading {
+    transition: opacity 0.3s ease;
+}
+
+.btn-discord.loading .btn-content {
+    opacity: 0;
+}
+
+.btn-discord.loading .btn-loading {
+    opacity: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn-discord .btn-loading {
+    opacity: 0;
 }
 
 .btn-discord:hover {
@@ -176,7 +204,7 @@ body {
 }
 
 .animate-bg {
-    animation: gradientShift 30s ease-in-out infinite; /* Changed from 15s to 30s */
+    animation: gradientShift 30s ease-in-out infinite;
 }
 
 .animate-in {

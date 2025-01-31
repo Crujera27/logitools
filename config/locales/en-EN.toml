@@ -1,3 +1,30 @@
+# .____                 .__  __                .__          
+# |    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
+# |    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
+# |    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
+# |_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
+#        \/    /_____/                                  \/ 
+#                         
+
+#        
+#    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+#
+#    This program is free software: you can redistribute it and/or modify  
+#    it under the terms of the GNU Affero General Public License as published by  
+#    the Free Software Foundation, either version 3 of the License, or  
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,  
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License  
+#    along with this program. If not, see <https://www.gnu.org/licenses/>.
+#    
+#    GitHub: https://github.com/Crujera27/
+#    Website: https://crujera.galnod.com
+
 [buttons]
 save = "Save"
 back = "Back"
@@ -11,6 +38,7 @@ new_ticket = "Open a New Ticket"
 view_ticket = "View Ticket"
 suspend = "Restrict Access"
 unsuspend = "Reinstate Access"
+save_changes = "Save Changes"
 
 [titles]
 dashboard = "Dashboard"
@@ -54,6 +82,14 @@ active = "Active"
 expired = "Expired"
 banned = "Banned"
 unbanned = "Unbanned"
+connected = "Connected"
+connecting = "Connecting..."
+disconnected = "Disconnected"
+reconnecting = "Attempting to reconnect..."
+connection_lost = "Connection Lost"
+session_inactive = "Session Inactive"
+inactive = "Inactive"
+inactive_message = "Disconnected due to inactivity"
 
 [punishments]
 warn = "Warning"
@@ -82,7 +118,7 @@ internal_error = "Internal server error"
 
 [validation]
 required = "This field is required"
-invalid_url = "Invalid URL"
+invalid_url = "URL must be a YouTube embed URL"
 invalid_number = "Invalid number"
 min_length = "Minimum length: {0} characters"
 max_length = "Maximum length: {0} characters"
@@ -139,6 +175,7 @@ staff_manager = "Staff Manager"
 user_manager = "User Manager"
 verify = "Verify Your Identity"
 staff_profile = "Staff Profile"
+settings = "Settings"
 
 [staff_profile]
 id = "ID"
@@ -162,6 +199,8 @@ status_suspended = "Suspended"
 status_active = "Active"
 yes = "Yes"
 no = "No"
+position = "Position"
+position_placeholder = "Enter position (1-999)"
 
 [verify]
 title = "Verify Your Identity"
@@ -178,10 +217,12 @@ staff_panel = "Staff Panel"
 admin_panel = "Admin Panel"
 logout = "Log Out"
 toggle_nav = "Toggle Navigation"
+settings = "My settings"
 
 [staff]
 name = "Name"
 role = "Role"
+member = "Staff Member"
 
 [table]
 name = "Name"
@@ -240,6 +281,8 @@ host_name = "Host OS Hostname"
 beta_title = "Important Information"
 beta_message = "This server is using a {link} Beta version intended for production environments. The software is not final and everything is subject to change. If you find bugs, report them at {github}."
 beta_accept = "Agree"
+settings_saved = "Settings saved successfully"
+settings_error = "Error saving settings"
 
 [form]
 user_id = "User ID"
@@ -253,6 +296,8 @@ user_id_placeholder = "Enter the user ID"
 add_staff = "Add Staff"
 search_staff = "Search staff by ID or name"
 search_user = "Search user by ID or name"
+position = "Position"
+position_help = "Lower numbers appear first (1-999)"
 
 [help_text]
 json_format = "Enter URLs in JSON format: [\"example.com\", \"example.org\"]"
@@ -282,18 +327,4 @@ automod_settings = "Automod Settings"
 staff_panel = "Staff Panel"
 close_admin_panel = "Close Admin Panel"
 logout = "Log Out"
-
-[tickets]
-all_tickets = "All Tickets"
-filter_all = "All"
-filter_open = "Open"
-filter_closed = "Closed"
-id = "ID"
-subject = "Subject"
-created_at = "Created"
-status = "Status"
-actions = "Actions"
-no_tickets = "No tickets found"
-no_subject = "No subject"
-create_new = "Create New Ticket"
-view = "View"
+video_manager = "Video Manager"

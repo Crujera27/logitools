@@ -7,25 +7,27 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
 
 */
+
+
 import executeQuery, { pool } from './mysql.mjs';
 import log from './log.mjs';
 import sendLog from './discordlog.mjs'
@@ -41,7 +43,8 @@ async function applyPunishment(discordId, punishmentType, punishmentReason, puni
             expirationDate = new Date();
             expirationDate.setMonth(expirationDate.getMonth() + 3);
         } else if (punishmentType === 'warn_severe') {
-            expirationDate = null;
+            expirationDate = new Date();
+            expirationDate.setMonth(expirationDate.getMonth() + 6);
         } else {
             expirationDate = null;
         }
@@ -65,9 +68,9 @@ async function updateExpirationStatus() {
         const sql = `
         UPDATE punishment_history
         SET expired = CASE
-            WHEN punishment_type = 'warn_severe' THEN 0
             WHEN punishment_type = 'warn_mild' AND DATE_ADD(issue_date, INTERVAL 1 MONTH) < NOW() THEN 1
             WHEN punishment_type = 'warn_middle' AND DATE_ADD(issue_date, INTERVAL 3 MONTH) < NOW() THEN 1
+            WHEN punishment_type = 'warn_severe' AND DATE_ADD(issue_date, INTERVAL 6 MONTH) < NOW() THEN 1
             ELSE 0
         END
         WHERE expired = 0

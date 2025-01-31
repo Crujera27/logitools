@@ -7,20 +7,20 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
@@ -32,7 +32,7 @@ const isAdmin = (req, res, next) => {
           if(req.user.adminVerifyStatus=="adminVerifyStatus" || req.user.adminVerifyStatus=="progress" && req.url!=="/admin/verify" || req.url=="/admin/verify?verificationCode=*"){
             return res.redirect('/admin/verify')
           }else if(req.user.adminVerifyStatus=="locked"){
-            return res.json({code: '403', error: 'Esta cuenta ha sido bloqueada por motivos de seguridad.'})
+            return res.status(403).render('error', { error : 'HTTP 403 - Esta cuenta ha sido bloqueada por motivos de seguridad.'});
           }else{
           return next()
           }

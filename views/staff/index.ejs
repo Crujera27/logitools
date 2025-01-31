@@ -1,51 +1,39 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= app.dashboard_name %> - Portal de staffs</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    />
+    <title><%= app.dashboard_name %> - <%= t.pages.staff_portal %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
     <link rel="stylesheet" href="/public/css/style.css" />
   </head>
 
-  <body>
+  <body class="bg-dark text-light">
     <%- include('../inc/staff-navbar.ejs') %>
+    
     <div class="container mt-5">
-      <% if (user.discriminator==="0" ) { %>
-      <h1>¡Hola, <%= user.username %>!</h1>
-      <p>
-        Estás en el portal de staffs, puedes navegar por ella o utilizar la
-        barra superior para acceder a más recuros o salir de esta zona en las
-        opciones de usuario.
-      </p>
-      <% } else { %>
-      <h1>¡Hola, <%= user.username %>#<%= user.discriminator %>!</h1>
-      <p>
-        Estás en el portal de staffs, puedes navegar por ella o utilizar la
-        barra superior para acceder a más recuros o salir de esta zona en las
-        opciones de usuario.
-      </p>
-      <% } %>
-    </div>
-  </div>
-  <div class="col-12 col-md-6">
-    <div class="popular-links-card">
-      <h2>Recursos</h2>
-      <div class="popular-links">
-        <a href="https://github.com/Crujera27/logitools" class="popular-link"
-          >GitHub</a
-        >
-        <a href="https://github.com/Crujera27/logitools" class="popular-link"
-          >Documentación</a
-        >
+      <div class="row">
+        <div class="col-12">
+          <h1 class="display-4">
+            <%= user.discriminator==="0" ? 
+              t.pages.staff_greeting.replace('{username}', user.username) :
+              t.pages.staff_greeting.replace('{username}', `${user.username}#${user.discriminator}`) %>
+          </h1>
+          <p class="lead"><%= t.pages.staff_welcome_message %></p>
+        </div>
+
+        <div class="col-12 col-md-6">
+          <div class="card bg-secondary mb-4">
+            <div class="card-body">
+              <h2 class="card-title h4 mb-3"><%= t.sections.resources %></h2>
+              <div class="d-flex flex-wrap gap-2">
+                <a href="https://github.com/Crujera27/logitools" class="btn btn-dark">GitHub</a>
+                <a href="https://github.com/Crujera27/logitools" class="btn btn-dark"><%= t.sections.documentation %></a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-    <%- include('../inc/footer.ejs') %>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

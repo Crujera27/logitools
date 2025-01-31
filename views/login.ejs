@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="<%= app.login_page.lang %>">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,45 +13,68 @@
     <meta property="og:image" content="<%= app.login_page.og_image %>">
     <meta property="og:url" content="<%= app.login_page.og_url %>">
     <meta property="og:type" content="website">
-    <title><%= app.dashboard_name %> - Iniciar sesión con Discord</title>
-    <link rel="stylesheet" href="/public/css/login.css">
+    <title><%= app.dashboard_name %> - <%= t.login.title %></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-    </style>
+    <link rel="stylesheet" href="/public/css/login.css">
 </head>
-
-<body>
-    <div class="container">
-        <div class="photo-section">
-            <img src="/public/img/<%= app.logo_url %>" alt="Logikk's Dashboard Image">
-        </div>
-        <div class="login-section">
-            <h1><%= app.dashboard_name %></h1>
-            <h2 class="subtitle">Inicia sesión para continuar</h2>
-            <a href="/auth/discord" class="discord-button">
-                <i class="fa-brands fa-discord discord-icon"></i>
-                <span>Iniciar sesión con Discord</span>
-            </a>
-            <small>
-                <h5>Al utilizar este servicio estás de acuerdo con nuestra <a href="/public/legal/Política de Privacidad.pdf">Política de
-                        Privacidad</a> y <a href="/public/legal/Términos de Servicio.pdf">Términos de Servicio</a></h5>
-            </small>
+<body class="animate-bg">
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <div class="container-fluid min-vh-100 animate-in">
+        <div class="row min-vh-100 align-items-center justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5">
+                <div class="card glass-card animate-up">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4 stagger-animate">
+                            <img src="/public/img/<%= app.logo_url %>" alt="Logo" class="img-fluid mb-4 hover-float" style="max-width: 130px;">
+                            <h1 class="h3 mb-3 fw-bold"><%= app.dashboard_name %></h1>
+                            <p class="text-muted mb-4"><%= t.login.subtitle %></p>
+                        </div>
+                        
+                        <div class="d-grid gap-3 stagger-animate-delayed">
+                            <a href="/auth/discord" class="btn btn-discord btn-lg hover-scale" id="discordLoginBtn">
+                                <span class="btn-content">
+                                    <i class="fab fa-discord me-2"></i>
+                                    <%= t.login.login_with_discord %>
+                                </span>
+                                <span class="btn-loading d-none">
+                                    <i class="fas fa-spinner fa-spin me-2"></i>
+                                    <%= t.login.logging_in %>
+                                </span>
+                            </a>
+                            
+                            <div class="text-center small text-muted mt-3">
+                                <%= t.login.privacy_terms %> 
+                                <a href="/public/legal/Política de Privacidad.pdf" class="hover-link"><%= t.login.privacy_policy %></a> 
+                                <%= t.login.and %> 
+                                <a href="/public/legal/Términos de Servicio.pdf" class="hover-link"><%= t.login.terms_of_service %></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <footer class="text-center mt-4 text-muted animate-up-delayed">
+                    <% if (!devVersion) { %>
+                        <p class="small">⚠️ <%= t.login.dev_warning %> <a href="https://crujera.galnod.com" class="crujera-link"><%= t.login.developed_by %></a></p>
+                        <p class="small">⚠️ <%= t.login.dev_unstable %></p>
+                    <% } else { %>
+                        <p class="small">Logitools v.<%= version %> <%= t.login.developed_by %> <a href="https://crujera.galnod.com" class="crujera-link">Crujera</a></p>
+                    <% } %>
+                </footer>
+            </div>
         </div>
     </div>
-    <footer>
-        <% if (!devVersion) { %>
-            <p>⚠️ Esta página web utiliza una versión no oficialmente publicada por <a
-                    href="https://crujera.galnod.com">Crujera</a></p>
-            <p>⚠️ versiones pueden ser muy inestables y no están recomendadas para producción.</p>
-            <% } else { %>
-                <p><i><small>Logitools v.<%= version %> developed with ❤️ by <a
-                                    href="https://crujera.galnod.com">Crujera</a></small></i></p>
-                <% } %>
-    </footer>
-</body>
-<script type="text/javascript" id="cookiebanner"
-    src="https://cdnjs.cloudflare.com/ajax/libs/cookie-banner/1.2.2/cookiebanner.min.js" data-height="20px"
-    data-position="top" data-message="Utilizamos cookies para mejorar su experiencia de navegación.">
-    </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/js/login.js"></script>
+    <script type="text/javascript" id="cookiebanner"
+        src="https://cdnjs.cloudflare.com/ajax/libs/cookie-banner/1.2.2/cookiebanner.min.js"
+        data-height="35px"
+        data-position="top"
+        data-message="<%= t.login.cookies_message %>">
+    </script>
+</body>
 </html>

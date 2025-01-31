@@ -7,20 +7,20 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
@@ -68,9 +68,26 @@ router.get('/auth/discord', passport.authenticate('discord'));
 router.get('/auth/discord/callback',
   passport.authenticate('discord', { failureRedirect: '/' }),
   (req, res) => {
-    const redirectTo = req.session.returnTo || '/';
+    const redirectUrl = req.cookies.redirectTo || '/dashboard';
+    
+    const isValidRedirect = (url) => {
+      return (
+        url.startsWith('/') && 
+        !url.includes('://') && 
+        !url.includes('\\') &&
+        !url.includes('..') &&
+        url.indexOf('/') === 0
+      );
+    };
 
-    res.redirect(redirectTo);
-  });
+    res.clearCookie('redirectTo');
+
+    if (redirectUrl && isValidRedirect(redirectUrl)) {
+      res.redirect(redirectUrl);
+    } else {
+      res.redirect('/dashboard');
+    }
+  }
+);
 
 export default router;

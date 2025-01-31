@@ -7,25 +7,26 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024  Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
+    This program is free software: you can redistribute it and/or modify  
+    it under the terms of the GNU Affero General Public License as published by  
+    the Free Software Foundation, either version 3 of the License, or  
     (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,  
+    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+    GNU Affero General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU Affero General Public License  
+    along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
     Website: https://crujera.galnod.com
 
 */
+
 import log from './tools/log.mjs'
 log('El asistente de inicio de Logitools está inicializando los paquetes de configuración; esto puede tardar un momento.', 'info');
 import express from 'express';
@@ -40,6 +41,16 @@ import toml from 'toml';
 import { postbootchecks } from './tools/bootchecks.mjs'
 import executeQuery, { pool } from './tools/mysql.mjs';
 import { applyPunishment, updateExpirationStatus } from './tools/punishment.mjs';
+import cookieParser from 'cookie-parser';
+import { localeMiddleware } from './middleware/locale.mjs';
+import { Server } from 'socket.io';
+import { createServer } from 'http';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 log('> Booting from index.mjs', 'info');
 try {
   console.log(fs.readFileSync('config/asccii/watermark.txt', 'utf8'));
@@ -65,10 +76,28 @@ app.set('view engine', 'ejs');
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(localeMiddleware);
 const BASE_PATH = path.resolve();
 app.use('/public', express.static(path.join(BASE_PATH, 'public')));
 
+const server = createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: process.env.CORS_ORIGIN || "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+// Serve socket.io client files
+app.get('/socket.io/socket.io.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'node_modules/socket.io/client-dist/socket.io.js'));
+});
+
+app.get('/socket.io/socket.io.js.map', (req, res) => {
+    res.sendFile(path.join(__dirname, 'node_modules/socket.io/client-dist/socket.io.js.map'));
+});
 
 passport.use(
   new DiscordStrategy(
@@ -146,9 +175,10 @@ passport.deserializeUser((user, done) => {
 import authRoutes from './routes/auth.mjs';
 import homeRoutes from './routes/home.mjs';
 import staffRoutes from './routes/staff.mjs';
-import adminRoutes from './routes/admin.mjs'
+import adminRoutes from './routes/admin.mjs';
+import supportRoutes from './routes/support.mjs'
 
-const routeModules = [authRoutes, homeRoutes, staffRoutes, adminRoutes];
+const routeModules = [authRoutes, homeRoutes, staffRoutes, adminRoutes, supportRoutes];
 
 routeModules.forEach((route) => {
   app.use('/', route);
@@ -164,9 +194,12 @@ const startWebServer = async () => {
     const appConfig = await parseConfig();
     const PORT = appConfig.port || 3000;
     const BIND_ADDRESS = appConfig.bind_address || '0.0.0.0';
-    app.listen(PORT, BIND_ADDRESS, () => {
+    
+    // Use server.listen instead of app.listen
+    server.listen(PORT, BIND_ADDRESS, () => {
       log(`Servidor escuchando en http://${BIND_ADDRESS}:${PORT}`, 'info');
     });
+    
     if(appConfig.pterodactyl.enabled == true){
       console.log(appConfig.pterodactyl.log_msg)
     }

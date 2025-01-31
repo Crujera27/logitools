@@ -1,0 +1,370 @@
+# .____                 .__  __                .__          
+# |    |    ____   ____ |__|/  |_  ____   ____ |  |   ______
+# |    |   /  _ \ / ___\|  \   __\/  _ \ /  _ \|  |  /  ___/
+# |    |__(  <_> ) /_/  >  ||  | (  <_> |  <_> )  |__\___ \ 
+# |_______ \____/\___  /|__||__|  \____/ \____/|____/____  >
+#        \/    /_____/                                  \/ 
+#                         
+#        
+#    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+#
+#    This program is free software: you can redistribute it and/or modify  
+#    it under the terms of the GNU Affero General Public License as published by  
+#    the Free Software Foundation, either version 3 of the License, or  
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,  
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of  
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the  
+#    GNU Affero General Public License for more details.
+#
+#    You should have received a copy of the GNU Affero General Public License  
+#    along with this program. If not, see <https://www.gnu.org/licenses/>.
+#    
+#    GitHub: https://github.com/Crujera27/
+#    Website: https://crujera.galnod.com
+
+[buttons]
+save = "Guardar"
+back = "Volver"
+add = "Agregar"
+delete = "Eliminar"
+revoke = "Revocar"
+apply = "Aplicar"
+search = "Buscar"
+login = "Iniciar sesión"
+new_ticket = "Abrir un nuevo ticket"
+view_ticket = "Ver ticket"
+suspend = "Restringir acceso"
+unsuspend = "Rehabilitar acceso"
+save_changes = "Guardar cambios"
+
+[titles]
+dashboard = "Panel de Control"
+settings = "Configuración"
+automod = "Moderación Automática"
+staff = "Personal"
+users = "Usuarios"
+punishments = "Sanciones"
+history = "Historial"
+
+[automod]
+activated = "Activado"
+deactivated = "Desactivado"
+enter_domain = "Introduce el dominio sin http:// o www (ej: discord.com)"
+
+[automod.categories]
+general = "General"
+limits = "Límites"
+actions = "Acciones" 
+filters = "Filtros"
+
+[automod.settings]
+filter_enabled = "Activar/desactivar el sistema de automod"
+max_mentions = "Máximo de menciones permitidas por mensaje"
+max_lines = "Máximo de líneas permitidas por mensaje"
+max_duplicates = "Máximo de mensajes duplicados permitidos"
+warn_threshold = "Número de advertencias antes de tomar acción"
+timeout_duration = "Duración del timeout en segundos"
+exempt_roles = "IDs de roles exentos del automod"
+blocked_words = "Lista de palabras bloqueadas"
+url_allowlist = "Lista de URLs permitidas"
+spam_sensitivity = "Nivel de sensibilidad anti-spam (1-5)"
+caps_percentage = "Porcentaje máximo de mayúsculas permitido"
+enable_antiflood = "Activar protección contra flood"
+flood_time_window = "Ventana de tiempo para detectar flood (segundos)"
+flood_message_count = "Número de mensajes para detectar flood"
+punishment_escalation = "Escalar castigos por infracciones repetidas"
+
+[status]
+active = "Vigente"
+expired = "Expirado"
+banned = "Baneado"
+unbanned = "No baneado"
+connected = "Conectado"
+connecting = "Conectando..."
+disconnected = "Desconectado"
+reconnecting = "Intentando reconectar..."
+connection_lost = "Conexión perdida"
+session_inactive = "Sesión inactiva"
+inactive = "Inactivo"
+inactive_message = "Desconectado por inactividad"
+
+[punishments] 
+warn = "Advertencia"
+timeout = "Timeout"
+ban = "Ban"
+reason = "Razón"
+issuer = "Emitido por"
+date = "Fecha"
+status = "Estado"
+kick = "Expulsión"
+mute = "Silenciado"
+duration = "Duración"
+expires_at = "Expira el"
+permanent = "Permanente"
+active = "Vigente"
+expired = "Expirado"
+warn_mild = "Advertencia leve"
+warn_middle = "Advertencia media"
+warn_severe = "Advertencia grave"
+
+[errors]
+not_found = "No encontrado"
+unauthorized = "No autorizado"
+forbidden = "Acceso denegado"
+internal_error = "Error interno del servidor"
+
+[validation]
+required = "Este campo es obligatorio"
+invalid_url = "La URL debe ser una URL de YouTube (embed)"
+invalid_number = "Número no válido"
+min_length = "Longitud mínima: {0} caracteres"
+max_length = "Longitud máxima: {0} caracteres"
+invalid_format = "Formato no válido"
+
+[notifications]
+success = "Operación exitosa"
+error = "Ha ocurrido un error"
+changes_saved = "Cambios guardados correctamente"
+settings_updated = "Configuración actualizada"
+user_not_found = "Usuario no encontrado"
+warn_removed = "Warn eliminado correctamente. La acción ha sido registrada."
+missing_user_id = "No has aportado una ID de usuario, por favor introduzca una ID de usuario válida"
+showing_history = "Mostrando el historial del usuario con ID de Discord {id}"
+
+[modals]
+confirm_title = "Confirmar acción"
+confirm_delete = "¿Estás seguro de que deseas eliminar esto?"
+cancel = "Cancelar"
+close = "Cerrar"
+save_changes = "Guardar cambios"
+
+[pages]
+error = "Error"
+suspended_account = "Cuenta suspendida"
+suspended_message = "Esta cuenta ha sido suspendida debido a una violación de los términos de servicio del dashboard."
+moderation = "Moderación"
+staff_title = "Nuestro equipo"
+staff_description = "Gracias a todos los integrantes/as de nuestro equipo de staff. Haciendo del servidor un mejor lugar."
+join_staff = "¿Quieres formar parte de este maravilloso equipo de la moderación?"
+apply_now = "Aplica ahora"
+resources_title = "Recursos de la moderación"
+resources_description = "Documentos, enlaces y herramientas proporcionadas por el equipo de moderación de manera pública."
+dashboard = "Dashboard"
+welcome_user = "¡Bienvenido/a, {username}!"
+welcome_message = "Estás en tu página principal, puedes navegar por ella o utilizar la barra superior para acceder a más recursos."
+history = "Mi historial"
+no_history = "No hay ningún registro en tu historial."
+support = "Soporte"
+support_greeting = "¡Hola, {username}! ¿Cómo te podemos ayudar?"
+no_tickets = "No hemos encontrado ningún ticket a tu nombre."
+staff_portal = "Portal de staffs"
+staff_greeting = "¡Hola, {username}!"
+staff_welcome_message = "Estás en el portal de staffs, puedes navegar por ella o utilizar la barra superior para acceder a más recursos o salir de esta zona en las opciones de usuario."
+punishment_manager = "Gestor de sanciones"
+warn_manager = "Gestor de warns"
+admin_portal = "Panel de administración"
+admin_greeting = "¡Hola, {username}!"
+admin_welcome_message = "Estás en el portal de administración, puedes navegar por ella o utilizar la barra superior para acceder a más recursos o salir de esta zona en las opciones de usuario."
+automod = "Configuración del Automod"
+automod_title = "Configuración del sistema Automod"
+resource_manager = "Gestor de recursos"
+staff_manager = "Gestor de staffs"
+user_manager = "Gestor de usuarios"
+verify = "Verifica tu identidad"
+staff_profile = "Ficha de staff"
+settings = "Configuración"
+
+[staff_profile]
+id = "ID"
+name = "Nombre"
+rank = "Rango"
+creation_date = "Fecha de creación (dashboard)"
+is_admin = "Administrador/a"
+status = "Estado"
+new_rank = "Nuevo Rango"
+new_rank_placeholder = "Ingrese el nuevo rango"
+update_rank = "Actualizar rango"
+make_admin = "Hacer Admin"
+remove_admin = "Quitar Admin"
+suspend = "Restringir acceso"
+unsuspend = "Rehabilitar acceso"
+hide_user = "Ocultar usuario"
+unhide_user = "Desocultar usuario"
+remove_staff = "Eliminar staff"
+back_to_manager = "Volver al gestor de staffs"
+status_suspended = "Suspendido/a"
+status_active = "Activo"
+yes = "Sí"
+no = "No"
+position = "Posición"
+position_placeholder = "Introduce posición (1-999)"
+
+[verify]
+title = "Verifica tu identidad"
+verification_code = "Código de verificación"
+verify_button = "Verificar"
+security_message = "Estás a punto de acceder a un recurso administrativo de {dashboard}, por motivos de seguridad, debes verificar tu identidad."
+logged_as = "Actualmente, estás conectado como {username}"
+
+[navigation]
+history = "Mi historial"
+tickets = "Mis tickets"
+moderation = "Moderación"
+staff_panel = "Panel de staff"
+admin_panel = "Panel de administración"
+logout = "Cerrar sesión"
+toggle_nav = "Toggle navigation"
+settings = "Mi configuración"
+
+[staff]
+name = "Nombre"
+role = "Cargo"
+member = "Miembro del staff"
+
+[table]
+name = "Nombre"
+link = "Link"
+open_resource = "Abrir recurso"
+id = "ID"
+punishment_type = "Tipo de sanción"
+reason = "Razón de la sanción"
+issued_by = "Emitido por"
+issued_at = "Emitido en"
+status = "En vigor"
+ticket_id = "ID"
+ticket_status = "Estado del ticket"
+delete_record = "Eliminar registro"
+resource_name = "Nombre del recurso"
+download = "Descargar"
+delete = "Eliminar"
+rank = "Rango"
+actions = "Acciones"
+profile = "Ficha"
+is_staff = "Es staff"
+view_warns = "Ver warns"
+
+[login]
+title = "Iniciar sesión con Discord"
+subtitle = "Inicia sesión para continuar"
+login_with_discord = "Iniciar sesión con Discord"
+privacy_terms = "Al utilizar este servicio estás de acuerdo con nuestra"
+privacy_policy = "Política de Privacidad"
+and = "y"
+terms_of_service = "Términos de Servicio"
+cookies_message = "Utilizamos cookies para mejorar su experiencia de navegación."
+dev_warning = "Esta página web utiliza una versión no oficialmente publicada por"
+dev_unstable = "versiones pueden ser muy inestables y no están recomendadas para producción."
+developed_by = "desarrollado con ❤️ por"
+
+[sections]
+whats_new = "¿Qué hay de nuevo?"
+read_more = "Leer más"
+popular_links = "Enlaces Populares"
+featured_video = "Video promocionado"
+discord_economy = "Economía Discord"
+discord_levels = "Niveles Discord"
+resources = "Recursos"
+documentation = "Documentación"
+instance_info = "Información de la instancia"
+
+[instance_info]
+app_name = "Nombre de la APP"
+app_version = "Versión de la APP"
+host_os = "SO del Host"
+host_os_version = "Version del SO del host"
+host_name = "Hostname del SO del host"
+
+[alerts]
+beta_title = "Información importante"
+beta_message = "Este servidor está utilizando una versión de {link} Beta. Intencionada para ámbitos de producción. El software todavía no es el final y todo está sujeto a cambios. Si encuentra bugs, repórtalos en {github}."
+beta_accept = "De acuerdo"
+settings_saved = "Configuración guardada correctamente"
+settings_error = "Error al guardar la configuración"
+
+[form]
+user_id = "ID de usuario"
+search = "Buscar"
+save = "Guardar"
+activated = "Activado"
+deactivated = "Desactivado"
+resource_name = "Nombre del recurso"
+add_resource = "Agregar recurso"
+user_id_placeholder = "Ingrese el ID del usuario"
+add_staff = "Agregar staff"
+search_staff = "Buscar staff por ID o nombre"
+search_user = "Buscar usuario por ID o nombre"
+position = "Posición"
+position_help = "Los números más bajos aparecen primero (1-999)"
+
+[help_text]
+json_format = "Introduce las URLs en formato JSON: [\"example.com\", \"example.org\"]"
+domain_format = "Introduce el dominio sin http:// o www (ej: discord.com)"
+
+[footer]
+social_networks = "Redes Sociales"
+contact = "Contacto"
+email = "Email"
+rights_reserved = "Todos los derechos reservados"
+developed_with = "developed with ❤️ by"
+
+[staff_navigation]
+punishment_manager = "Gestor de sanciones"
+ticket_manager = "Gestor de tickets"
+close_staff_panel = "Cerrar panel de staff"
+admin_panel = "Panel de administración"
+logout = "Cerrar sesión"
+toggle_nav = "Toggle navigation"
+
+[admin_navigation]
+toggle_nav = "Toggle navigation"
+resource_manager = "Gestor de recursos"
+user_manager = "Gestor de usuarios"
+staff_manager = "Gestor de staffs"
+automod_settings = "Configuración de Automod"
+staff_panel = "Panel de staff"
+close_admin_panel = "Cerrar panel de administración"
+logout = "Cerrar sesión"
+video_manager = "Gestor de videos"
+
+[settings]
+interface = "Interfaz"
+language = "Idioma"
+compact_mode = "Modo compacto"
+notifications = "Notificaciones"
+email_notifications = "Notificaciones por email"
+discord_notifications = "Notificaciones de Discord"
+privacy = "Privacidad"
+hide_profile = "Ocultar perfil"
+hide_stats = "Ocultar estadísticas"
+
+[tickets]
+all_tickets = "Todos los Tickets"
+filter_all = "Todos"
+filter_open = "Abiertos"
+filter_closed = "Cerrados"
+id = "ID"
+subject = "Asunto"
+created_at = "Creado"
+status = "Estado"
+actions = "Acciones"
+no_tickets = "No se encontraron tickets"
+no_subject = "Sin asunto"
+create_new = "Crear Nuevo Ticket"
+view = "Ver"
+message = "Mensaje"
+reply = "Respuesta"
+send = "Enviar"
+create_description = "Describe tu problema o consulta lo más detalladamente posible"
+ticket_id = "ID del Ticket"
+user = "Usuario"
+close_ticket = "Cerrar Ticket"
+staff_reply = "Respuesta del Staff"
+view_ticket = "Ver Ticket"
+auto_refresh = "Actualización Automática"
+search_placeholder = "Buscar tickets..."
+messages = "Mensajes"
+submit = "Enviar Ticket"
+status_open = "Abierto"
+status_closed = "Cerrado"

@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= app.dashboard_name %> - <%= t.staff_navigation.ticket_manager %></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/public/css/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4/dist/socket.io.min.js"></script>
+</head>
+<body>
+    <%- include('../inc/staff-navbar.ejs') %>
+    
+    <div class="container mt-5">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-4">
+                    <%= t.staff_navigation.ticket_manager %>
+                    <span class="badge bg-primary" id="ticketCount"></span>
+                    <span class="badge bg-success ms-2" id="connectionStatus">
+                        <i class="fas fa-signal me-1"></i> <%= t.status.connected %>
+                    </span>
+                </h1>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex gap-2">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary active" onclick="filterTickets('all')">
+                            <i class="fas fa-list me-2"></i><%= t.tickets.filter_all %>
+                        </button>
+                        <button class="btn btn-outline-success" onclick="filterTickets('open')">
+                            <i class="fas fa-envelope-open me-2"></i><%= t.tickets.filter_open %>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="filterTickets('closed')">
+                            <i class="fas fa-envelope me-2"></i><%= t.tickets.filter_closed %>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control w-auto" id="searchInput" 
+                           placeholder="<%= t.tickets.search_placeholder %>"
+                           onkeyup="searchTickets()">
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoRefresh" checked>
+                    <label class="form-check-label" for="autoRefresh">
+                        <%= t.tickets.auto_refresh %>
+                    </label>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)" class="sortable">ID <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1)" class="sortable"><%= t.tickets.user %> <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2)" class="sortable"><%= t.tickets.subject %> <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3)" class="sortable"><%= t.tickets.status %> <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(4)" class="sortable"><%= t.tickets.created_at %> <i class="fas fa-sort"></i></th>
+                            <th class="text-end"><%= t.tickets.actions %></th>
+                        </tr>
+                    </thead>
+                    <tbody id="ticketsList">
+                        <% tickets.forEach(ticket => { %>
+                            <tr class="ticket-row" data-status="<%= ticket.status %>">
+                                <td><%= ticket.ticket_id %></td>
+                                <td><%= ticket.username %></td>
+                                <td>
+                                    <span class="<%= ticket.status === 'open' ? 'text-white' : 'text-muted' %>">
+                                        <%= ticket.subject %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-<%= ticket.status === 'open' ? 'success' : 'secondary' %>">
+                                        <i class="fas fa-<%= ticket.status === 'open' ? 'envelope-open' : 'envelope' %> me-1"></i>
+                                        <%= t.tickets[`status_${ticket.status}`] %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span title="<%= new Date(ticket.created_at).toLocaleString() %>">
+                                        <%= new Date(ticket.created_at).toLocaleDateString() %>
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <a href="/staff/ticket/<%= ticket.ticket_id %>" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i> <%= t.tickets.view %>
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let socket;
+        let connectionFailed = false;
+        let fallbackMode = false;
+        let lastActivity = Date.now();
+        const INACTIVITY_TIMEOUT = 3600000; // 1 hour in milliseconds
+        
+        // Track user activity
+        function updateActivity() {
+            lastActivity = Date.now();
+        }
+
+        // Add activity listeners
+        ['mousemove', 'keydown', 'click', 'scroll'].forEach(event => {
+            document.addEventListener(event, updateActivity);
+        });
+
+        function updateConnectionStatus(status, message) {
+            const statusBadge = document.getElementById('connectionStatus');
+            switch(status) {
+                case 'connected':
+                    statusBadge.className = 'badge bg-success ms-2';
+                    statusBadge.innerHTML = `<i class="fas fa-signal me-1"></i> ${t.status.connected}`;
+                    break;
+                case 'connecting':
+                    statusBadge.className = 'badge bg-warning ms-2';
+                    statusBadge.innerHTML = `<i class="fas fa-sync fa-spin me-1"></i> ${t.status.connecting}`;
+                    break;
+                case 'disconnected':
+                    statusBadge.className = 'badge bg-danger ms-2';
+                    statusBadge.innerHTML = `<i class="fas fa-exclamation-triangle me-1"></i> ${t.status.disconnected}`;
+                    // Show toast notification
+                    showToast(t.status.connection_lost, message || t.status.reconnecting, 'warning');
+                    break;
+                case 'inactive':
+                    statusBadge.className = 'badge bg-secondary ms-2';
+                    statusBadge.innerHTML = `<i class="fas fa-power-off me-1"></i> ${t.status.inactive}`;
+                    showToast(t.status.session_inactive, t.status.inactive_message, 'info');
+                    break;
+            }
+        }
+
+        // Add toast container to the page
+        document.body.insertAdjacentHTML('beforeend', `
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="connectionToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <i class="fas fa-bell me-2"></i>
+                        <strong class="me-auto" id="toastTitle"></strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body" id="toastMessage"></div>
+                </div>
+            </div>
+        `);
+
+        function showToast(title, message, type = 'info') {
+            const toast = document.getElementById('connectionToast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = `toast border-${type}`;
+            toastTitle.textContent = title;
+            toastMessage.textContent = message;
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+
+        function initializeSocket() {
+            socket = io({
+                reconnectionAttempts: 5,
+                timeout: 10000
+            });
+            
+            socket.on('connect', () => {
+                updateConnectionStatus('connected');
+                socket.emit('authenticate', { isStaff: true });
+            });
+
+            socket.on('connect_error', () => {
+                updateConnectionStatus('disconnected', 'Connection failed');
+            });
+
+            socket.on('reconnect_attempt', () => {
+                updateConnectionStatus('connecting');
+            });
+
+            socket.on('reconnect_failed', () => {
+                updateConnectionStatus('disconnected', 'Could not reconnect. Please refresh the page.');
+            });
+
+            socket.on('disconnect', () => {
+                updateConnectionStatus('disconnected');
+            });
+
+            // Check for inactivity every minute
+            setInterval(() => {
+                if (Date.now() - lastActivity > INACTIVITY_TIMEOUT) {
+                    socket.disconnect();
+                    updateConnectionStatus('inactive');
+                    // Disable auto-refresh
+                    document.getElementById('autoRefresh').checked = false;
+                }
+            }, 60000);
+
+            socket.on('authenticated', () => {
+                console.log('Socket authenticated');
+                connectionFailed = false;
+                fallbackMode = false;
+            });
+
+            socket.on('ticketUpdate', (data) => {
+                if (!document.getElementById('autoRefresh').checked) return;
+                updateTicketList(data.tickets);
+            });
+
+            socket.on('ping', () => {
+                socket.emit('heartbeat');
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Socket disconnected');
+                if (!connectionFailed) {
+                    connectionFailed = true;
+                    setTimeout(fallbackToPolling, 5000); // Try reconnect after 5 seconds
+                }
+            });
+        }
+
+        function fallbackToPolling() {
+            if (fallbackMode) return;
+            fallbackMode = true;
+            console.log('Falling back to polling');
+            
+            // Start polling every 30 seconds
+            setInterval(() => {
+                if (!document.getElementById('autoRefresh').checked) return;
+                fetch('/staff/tickets/data')
+                    .then(res => {
+                        if (!res.ok) throw new Error('Network response was not ok');
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data && data.tickets) {
+                            updateTicketList(data.tickets);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Polling failed:', err);
+                        updateConnectionStatus('disconnected', 'Failed to fetch updates');
+                    });
+            }, 30000);
+        }
+
+        // Initialize socket connection
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof io === 'undefined') {
+                console.error('Socket.IO client not loaded');
+                // Show connection error in UI
+                updateConnectionStatus('disconnected', 'Socket.IO failed to load');
+                return;
+            }
+            initializeSocket();
+        });
+
+        let currentSort = { column: -1, asc: true };
+        let lastUpdate = new Date();
+
+        // Auto-refresh tickets
+        function autoRefresh() {
+            if (!document.getElementById('autoRefresh').checked) return;
+            
+            fetch('/staff/tickets/data')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.lastUpdate > lastUpdate) {
+                        updateTicketList(data.tickets);
+                        lastUpdate = data.lastUpdate;
+                        // Play notification sound if new ticket
+                        new Audio('/public/sounds/notification.mp3').play();
+                    }
+                });
+        }
+
+        // Initialize auto-refresh
+        setInterval(autoRefresh, 10000); // Check every 10 seconds
+
+        function updateTicketList(tickets) {
+            const tbody = document.getElementById('ticketsList');
+            tbody.innerHTML = tickets.map(ticket => `
+                <tr class="ticket-row" data-status="${ticket.status}">
+                    <td>${ticket.ticket_id}</td>
+                    <td>${ticket.username}</td>
+                    <td>
+                        <span class="${ticket.status === 'open' ? 'text-white' : 'text-muted'}">
+                            ${ticket.subject}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-${ticket.status === 'open' ? 'success' : 'secondary'}">
+                            <i class="fas fa-${ticket.status === 'open' ? 'envelope-open' : 'envelope'} me-1"></i>
+                            ${t.tickets[`status_${ticket.status}`]}
+                        </span>
+                    </td>
+                    <td>
+                        <span title="${new Date(ticket.created_at).toLocaleString()}">
+                            ${new Date(ticket.created_at).toLocaleDateString()}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a href="/staff/ticket/${ticket.ticket_id}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i> View
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('ticketCount').textContent = tickets.length;
+        }
+
+        // Search functionality
+        function searchTickets() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            const rows = document.querySelectorAll('.ticket-row');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(input) ? '' : 'none';
+            });
+        }
+
+        // Sorting functionality
+        function sortTable(column) {
+            const table = document.querySelector('table');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            currentSort.asc = column === currentSort.column ? !currentSort.asc : true;
+            currentSort.column = column;
+
+            const sortedRows = rows.sort((a, b) => {
+                const aCol = a.children[column].textContent.trim();
+                const bCol = b.children[column].textContent.trim();
+                return currentSort.asc ? aCol.localeCompare(bCol) : bCol.localeCompare(aCol);
+            });
+
+            tbody.innerHTML = '';
+            sortedRows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Filter functionality
+        function filterTickets(status) {
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(status)) {
+                    btn.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.ticket-row').forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 {
   "name": "crujera-logitools",
-  "version": "4.0.0",
+  "version": "v4.0.0-pre2",
   "isBeta": true,
   "description": "",
   "relasenotes": " Carga de avatares de Discord, nuevo banner de cookies, nueva manera en la que los warns expiran, nueva pantalla de login, rutas más bonita, uso de MJS (en la mayoría del código), formato de fecha en los warns, avatar en la zona de staffs, configuración de la app en toml, mejora en la UI web, compatibilidad (débil) con móvil, página de staffs dinámica, sistema de recursos en DB, aplicar sanción al superar límite de ciertos warns y más.",

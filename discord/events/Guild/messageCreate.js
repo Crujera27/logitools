@@ -31,7 +31,7 @@ const { ChannelType, Message } = require("discord.js");
 const config = require("../../config.js");
 const { log } = require("../../functions");
 const ExtendedClient = require("../../class/ExtendedClient.js");
-const checkmsg = require('../../../tools/ollama.mjs');
+// const checkmsg = require('../../../tools/ollama.mjs');
 const executeQuery = require('../../../tools/mysql.mjs');
 
 const cooldown = new Map();
@@ -51,7 +51,7 @@ let filterCache = {
 };
 
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
+/*
 async function updateFilterCache() {
     if (Date.now() - filterCache.lastUpdate < CACHE_DURATION) {
         return filterCache;
@@ -72,6 +72,7 @@ async function updateFilterCache() {
 
     return filterCache;
 }
+*/
 
 function isSpam(message) {
     const authorHistory = MESSAGE_HISTORY.get(message.author.id) || [];

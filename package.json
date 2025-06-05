@@ -14,7 +14,7 @@
   "author": "Crujera27",
   "license": "MIT",
   "dependencies": {
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "content-disposition": "^0.5.4",
     "cookie-parser": "^1.4.7",
     "crujera-logitools": "file:",

@@ -221,7 +221,7 @@ module.exports = {
           }
           return;
         }
-        if (warnsgrave.length >= appConfig.punishments.reset_cnt_add_nextlvl_warn_on_limit) {
+  if (warnsgrave.length >= appConfig.punishments.limit_warns_severe) {
           await tools.updateExpirationStatusByUserAndType(
             target.id,
             "warn_severe"

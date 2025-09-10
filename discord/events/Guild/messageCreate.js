@@ -27,14 +27,18 @@
 
 */
 
-const { ChannelType, Message } = require("discord.js");
+const { ChannelType, Message, EmbedBuilder } = require("discord.js");
 const config = require("../../config.js");
 const { log } = require("../../functions");
 const ExtendedClient = require("../../class/ExtendedClient.js");
-// const checkmsg = require('../../../tools/ollama.mjs');
 const executeQuery = require('../../../tools/mysql.mjs');
 
 const cooldown = new Map();
+
+// Enhanced message tracking for AI context
+const USER_MESSAGE_HISTORY = new Map(); // Store recent messages per user for AI context
+const AI_CONTEXT_MESSAGES = 5; // Number of recent messages to send to AI
+const AI_CONTEXT_TIME_WINDOW = 300000; // 5 minutes in milliseconds
 
 // Add these at the top of the file
 const SPAM_THRESHOLD = 5; // Messages
@@ -150,6 +154,365 @@ async function checkViolations(content, message) {
     return null;
 }
 
+// Enhanced function to collect user message context for AI
+function updateUserMessageHistory(message) {
+    const userId = message.author.id;
+    const now = Date.now();
+    
+    if (!USER_MESSAGE_HISTORY.has(userId)) {
+        USER_MESSAGE_HISTORY.set(userId, []);
+    }
+    
+    const userHistory = USER_MESSAGE_HISTORY.get(userId);
+    
+    // Add current message
+    userHistory.push({
+        content: message.content,
+        timestamp: now,
+        channelId: message.channel.id,
+        channelName: message.channel.name
+    });
+    
+    // Remove messages older than time window and keep only recent messages
+    const filteredHistory = userHistory
+        .filter(msg => now - msg.timestamp < AI_CONTEXT_TIME_WINDOW)
+        .slice(-AI_CONTEXT_MESSAGES);
+    
+    USER_MESSAGE_HISTORY.set(userId, filteredHistory);
+    
+    return filteredHistory;
+}
+
+// Function to prepare context for AI analysis
+function prepareAIContext(userHistory, currentMessage) {
+    if (userHistory.length <= 1) {
+        return currentMessage.content;
+    }
+    
+    let context = "Contexto de mensajes recientes del usuario:\n\n";
+    
+    userHistory.forEach((msg, index) => {
+        const isCurrentMessage = index === userHistory.length - 1;
+        const prefix = isCurrentMessage ? "[MENSAJE ACTUAL]" : `[Mensaje ${index + 1}]`;
+        context += `${prefix} en #${msg.channelName}: ${msg.content}\n`;
+    });
+    
+    return context;
+}
+
+// AI Moderation function using Llama Guard 3
+async function performAIModerationCheck(message) {
+    try {
+        const userHistory = updateUserMessageHistory(message);
+        const contextualMessage = prepareAIContext(userHistory, message);
+        
+        // Import the Ollama module dynamically
+        const { default: checkmsg } = await import('../../../tools/ollama.mjs');
+        
+        // Send message to Llama Guard 3 for analysis
+        const aiResponse = await checkmsg(contextualMessage);
+        
+        if (!aiResponse || !aiResponse.message) {
+            log('AI moderation response was empty or malformed', 'warn');
+            return null;
+        }
+        
+        const decision = aiResponse.message.content.trim().toLowerCase();
+        let punishment = null;
+        let category = null;
+        
+        // Parse Llama Guard 3 response
+        if (decision.startsWith('unsafe')) {
+            // Extract category (e.g., "unsafe\nS2" -> "S2")
+            const lines = aiResponse.message.content.trim().split('\n');
+            category = lines.length > 1 ? lines[1] : 'unknown';
+            
+            // Map Llama Guard categories to our punishment system
+            punishment = mapGuardCategoryToPunishment(category, contextualMessage);
+        } else if (decision === 'safe') {
+            punishment = null; // No action needed
+        } else {
+            // Fallback for custom responses from our automod prompt
+            switch (decision) {
+                case 'warn_mild':
+                    punishment = { type: 'warn_mild', reason: 'Contenido detectado como inapropiado por IA (leve)' };
+                    break;
+                case 'warn_middle':
+                    punishment = { type: 'warn_middle', reason: 'Contenido detectado como inapropiado por IA (medio)' };
+                    break;
+                case 'warn_severe':
+                    punishment = { type: 'warn_severe', reason: 'Contenido detectado como inapropiado por IA (grave)' };
+                    break;
+                case 'ban':
+                    punishment = { type: 'ban', reason: 'Contenido detectado como extremadamente inapropiado por IA' };
+                    break;
+                case 'none':
+                default:
+                    punishment = null;
+                    break;
+            }
+        }
+        
+        // Log AI decision for monitoring and improvement
+        await logAIDecision(message, contextualMessage, decision, category, punishment);
+        
+        return punishment;
+    } catch (error) {
+        log(`Error in AI moderation: ${error.message}`, 'err');
+        return null;
+    }
+}
+
+// Log AI moderation decisions for analysis and monitoring
+async function logAIDecision(message, contextualMessage, decision, category, punishment) {
+    try {
+        const contextHistory = USER_MESSAGE_HISTORY.get(message.author.id) || [];
+        
+        const logData = {
+            user_id: message.author.id,
+            message_content: contextualMessage,
+            ai_decision: decision,
+            ai_category: category,
+            punishment_applied: punishment ? punishment.type : null,
+            context_messages: JSON.stringify(contextHistory)
+        };
+        
+        await executeQuery(`
+            INSERT INTO ai_moderation_logs 
+            (user_id, message_content, ai_decision, ai_category, punishment_applied, context_messages)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [
+            logData.user_id,
+            logData.message_content,
+            logData.ai_decision,
+            logData.ai_category,
+            logData.punishment_applied,
+            logData.context_messages
+        ]);
+        
+        log(`AI decision logged for user ${message.author.username}: ${decision}`, 'info');
+    } catch (error) {
+        log(`Failed to log AI decision: ${error.message}`, 'err');
+    }
+}
+
+// Map Llama Guard 3 safety categories to punishment levels
+function mapGuardCategoryToPunishment(category, content) {
+    const categoryMap = {
+        'S1': { type: 'ban', reason: 'Crímenes violentos detectados por IA' }, // Violent Crimes
+        'S2': { type: 'warn_severe', reason: 'Crímenes no violentos detectados por IA' }, // Non-Violent Crimes
+        'S3': { type: 'ban', reason: 'Contenido sexual inapropiado detectado por IA' }, // Sex-Related Crimes
+        'S4': { type: 'ban', reason: 'Explotación infantil detectada por IA' }, // Child Sexual Exploitation
+        'S5': { type: 'warn_severe', reason: 'Difamación detectada por IA' }, // Defamation
+        'S6': { type: 'warn_middle', reason: 'Consejo especializado inapropiado detectado por IA' }, // Specialized Advice
+        'S7': { type: 'warn_severe', reason: 'Violación de privacidad detectada por IA' }, // Privacy
+        'S8': { type: 'warn_middle', reason: 'Violación de propiedad intelectual detectada por IA' }, // Intellectual Property
+        'S9': { type: 'ban', reason: 'Contenido sobre armas peligrosas detectado por IA' }, // Indiscriminate Weapons
+        'S10': { type: 'warn_severe', reason: 'Discurso de odio detectado por IA' }, // Hate
+        'S11': { type: 'warn_severe', reason: 'Contenido de autolesión detectado por IA' }, // Suicide & Self-Harm
+        'S12': { type: 'warn_middle', reason: 'Contenido sexual detectado por IA' }, // Sexual Content
+        'S13': { type: 'warn_middle', reason: 'Desinformación electoral detectada por IA' }, // Elections
+    };
+    
+    return categoryMap[category] || { type: 'warn_mild', reason: 'Contenido inapropiado detectado por IA' };
+}
+
+// Apply automated punishment
+async function applyAutomatedPunishment(message, punishment) {
+    try {
+        const toolsModule = await import("../../../tools/punishment.mjs");
+        const tools = await toolsModule;
+        
+        // Apply the punishment
+        const punishmentResult = await tools.applyPunishment(
+            message.author.id,
+            punishment.type,
+            punishment.reason + " (Aplicado automáticamente)",
+            "SYSTEM_AI"
+        );
+        
+        if (!punishmentResult.success) {
+            log(`Failed to apply automated punishment to ${message.author.id}`, 'err');
+            return false;
+        }
+        
+        // Send DM to user (required notification about automation)
+        await sendAutomatedPunishmentDM(message.author, punishment, message);
+        
+        // Handle severe punishments (ban)
+        if (punishment.type === 'ban') {
+            try {
+                const member = await message.guild.members.fetch(message.author.id);
+                await member.ban({ reason: punishment.reason + " (Aplicado automáticamente)" });
+                log(`User ${message.author.id} was automatically banned`, 'warn');
+            } catch (error) {
+                log(`Failed to ban user ${message.author.id}: ${error.message}`, 'err');
+            }
+        }
+        
+        // Check if user has exceeded warning limits
+        await checkAndApplyWarningLimits(message, punishment.type, tools);
+        
+        return true;
+    } catch (error) {
+        log(`Error applying automated punishment: ${error.message}`, 'err');
+        return false;
+    }
+}
+
+// Send DM notification about automated punishment
+async function sendAutomatedPunishmentDM(user, punishment, originalMessage) {
+    const severityNames = {
+        'warn_mild': 'leve',
+        'warn_middle': 'medio', 
+        'warn_severe': 'grave',
+        'ban': 'ban'
+    };
+    
+    const severityName = severityNames[punishment.type] || punishment.type;
+    
+    let description;
+    if (punishment.type === 'ban') {
+        description = `Hola, ${user}. Nos ponemos en contacto con usted mediante el presente comunicado para informarle sobre las medidas que se han tomado debido a su conducta.
+
+**⚠️ ESTA SANCIÓN HA SIDO APLICADA AUTOMÁTICAMENTE POR NUESTRO SISTEMA DE INTELIGENCIA ARTIFICIAL ⚠️**
+
+Sanción impuesta: **Ban**
+Razón: **${punishment.reason}**
+Canal: **#${originalMessage.channel.name}**
+
+Esta decisión ha sido tomada por nuestro sistema automatizado de moderación basado en IA, que analiza el contenido de los mensajes para garantizar un ambiente seguro y respetuoso.
+
+Si considera que esta sanción ha sido aplicada de forma incorrecta, puede apelar contactando con el equipo de moderación.
+
+Un saludo,
+**Sistema Automatizado de Moderación - Logikk's Discord**`;
+    } else {
+        description = `Hola, ${user}. Nos ponemos en contacto con usted mediante el presente comunicado para informarle sobre las medidas que se han tomado debido a su conducta.
+
+**⚠️ ESTA SANCIÓN HA SIDO APLICADA AUTOMÁTICAMENTE POR NUESTRO SISTEMA DE INTELIGENCIA ARTIFICIAL ⚠️**
+
+Sanción impuesta: **Warn ${severityName}**
+Razón: **${punishment.reason}**
+Canal: **#${originalMessage.channel.name}**
+
+Esta decisión ha sido tomada por nuestro sistema automatizado de moderación basado en IA, que analiza el contenido de los mensajes para garantizar un ambiente seguro y respetuoso.
+
+Le recomendamos que visite el canal de reglas y eche un vistazo para evitar posibles sanciones en el futuro.
+Puede encontrar su historial del servidor en [aquí](https://logikk.crujera.net/history).
+Si considera que esta sanción ha sido aplicada de forma incorrecta, abra un ticket o contacte con el equipo de moderación.
+
+Un saludo,
+**Sistema Automatizado de Moderación - Logikk's Discord**`;
+    }
+    
+    const embed = new EmbedBuilder()
+        .setColor(punishment.type === 'ban' ? "#000000" : "#ff0000")
+        .setTitle("🤖 Mensaje del Sistema Automatizado de Moderación")
+        .setDescription(description)
+        .setTimestamp();
+    
+    try {
+        await user.send({ embeds: [embed] });
+        log(`Automated punishment DM sent to ${user.username}`, 'info');
+    } catch (error) {
+        log(`Failed to send automated punishment DM to ${user.username}: ${error.message}`, 'warn');
+    }
+}
+
+// Check and apply warning limits automatically
+async function checkAndApplyWarningLimits(message, punishmentType, tools) {
+    try {
+        const parseConfigModule = await import("../../../tools/parseConfig.mjs");
+        const parseConfig = parseConfigModule.default;
+        const appConfig = await parseConfig();
+        
+        const checkPunishments = await tools.getUserVigentPunishments(message.author.id);
+        
+        if (!checkPunishments.success) {
+            return;
+        }
+        
+        const warnsleves = checkPunishments.punishments.filter(
+            (punishment) => punishment.punishment_type === "warn_mild"
+        );
+        const warnsmedios = checkPunishments.punishments.filter(
+            (punishment) => punishment.punishment_type === "warn_middle"
+        );
+        const warnsgrave = checkPunishments.punishments.filter(
+            (punishment) => punishment.punishment_type === "warn_severe"
+        );
+        
+        // Check mild warning limits
+        if (warnsleves.length >= appConfig.punishments.limit_warns_mild) {
+            await tools.updateExpirationStatusByUserAndType(message.author.id, "warn_mild");
+            
+            if (appConfig.punishments.reset_cnt_add_nextlvl_warn_on_limit == true) {
+                await tools.applyPunishment(
+                    message.author.id,
+                    "warn_middle",
+                    "Límite de warns leves superados (automático)",
+                    "SYSTEM_AI"
+                );
+            }
+        }
+        
+        // Check middle warning limits  
+        if (warnsmedios.length >= appConfig.punishments.limit_warns_milddle) {
+            await tools.updateExpirationStatusByUserAndType(message.author.id, "warn_middle");
+            
+            if (appConfig.punishments.reset_cnt_add_nextlvl_warn_on_limit == true) {
+                await tools.applyPunishment(
+                    message.author.id,
+                    "warn_severe", 
+                    "Límite de warns medios superados (automático)",
+                    "SYSTEM_AI"
+                );
+            }
+        }
+        
+        // Check severe warning limits
+        if (warnsgrave.length >= appConfig.punishments.limit_warns_severe) {
+            await tools.updateExpirationStatusByUserAndType(message.author.id, "warn_severe");
+            
+            try {
+                const member = await message.guild.members.fetch(message.author.id);
+                await member.ban({ reason: "Límite de warns graves superado (automático)" });
+                
+                const banEmbed = new EmbedBuilder()
+                    .setColor("#000000")
+                    .setTitle("🤖 Sistema Automatizado de Moderación - Ban")
+                    .setDescription(
+                        `Hola, ${message.author}. Su cuenta ha sido baneada automáticamente del servidor.
+                        
+**⚠️ ESTA SANCIÓN HA SIDO APLICADA AUTOMÁTICAMENTE POR EXCEDER EL LÍMITE DE ADVERTENCIAS ⚠️**
+
+Sanción impuesta: **Ban**
+Razón: **Límite de warns graves superado**
+
+Esta decisión ha sido tomada automáticamente por nuestro sistema al detectar que ha superado el límite permitido de advertencias graves.
+
+Un saludo,
+**Sistema Automatizado de Moderación - Logikk's Discord**`
+                    )
+                    .setTimestamp();
+                
+                try {
+                    await message.author.send({ embeds: [banEmbed] });
+                } catch (dmError) {
+                    log(`Failed to send ban DM to ${message.author.username}: ${dmError.message}`, 'warn');
+                }
+                
+            } catch (error) {
+                log(`Failed to ban user for exceeding severe warning limit: ${error.message}`, 'err');
+            }
+        }
+        
+    } catch (error) {
+        log(`Error checking warning limits: ${error.message}`, 'err');
+    }
+}
+
 async function canBypassModeration(message) {
     // Admin permission bypass
     if (message.member.permissions.has('Administrator')) return true;
@@ -212,22 +575,28 @@ module.exports = {
         // Check if AI moderation is enabled before proceeding
         const aiEnabled = await isAIModerationEnabled();
         if (aiEnabled) {
-            const aiResponse = await checkmsg(message.content);
-            const action = aiResponse.message.content.trim().toLowerCase();
+            // Perform AI moderation check
+            const aiPunishment = await performAIModerationCheck(message);
             
-            switch(action) {
-                case 'warn_mild':
-                    // Add warn mild logic
-                    break;
-                case 'warn_middle':
-                    // Add warn middle logic
-                    break;
-                case 'warn_severe':
-                    // Add warn severe logic
-                    break;
-                case 'ban':
-                    // Add ban logic
-                    break;
+            if (aiPunishment) {
+                // Delete the message first
+                try {
+                    await message.delete();
+                    log(`Message from ${message.author.username} deleted by AI moderation`, 'warn');
+                } catch (deleteError) {
+                    log(`Failed to delete message: ${deleteError.message}`, 'err');
+                }
+                
+                // Apply the automated punishment
+                const punishmentApplied = await applyAutomatedPunishment(message, aiPunishment);
+                
+                if (punishmentApplied) {
+                    log(`Automated ${aiPunishment.type} applied to ${message.author.username} (${message.author.id}) for: ${aiPunishment.reason}`, 'warn');
+                } else {
+                    log(`Failed to apply automated punishment to ${message.author.username}`, 'err');
+                }
+                
+                return; // Don't process the message further
             }
         }
 

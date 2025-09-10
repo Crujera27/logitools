@@ -45,7 +45,7 @@ html_author="Logikk Media"
 og_title="Logikk's Dashboard"
 og_description="Página web oficial del Discord de Logikk. Creador de contenido de Bee Swarm Simulator. Desde aquí puedes controlar varias acciones."
 og_image="/public/img/logikk.png"
-og_url="https://logikk.galnod.com"
+og_url="https://logikk.crujera.net"
 
 
 [oauth]
@@ -98,7 +98,7 @@ apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"
 
 
 [ai]
-enabled=false
-assistant_name="" # Se le informa al modelo en el proceso de carga de cuál es su nombre (mensaje enviado como sistema)
-ollama_host=""
-ollama_model="dolphin-mistral" # Default: dolphin-mistral. Puedes consultar una lista completa en https://ollama.com/search
+enabled=true
+assistant_name="LogikkGuard" # Se le informa al modelo en el proceso de carga de cuál es su nombre (mensaje enviado como sistema)
+ollama_host="http://localhost:11434" # URL del servidor Ollama remoto
+ollama_model="llama-guard3" # Default: llama-guard3. Puedes consultar una lista completa en https://ollama.com/search

@@ -179,7 +179,7 @@ module.exports = {
             Duración: **${prettyMs(msDuration, { verbose: true })}**
             \n
             Le recomendamos que visite el canal de <#901587290093158442> y eche un vistazo para evitar posibles sanciones en el futuro.
-            Puede encontrar su historial del servidor en [aquí](https://logikk.galnod.com/history).
+            Puede encontrar su historial del servidor en [aquí](https://logikk.crujera.net/history).
             \n
             Un saludo,
             **Equipo administrativo de Logikk's Discord**`

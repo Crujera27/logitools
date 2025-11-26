@@ -1,6 +1,6 @@
 # Logitools
 
-Logitools is a moderation bot designed for Discord built on node.js v18, equipped with a user-friendly web dashboard. Originally created for [Logikk's Discord server](https://crujera.galnod.com), this is version 4 of the bot, currently undergoing development.
+Logitools is a moderation bot designed for Discord built on node.js v18, equipped with a user-friendly web dashboard. Originally created for [Logikk's Discord server](https://crujera.net), this is version 4 of the bot, currently undergoing development.
 
 
 ## Installation Guide

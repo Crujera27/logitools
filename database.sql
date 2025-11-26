@@ -24,7 +24,7 @@
     along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
-    Website: https://crujera.galnod.com
+    Website: https://crujera.net
 
 */
 -- SQL FOR LOGITOOLS BETA v.4.0.0 (26/11/2025)

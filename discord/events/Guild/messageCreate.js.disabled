@@ -26,7 +26,7 @@
     Website: https://crujera.galnod.com
 
 */
-
+/*
 const { ChannelType, Message, EmbedBuilder } = require("discord.js");
 const config = require("../../config.js");
 const { log } = require("../../functions");

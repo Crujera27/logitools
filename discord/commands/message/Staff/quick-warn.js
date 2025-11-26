@@ -33,7 +33,9 @@ const {
     ModalBuilder,
     TextInputBuilder,
     TextInputStyle,
-    ActionRowBuilder
+    ActionRowBuilder,
+    ApplicationIntegrationType,
+    InteractionContextType
 } = require('discord.js');
 const ExtendedClient = require('../../../class/ExtendedClient.js');
 const config = require('../../../config.js');
@@ -41,7 +43,9 @@ const config = require('../../../config.js');
 module.exports = {
     structure: new ContextMenuCommandBuilder()
         .setName('[Staff] Warn rápido')
-        .setType(3),
+        .setType(3)
+        .setIntegrationTypes(ApplicationIntegrationType.GuildInstall)
+        .setContexts(InteractionContextType.Guild),
     /**
      * @param {ExtendedClient} client 
      * @param {MessageContextMenuCommandInteraction} interaction 

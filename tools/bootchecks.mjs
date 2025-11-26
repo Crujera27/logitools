@@ -54,8 +54,7 @@ const postbootchecks = async () => {
         DISCORD_BOT_TOKEN: "",
         SESSION_SECRET: "DEFAULT-SESSION-SECRET-CHANGE-ME",
         DB_HOST: "127.0.0.1",
-        DB_USER: "root",
-        DB_PASSWORD: "supersecretpassword"
+        DB_USER: "",
       };
 
       for (const [key, defaultValue] of Object.entries(requiredEnvVars)) {

@@ -31,7 +31,12 @@ const { ChannelType, Message, EmbedBuilder } = require("discord.js");
 const config = require("../../config.js");
 const { log } = require("../../functions");
 const ExtendedClient = require("../../class/ExtendedClient.js");
-const executeQuery = require('../../../tools/mysql.mjs');
+
+let executeQuery;
+(async () => {
+    const mysql = await import('../../../tools/mysql.mjs');
+    executeQuery = mysql.default;
+})();
 
 const cooldown = new Map();
 

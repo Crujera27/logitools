@@ -69,6 +69,8 @@ linkedin=""
 handler_prefix = "lt!"
 handler_deploy = true
 modlog_webhook = "https://discord.com/api/webhooks/1242533340125597817/NB96eEONZr4y5ZATFF-2tVpQjgiWyYjlg_GEJ9Ds-NvE6-hMl6M-G_U-0QPpGEdh462O"
+warns_channel = "" # ID del canal donde se enviarán las notificaciones de warns
+evidence_channel = "" # ID del canal donde se enviarán las evidencias (capturas de mensajes)
 [discord_handler_commands]
   prefix = true
   slash = true
@@ -76,8 +78,8 @@ modlog_webhook = "https://discord.com/api/webhooks/1242533340125597817/NB96eEONZ
   message = true
 [discord_development]
 enabled = true
-guild = "905124554303762552" # ID del servidor de desarollo
-developers = "451765453988298764" # IDs de los desarolladores
+guild = "" # ID del servidor de desarollo
+developers = "" # IDs de los desarolladores
 
 [punishments]
 limit_warns_mild="3"

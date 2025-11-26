@@ -128,6 +128,7 @@ module.exports = {
                     `Tag: <@${pendingWarn.targetUserId}>\n` +
                     `Razón: ${reason}\n` +
                     `Canal:\n${channelMention}\n` +
+                    `Staff: <@${interaction.user.id}> (${interaction.user.id})\n` +
                     `Pruebas:`;
 
                 const files = [];

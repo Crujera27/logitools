@@ -42,7 +42,7 @@ module.exports = {
     structure: new ContextMenuCommandBuilder()
         .setName('Warn rápido')
         .setType(3)
-        .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers),
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
     /**
      * @param {ExtendedClient} client 
      * @param {MessageContextMenuCommandInteraction} interaction 

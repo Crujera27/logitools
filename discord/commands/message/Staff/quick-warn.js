@@ -33,22 +33,35 @@ const {
     ModalBuilder,
     TextInputBuilder,
     TextInputStyle,
-    ActionRowBuilder,
-    PermissionFlagsBits
+    ActionRowBuilder
 } = require('discord.js');
 const ExtendedClient = require('../../../class/ExtendedClient.js');
+const config = require('../../../config.js');
 
 module.exports = {
     structure: new ContextMenuCommandBuilder()
-        .setName('Warn rápido')
-        .setType(3)
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
+        .setName('[Staff] Warn rápido')
+        .setType(3),
     /**
      * @param {ExtendedClient} client 
      * @param {MessageContextMenuCommandInteraction} interaction 
      */
     run: async (client, interaction) => {
         try {
+            // Check if user has a staff role from config
+            const staffRoles = config.roles?.staff || [];
+            
+            const hasStaffRole = interaction.member.roles.cache.some(role => 
+                staffRoles.includes(role.id)
+            ) || interaction.member.permissions.has('Administrator');
+
+            if (!hasStaffRole) {
+                return await interaction.reply({
+                    content: 'No tienes permisos para usar este comando.',
+                    ephemeral: true,
+                });
+            }
+
             const targetMessage = interaction.targetMessage;
             const targetUser = targetMessage.author;
 

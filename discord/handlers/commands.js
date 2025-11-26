@@ -63,6 +63,12 @@ module.exports = (client) => {
                         continue;
                     };
 
+                    // Prevent duplicate commands
+                    if (client.collection.interactioncommands.has(module.structure.name)) {
+                        log('Comando duplicado ignorado: ' + module.structure.name, 'warn');
+                        continue;
+                    }
+
                     client.collection.interactioncommands.set(module.structure.name, module);
                     client.applicationcommandsArray.push(module.structure);
                 };

@@ -41,7 +41,7 @@ module.exports = async (client) => {
     );
 
     try {
-        log("Cargando comandos de la aplicación...", "info");
+        log("Limpiando comandos de la aplicación existentes...", "info");
 
         const guildId = config.development.guild;
 
@@ -51,6 +51,16 @@ module.exports = async (client) => {
                 return;
             };
 
+            // Clear all existing guild commands first
+            await rest.put(
+                Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId), {
+                    body: [],
+                }
+            );
+            log(`Comandos de la guild ${guildId} eliminados.`, "info");
+
+            // Register new commands
+            log("Registrando nuevos comandos de la aplicación...", "info");
             await rest.put(
                 Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId), {
                     body: client.applicationcommandsArray,
@@ -59,6 +69,16 @@ module.exports = async (client) => {
 
             log(`Comandos de aplicación cargados exitosamente para la guild con ID ${guildId}.`, "done");
         } else {
+            // Clear all existing global commands first
+            await rest.put(
+                Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
+                    body: [],
+                }
+            );
+            log("Comandos globales eliminados.", "info");
+
+            // Register new commands
+            log("Registrando nuevos comandos de la aplicación...", "info");
             await rest.put(
                 Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
                     body: client.applicationcommandsArray,

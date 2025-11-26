@@ -41,6 +41,9 @@ module.exports = {
     users: {
         developers: ["905124554303762552"],
     },
+    roles: {
+        staff: [],
+    },
     development: { 
         enabled: true,
         guild: "905124554303762552",

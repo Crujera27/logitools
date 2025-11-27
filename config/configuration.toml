@@ -6,7 +6,7 @@
 #        \/    /_____/                                  \/ 
 #                         
 #        
-#    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+#    Copyright (C) 2024 Ángel Crujera (me@crujera.net)
 #
 #    This program is free software: you can redistribute it and/or modify  
 #    it under the terms of the GNU Affero General Public License as published by  
@@ -22,7 +22,7 @@
 #    along with this program. If not, see <https://www.gnu.org/licenses/>.
 #    
 #    GitHub: https://github.com/Crujera27/
-#    Website: https://crujera.galnod.com
+#    Website: https://crujera.net
 
 
 
@@ -45,7 +45,7 @@ html_author="Logikk Media"
 og_title="Logikk's Dashboard"
 og_description="Página web oficial del Discord de Logikk. Creador de contenido de Bee Swarm Simulator. Desde aquí puedes controlar varias acciones."
 og_image="/public/img/logikk.png"
-og_url="https://logikk.galnod.com"
+og_url="https://logikk.crujera.net"
 
 
 [oauth]
@@ -69,6 +69,8 @@ linkedin=""
 handler_prefix = "lt!"
 handler_deploy = true
 modlog_webhook = "https://discord.com/api/webhooks/1242533340125597817/NB96eEONZr4y5ZATFF-2tVpQjgiWyYjlg_GEJ9Ds-NvE6-hMl6M-G_U-0QPpGEdh462O"
+warns_channel = "" # ID del canal donde se enviarán las notificaciones de warns
+evidence_channel = "" # ID del canal donde se enviarán las evidencias (capturas de mensajes)
 [discord_handler_commands]
   prefix = true
   slash = true
@@ -76,8 +78,8 @@ modlog_webhook = "https://discord.com/api/webhooks/1242533340125597817/NB96eEONZ
   message = true
 [discord_development]
 enabled = true
-guild = "905124554303762552" # ID del servidor de desarollo
-developers = "451765453988298764" # IDs de los desarolladores
+guild = "" # ID del servidor de desarollo
+developers = "" # IDs de los desarolladores
 
 [punishments]
 limit_warns_mild="3"
@@ -98,7 +100,7 @@ apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"
 
 
 [ai]
-enabled=false
-assistant_name="" # Se le informa al modelo en el proceso de carga de cuál es su nombre (mensaje enviado como sistema)
-ollama_host=""
-ollama_model="dolphin-mistral" # Default: dolphin-mistral. Puedes consultar una lista completa en https://ollama.com/search
+enabled=true
+assistant_name="LogikkGuard" # Se le informa al modelo en el proceso de carga de cuál es su nombre (mensaje enviado como sistema)
+ollama_host="http://localhost:11434" # URL del servidor Ollama remoto
+ollama_model="llama-guard3" # Default: llama-guard3. Puedes consultar una lista completa en https://ollama.com/search

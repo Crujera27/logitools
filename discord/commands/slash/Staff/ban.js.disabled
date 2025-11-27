@@ -7,7 +7,7 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (me@crujera.net)
 
     This program is free software: you can redistribute it and/or modify  
     it under the terms of the GNU Affero General Public License as published by  
@@ -23,7 +23,7 @@
     along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
-    Website: https://crujera.galnod.com
+    Website: https://crujera.net
 
 */
 
@@ -87,7 +87,7 @@ module.exports = {
             const bannedEmbed = new EmbedBuilder()
                 .setColor()
                 .setTitle('Mensaje de la moderación de Logikk\'s Discord')
-                .setDescription(`Hola, ${targetUser}. Nos ponemos en contacto contigo para informarte sobre las medidas que se han tomado debido a tu conducta.\n\n Sanción impuesta: **Suspensión permanente (Ban)**\nRazón: ${reason}\n\nSi consideras que esta sanción ha sido aplicada incorrectamente o de manera injusta, puedes enviar una solicitud de apelación en [este enlace](https://logikk.galnod.com/support).\n\nUn saludo, **Departamento de Certidumbre y Seguridad de Logikk's Discord**`)
+                .setDescription(`Hola, ${targetUser}. Nos ponemos en contacto contigo para informarte sobre las medidas que se han tomado debido a tu conducta.\n\n Sanción impuesta: **Suspensión permanente (Ban)**\nRazón: ${reason}\n\nSi consideras que esta sanción ha sido aplicada incorrectamente o de manera injusta, puedes enviar una solicitud de apelación en [este enlace](https://logikk.crujera.net/support).\n\nUn saludo, **Departamento de Certidumbre y Seguridad de Logikk's Discord**`)
                 .setTimestamp();
 
             await targetUser.send({ embeds: [bannedEmbed] });

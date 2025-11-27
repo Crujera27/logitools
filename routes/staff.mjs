@@ -7,7 +7,7 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (me@crujera.net)
 
     This program is free software: you can redistribute it and/or modify  
     it under the terms of the GNU Affero General Public License as published by  
@@ -23,7 +23,7 @@
     along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
-    Website: https://crujera.galnod.com
+    Website: https://crujera.net
 
 */
 

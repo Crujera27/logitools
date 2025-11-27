@@ -7,7 +7,7 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (me@crujera.net)
 
     This program is free software: you can redistribute it and/or modify  
     it under the terms of the GNU Affero General Public License as published by  
@@ -23,7 +23,7 @@
     along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
-    Website: https://crujera.galnod.com
+    Website: https://crujera.net
 
 */
 
@@ -51,21 +51,31 @@ async function chat(msg, role){
 }
 
 async function boot(){
-    await chat(`From now on your name is ${appConfig.ai.assistant_name}`, 'system')
-    async function boot(){
-        try {
-            const automodFile = fs.readFileSync('./config/automod.txt', 'utf8');
-            await chat(automodFile, 'system');
-        } catch (error) {
-            log(`❌> Error al intentar cargar el archivo automod.txt: ${error.message}`, 'err');
-            process.exit();
+    try {
+        if (appConfig.ai.assistant_name) {
+            await chat(`From now on your name is ${appConfig.ai.assistant_name}`, 'system');
         }
+        
+        const automodFile = fs.readFileSync('./config/prompts/automod.txt', 'utf8');
+        await chat(automodFile, 'system');
+        log(`✅> Sistema de moderación AI inicializado con el modelo ${appConfig.ai.ollama_model}`, 'done');
+    } catch (error) {
+        log(`❌> Error al intentar cargar el archivo automod.txt: ${error.message}`, 'err');
+        throw error;
     }
-
 }
 
 async function checkmsg(msg) { 
-    await chat(msg, 'assistant')
+    try {
+        const response = await llama.chat({
+            model: appConfig.ai.ollama_model || 'llama-guard3',
+            messages: [{ role: 'user', content: msg }],
+        });
+        return response;
+    } catch (error) {
+        log(`❌> Error al consultar el modelo de IA: ${error.message}`, 'err');
+        throw error;
+    }
 }
 
 export { checkmsg as default, boot }

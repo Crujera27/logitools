@@ -7,7 +7,7 @@
         \/    /_____/                                  \/ 
                          
         
-    Copyright (C) 2024 Ángel Crujera (angel.c@galnod.com)
+    Copyright (C) 2024 Ángel Crujera (me@crujera.net)
 
     This program is free software: you can redistribute it and/or modify  
     it under the terms of the GNU Affero General Public License as published by  
@@ -23,7 +23,7 @@
     along with this program. If not, see <https://www.gnu.org/licenses/>.
     
     GitHub: https://github.com/Crujera27/
-    Website: https://crujera.galnod.com
+    Website: https://crujera.net
 
 */
 const { REST, Routes } = require("discord.js");
@@ -41,7 +41,7 @@ module.exports = async (client) => {
     );
 
     try {
-        log("Cargando comandos de la aplicación...", "info");
+        log("Limpiando comandos de la aplicación existentes...", "info");
 
         const guildId = config.development.guild;
 
@@ -51,6 +51,16 @@ module.exports = async (client) => {
                 return;
             };
 
+            // Clear all existing guild commands first
+            await rest.put(
+                Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId), {
+                    body: [],
+                }
+            );
+            log(`Comandos de la guild ${guildId} eliminados.`, "info");
+
+            // Register new commands
+            log("Registrando nuevos comandos de la aplicación...", "info");
             await rest.put(
                 Routes.applicationGuildCommands(process.env.DISCORD_CLIENT_ID, guildId), {
                     body: client.applicationcommandsArray,
@@ -59,6 +69,16 @@ module.exports = async (client) => {
 
             log(`Comandos de aplicación cargados exitosamente para la guild con ID ${guildId}.`, "done");
         } else {
+            // Clear all existing global commands first
+            await rest.put(
+                Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
+                    body: [],
+                }
+            );
+            log("Comandos globales eliminados.", "info");
+
+            // Register new commands
+            log("Registrando nuevos comandos de la aplicación...", "info");
             await rest.put(
                 Routes.applicationCommands(process.env.DISCORD_CLIENT_ID), {
                     body: client.applicationcommandsArray,

@@ -85,6 +85,22 @@ module.exports = {
             .setMinValue(1)
             .setMaxValue(25)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("test")
+        .setDescription("Probar la conexión con el servidor Ollama y LlamaGuard3")
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("analyze")
+        .setDescription("Analizar un texto manualmente con LlamaGuard3")
+        .addStringOption((option) =>
+          option
+            .setName("text")
+            .setDescription("Texto a analizar")
+            .setRequired(true)
+        )
     ),
 
   run: async (client, interaction) => {
@@ -97,6 +113,12 @@ module.exports = {
           break;
         case "status":
           await handleStatus(interaction);
+          break;
+        case "test":
+          await handleTest(interaction);
+          break;
+        case "analyze":
+          await handleAnalyze(interaction);
           break;
         case "stats":
           await handleStats(interaction);
@@ -150,14 +172,13 @@ async function handleToggle(interaction) {
 
 async function handleStatus(interaction) {
   try {
-    const [settings] = await executeQuery(
+    const settings = await executeQuery(
       "SELECT value FROM settings WHERE name = 'ai_moderation_enabled'"
     );
 
     const isEnabled = settings[0]?.value === "1";
 
-    // Get recent activity stats
-    const [activityStats] = await executeQuery(`
+    const activityStats = await executeQuery(`
       SELECT 
         COUNT(*) as total_checks,
         SUM(CASE WHEN punishment_applied IS NOT NULL THEN 1 ELSE 0 END) as actions_taken,
@@ -199,7 +220,7 @@ async function handleStats(interaction) {
   const days = interaction.options.getInteger("days") || 7;
 
   try {
-    const [stats] = await executeQuery(`
+    const stats = await executeQuery(`
       SELECT 
         COUNT(*) as total_checks,
         SUM(CASE WHEN punishment_applied = 'warn_mild' THEN 1 ELSE 0 END) as warn_mild,
@@ -215,7 +236,7 @@ async function handleStats(interaction) {
       ORDER BY category_count DESC
     `, [days]);
 
-    const [totals] = await executeQuery(`
+    const totals = await executeQuery(`
       SELECT 
         COUNT(*) as total_checks,
         SUM(CASE WHEN punishment_applied IS NOT NULL THEN 1 ELSE 0 END) as total_actions,
@@ -282,7 +303,7 @@ async function handleLogs(interaction) {
   params.push(limit);
 
   try {
-    const [logs] = await executeQuery(query, params);
+    const logs = await executeQuery(query, params);
 
     if (logs.length === 0) {
       await interaction.reply({
@@ -316,6 +337,108 @@ async function handleLogs(interaction) {
     await interaction.reply({
       content: "Error al obtener los logs de moderación por IA.",
       ephemeral: true,
+    });
+  }
+}
+
+async function handleTest(interaction) {
+  await interaction.deferReply({ ephemeral: true });
+
+  try {
+    const { testConnection } = await import("../../../../tools/ollama.mjs");
+    const result = await testConnection();
+
+    const embed = new EmbedBuilder()
+      .setTitle("Test de Conexión Ollama")
+      .setColor(result.connected ? "#00ff00" : "#ff0000")
+      .addFields(
+        {
+          name: "Estado",
+          value: result.connected ? "✅ Conectado" : "❌ Desconectado",
+          inline: true,
+        },
+        {
+          name: "Modelo",
+          value: result.model || "N/A",
+          inline: true,
+        }
+      )
+      .setTimestamp();
+
+    if (!result.connected) {
+      embed.addFields({
+        name: "Error",
+        value: `\`\`\`${result.error || "Error desconocido"}\`\`\``,
+        inline: false,
+      });
+    }
+
+    await interaction.editReply({ embeds: [embed] });
+  } catch (error) {
+    await interaction.editReply({
+      content: `Error al probar la conexión: ${error.message}`,
+    });
+  }
+}
+
+const CATEGORY_DESCRIPTIONS = {
+  'S1': 'Crímenes Violentos',
+  'S2': 'Crímenes No Violentos',
+  'S3': 'Crímenes Sexuales',
+  'S4': 'Explotación Infantil',
+  'S5': 'Difamación',
+  'S6': 'Consejos Especializados',
+  'S7': 'Privacidad',
+  'S8': 'Propiedad Intelectual',
+  'S9': 'Armas Indiscriminadas',
+  'S10': 'Discurso de Odio',
+  'S11': 'Autolesión/Suicidio',
+  'S12': 'Contenido Sexual',
+  'S13': 'Desinformación Electoral',
+};
+
+async function handleAnalyze(interaction) {
+  await interaction.deferReply({ ephemeral: true });
+
+  const text = interaction.options.getString("text");
+
+  try {
+    const { classifyContent } = await import("../../../../tools/ollama.mjs");
+    const result = await classifyContent([{ role: "user", content: text }]);
+
+    const embed = new EmbedBuilder()
+      .setTitle("🔍 Análisis de Contenido")
+      .setColor(result.safe ? "#00ff00" : "#ff0000")
+      .addFields(
+        {
+          name: "Texto analizado",
+          value: `\`\`\`${text.substring(0, 200)}${text.length > 200 ? "..." : ""}\`\`\``,
+          inline: false,
+        },
+        {
+          name: "Resultado",
+          value: result.safe ? "✅ Seguro" : "⚠️ Inseguro",
+          inline: true,
+        },
+        {
+          name: "Categoría",
+          value: result.category 
+            ? `${result.category}: ${CATEGORY_DESCRIPTIONS[result.category] || 'Desconocida'}`
+            : "N/A",
+          inline: true,
+        },
+        {
+          name: "Respuesta raw",
+          value: `\`\`\`${result.raw || "Sin respuesta"}\`\`\``,
+          inline: false,
+        }
+      )
+      .setTimestamp();
+
+    await interaction.editReply({ embeds: [embed] });
+  } catch (error) {
+    await interaction.editReply({
+      content: `Error al analizar el contenido: ${error.message}`,
     });
   }
 }

@@ -101,6 +101,10 @@ apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"
 
 [ai]
 enabled=true
-assistant_name="LogikkGuard" # Se le informa al modelo en el proceso de carga de cuál es su nombre (mensaje enviado como sistema)
-ollama_host="http://localhost:11434" # URL del servidor Ollama remoto
-ollama_model="llama-guard3" # Default: llama-guard3. Puedes consultar una lista completa en https://ollama.com/search
+assistant_name="LogikkGuard"
+ollama_host="http://localhost:11434"
+ollama_model="llama-guard3"
+min_message_length=10
+context_messages=5
+context_time_window=300000
+ban_appeal_link="https://dyno.gg/form/bcbd876e"

@@ -30,6 +30,7 @@
 import fs from 'fs';
 import log  from './log.mjs';
 import { Ollama }  from 'ollama';
+
 try {
     const parseConfigModule = (
       await import("./parseConfig.mjs")
@@ -40,6 +41,7 @@ try {
     log(`❌> Error al intentar cargar la configuración: ${error.message}`, 'err');
     process.exit();
 }
+
 const llama = new Ollama({ host: appConfig.ai.ollama_host || 'http://127.0.0.1:11434'});
 
 async function chat(msg, role){
@@ -65,11 +67,17 @@ async function boot(){
     }
 }
 
-async function checkmsg(msg) { 
+async function checkmsg(msg, contextMessages = []) { 
     try {
+        const messages = [
+            ...contextMessages.map(m => ({ role: 'user', content: m })),
+            { role: 'user', content: msg }
+        ];
+        
         const response = await llama.chat({
             model: appConfig.ai.ollama_model || 'llama-guard3',
-            messages: [{ role: 'user', content: msg }],
+            messages: messages.length > 1 ? messages : [{ role: 'user', content: msg }],
+            stream: false
         });
         return response;
     } catch (error) {
@@ -78,4 +86,40 @@ async function checkmsg(msg) {
     }
 }
 
-export { checkmsg as default, boot }
+async function classifyContent(messages) {
+    try {
+        const response = await llama.chat({
+            model: appConfig.ai.ollama_model || 'llama-guard3',
+            messages: messages,
+            stream: false
+        });
+        
+        const content = response.message?.content?.trim() || '';
+        const isUnsafe = content.toLowerCase().startsWith('unsafe');
+        const categoryMatch = content.match(/S\d{1,2}/i);
+        
+        return {
+            safe: !isUnsafe,
+            category: categoryMatch ? categoryMatch[0].toUpperCase() : null,
+            raw: content
+        };
+    } catch (error) {
+        log(`❌> Error en clasificación de contenido: ${error.message}`, 'err');
+        return { safe: true, category: null, raw: '', error: error.message };
+    }
+}
+
+async function testConnection() {
+    try {
+        const response = await llama.chat({
+            model: appConfig.ai.ollama_model || 'llama-guard3',
+            messages: [{ role: 'user', content: 'Hello' }],
+            stream: false
+        });
+        return { connected: true, model: appConfig.ai.ollama_model };
+    } catch (error) {
+        return { connected: false, error: error.message };
+    }
+}
+
+export { checkmsg as default, boot, classifyContent, testConnection }

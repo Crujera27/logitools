@@ -29,6 +29,8 @@
 
 const { ModalSubmitInteraction, EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const ExtendedClient = require('../../class/ExtendedClient.js');
+const https = require('https');
+const http = require('http');
 
 module.exports = {
     customId: 'quick-warn-modal',
@@ -116,6 +118,8 @@ module.exports = {
 
             const messageScreenshot = await generateMessageScreenshot(client, pendingWarn);
 
+            const downloadedAttachments = await downloadAttachments(pendingWarn.attachments);
+
             const sourceChannel = await client.channels.fetch(pendingWarn.channelId);
             const channelMention = sourceChannel ? `<#${sourceChannel.id}>` : '#unknown';
 
@@ -137,6 +141,16 @@ module.exports = {
                         name: 'evidence.png' 
                     });
                     files.push(attachment);
+                }
+
+                for (let i = 0; i < downloadedAttachments.length; i++) {
+                    const att = downloadedAttachments[i];
+                    if (att.buffer) {
+                        const attachment = new AttachmentBuilder(att.buffer, { 
+                            name: att.filename || `attachment_${i + 1}${att.extension || ''}`
+                        });
+                        files.push(attachment);
+                    }
                 }
 
                 await evidenceChannel.send({ content: evidenceText, files });
@@ -493,4 +507,72 @@ async function checkWarnLimits(tools, appConfig, targetUser, interaction) {
         
         await tools.applyPunishment(targetUser.id, 'ban', 'Límite de warns graves superados', interaction.user.id);
     }
+}
+
+/**
+ * Downloads attachments from URLs and returns them as buffers
+ * @param {string[]} attachmentUrls - Array of attachment URLs
+ * @returns {Promise<Array<{buffer: Buffer, filename: string, extension: string}>>}
+ */
+async function downloadAttachments(attachmentUrls) {
+    if (!attachmentUrls || attachmentUrls.length === 0) return [];
+
+    const downloadedFiles = [];
+
+    for (const url of attachmentUrls) {
+        try {
+            const buffer = await downloadFile(url);
+            if (buffer) {
+                const urlObj = new URL(url);
+                const pathname = urlObj.pathname;
+                const filename = pathname.split('/').pop() || 'attachment';
+                const extension = filename.includes('.') ? '.' + filename.split('.').pop() : '';
+
+                downloadedFiles.push({
+                    buffer,
+                    filename,
+                    extension
+                });
+            }
+        } catch (error) {
+            console.error(`Error downloading attachment from ${url}:`, error.message);
+        }
+    }
+
+    return downloadedFiles;
+}
+
+/**
+ * Downloads a file from a URL and returns it as a buffer
+ * @param {string} url - The URL to download from
+ * @returns {Promise<Buffer|null>}
+ */
+function downloadFile(url) {
+    return new Promise((resolve, reject) => {
+        const protocol = url.startsWith('https') ? https : http;
+        
+        const request = protocol.get(url, { timeout: 10000 }, (response) => {
+            // Handle redirects
+            if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+                downloadFile(response.headers.location).then(resolve).catch(reject);
+                return;
+            }
+
+            if (response.statusCode !== 200) {
+                reject(new Error(`Failed to download: ${response.statusCode}`));
+                return;
+            }
+
+            const chunks = [];
+            response.on('data', (chunk) => chunks.push(chunk));
+            response.on('end', () => resolve(Buffer.concat(chunks)));
+            response.on('error', reject);
+        });
+
+        request.on('error', reject);
+        request.on('timeout', () => {
+            request.destroy();
+            reject(new Error('Request timed out'));
+        });
+    });
 }

@@ -91,3 +91,38 @@ INSERT IGNORE INTO filter_allowlist (domain) VALUES
 
 -- Update existing settings if they exist
 UPDATE settings SET value = '1' WHERE name = 'ai_moderation_enabled';
+
+CREATE TABLE IF NOT EXISTS ai_trigger_patterns (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category VARCHAR(50) NOT NULL,
+    pattern VARCHAR(1000) NOT NULL,
+    description VARCHAR(255),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_category (category),
+    INDEX idx_is_active (is_active)
+);
+
+INSERT IGNORE INTO ai_trigger_patterns (category, pattern, description) VALUES
+('violence', '\\b(kill|murder|attack|bomb|shoot|stab|hurt|harm|die|death|execute|assassinate|slaughter|massacre|torture|strangle|suffocate|decapitate|dismember)\\b', 'Palabras relacionadas con violencia física'),
+('violence_threats', '\\b(threat|threaten|gonna kill|will kill|i will hurt|going to hurt|beat you|fight you|destroy you|end you)\\b', 'Amenazas de violencia'),
+('hate_speech', '\\b(hate|racist|sexist|nazi|n[i1]gg[ae3]r?|f[a4]g+[o0]?t?|retard|spic|chink|wetback|beaner|kike|tranny|dyke)\\b', 'Insultos y discurso de odio'),
+('discrimination', '\\b(all (women|men|blacks|whites|jews|muslims|gays) (are|should)|go back to|deport all|gas the|exterminate)\\b', 'Discriminación y generalizaciones'),
+('nsfw_explicit', '\\b(nude|nudes|porn|porno|pornography|xxx|hentai|rule34|onlyfans leak)\\b', 'Contenido explícito NSFW'),
+('nsfw_sexual', '\\b(sex|dick|cock|pussy|penis|vagina|blowjob|handjob|cumshot|creampie|gangbang|orgy|anal|masturbat)\\b', 'Términos sexuales explícitos'),
+('nsfw_solicitation', '\\b(send nudes|show me your|wanna see my|trade pics|exchange photos|dm me pics)\\b', 'Solicitud de contenido NSFW'),
+('hacking', '\\b(hack|hacker|hacking|crack|cracking|exploit|ddos|dos attack|dox|doxxing|leak|leaked|breach|breached|malware|trojan|keylogger|ransomware|phishing)\\b', 'Hacking y ciberseguridad'),
+('scam_fraud', '\\b(scam|scammer|fraud|fraudulent|steal|robbery|rob you|free nitro|gift card|claim your prize|you won|inheritance|nigerian prince|crypto giveaway)\\b', 'Estafas y fraude'),
+('self_harm', '\\b(suicide|suicidal|kill myself|end my life|want to die|selfharm|self-harm|cutting myself|hurt myself|overdose|hang myself|jump off)\\b', 'Autolesión y suicidio'),
+('drugs_hard', '\\b(cocaine|heroin|meth|methamphetamine|fentanyl|crack|lsd|acid|ecstasy|mdma|ketamine|pcp|dmt)\\b', 'Drogas duras'),
+('drugs_soft', '\\b(weed|marijuana|cannabis|420|blunt|joint|bong|edibles|thc|cbd|stoner)\\b', 'Drogas blandas'),
+('drugs_dealing', '\\b(selling|sell you|buy some|dealer|plug|connect|score some|where to get|hook you up)\\b', 'Venta de drogas'),
+('weapons', '\\b(gun|firearm|rifle|pistol|shotgun|ak-?47|ar-?15|ammunition|ammo|bomb|explosive|grenade|molotov|how to make a)\\b', 'Armas y explosivos'),
+('personal_info', '\\b(ssn|social security|credit card|card number|cvv|bank account|routing number|password|login credentials|home address|where do you live|your address)\\b', 'Información personal sensible'),
+('doxxing', '\\b(dox|doxx|expose|real name is|lives at|phone number is|found your|leaked your)\\b', 'Doxxing e información privada'),
+('spam_promo', '\\b(free discord nitro|claim now|limited time|act fast|click here|bit\\.ly|tinyurl|discord\\.gift|steamnity|stearncommunity)\\b', 'Spam y promociones falsas'),
+('raid_related', '\\b(raid this|lets raid|nuke the server|mass report|spam this|flood the chat|crash the)\\b', 'Raids y ataques coordinados'),
+('grooming', '\\b(how old are you|are you alone|dont tell your parents|our secret|between us|send me a pic|video call me|meet up|come over)\\b', 'Posible grooming'),
+('extremism', '\\b(jihad|infidel|crusade|race war|white power|black power|antifa|proud boys|boogaloo|accelerat)\\b', 'Extremismo y radicalización'),
+('misinformation', '\\b(fake news|plandemic|5g causes|microchip|bill gates|deep state|qanon|stolen election|hoax|wake up sheeple)\\b', 'Desinformación');

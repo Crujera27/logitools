@@ -417,7 +417,7 @@ async function handleAnalyze(interaction) {
         },
         {
           name: "Resultado",
-          value: result.safe ? "✅ Seguro" : "⚠️ Inseguro",
+          value: result.safe ? "Seguro" : "Inseguro",
           inline: true,
         },
         {

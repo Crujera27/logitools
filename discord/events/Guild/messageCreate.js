@@ -39,9 +39,47 @@ const AI_CACHE_TTL = 60 * 1000;
 const MIN_MESSAGE_LENGTH = 5;
 const CONTEXT_MESSAGE_COUNT = 10;
 const QUEUE_PROCESS_INTERVAL = 500;
+const ANONYMIZE_AFTER_DAYS = 30;
+const ANONYMIZE_INTERVAL = 6 * 60 * 60 * 1000;
+const OLLAMA_MAX_RETRIES = 3;
+const OLLAMA_INITIAL_DELAY = 1000;
+const OLLAMA_TIMEOUT = 30000;
 
 const moderationQueue = [];
 let isProcessingQueue = false;
+let lastAnonymize = 0;
+
+async function anonymizeOldLogs() {
+    if (Date.now() - lastAnonymize < ANONYMIZE_INTERVAL) return;
+    lastAnonymize = Date.now();
+    
+    try {
+        const parseConfigModule = (await import("../../../tools/parseConfig.mjs")).default;
+        const parseConfig = await parseConfigModule;
+        const appConfig = await parseConfig();
+        
+        const anonymizeDays = appConfig.ai?.anonymize_after_days ?? ANONYMIZE_AFTER_DAYS;
+        if (anonymizeDays <= 0) return;
+        
+        const executeQuery = require("../../../tools/mysql.mjs").default;
+        
+        // Anonimizar registros antiguos: eliminar contenido sensible pero conservar estadísticas
+        await executeQuery(`
+            UPDATE ai_moderation_logs 
+            SET 
+                message_content = '[ANONIMIZADO]',
+                context_messages = '[]',
+                user_id = CONCAT('anon_', MD5(user_id))
+            WHERE 
+                created_at < DATE_SUB(NOW(), INTERVAL ? DAY)
+                AND message_content != '[ANONIMIZADO]'
+        `, [anonymizeDays]);
+        
+        log(`[AI-Mod] Logs antiguos anonimizados (>${anonymizeDays} días)`, 'info');
+    } catch (error) {
+        log(`Error anonymizing AI moderation logs: ${error.message}`, 'err');
+    }
+}
 
 function addToModerationQueue(client, message) {
     moderationQueue.push({ client, message, addedAt: Date.now() });
@@ -78,36 +116,37 @@ async function processQueue() {
 }
 
 const CATEGORY_PUNISHMENT_MAP = {
-    'S1': 'ban',
-    'S2': 'warn_severe',
+    'S1': 'warn_severe',
+    'S2': null,
     'S3': 'ban',
     'S4': 'ban',
     'S5': 'warn_severe',
-    'S6': 'warn_middle',
+    'S6': null,
     'S7': 'warn_severe',
     'S8': 'warn_middle',
     'S9': 'ban',
     'S10': 'warn_severe',
     'S11': 'warn_severe',
     'S12': 'warn_middle',
-    'S13': 'warn_middle',
+    'S13': null,
 };
 
 const CATEGORY_DESCRIPTIONS = {
-    'S1': 'Crímenes Violentos',
-    'S2': 'Crímenes No Violentos',
-    'S3': 'Crímenes Sexuales',
-    'S4': 'Explotación Infantil',
-    'S5': 'Difamación',
-    'S6': 'Consejos Especializados',
-    'S7': 'Privacidad',
-    'S8': 'Propiedad Intelectual',
-    'S9': 'Armas Indiscriminadas',
-    'S10': 'Discurso de Odio',
-    'S11': 'Autolesión/Suicidio',
-    'S12': 'Contenido Sexual',
-    'S13': 'Desinformación Electoral',
+    'S1': 'Crear / promocionar contenido de naturaleza violenta',
+    'S2': 'Crear / promocionar contenido de crímenes no violentos',
+    'S3': 'Crear / promocionar crímenes de carácter sexual',
+    'S4': 'Crear / promocionar contenido en contra de los derechos humanos',
+    'S5': 'Crear / promocionar contenido de naturaleza difamatoria',
+    'S6': 'Crear / promocionar consejos especializados no seguros',
+    'S7': 'Crear / promocionar la divulgación de información privada',
+    'S8': 'Crear / promocionar el infringimiento a la Propiedad Intelectual',
+    'S9': 'Crear / promocionar armas indiscriminadas',
+    'S10': 'Crear / promocionar discurso de odio',
+    'S11': 'Crear / promocionar autolesión o suicidio',
+    'S12': 'Crear / promocionar contenido sexual',
+    'S13': 'Crear / promocionar desinformación electoral',
 };
+
 
 module.exports = {
     event: "messageCreate",
@@ -237,53 +276,92 @@ module.exports = {
 
 async function processAIModeration(client, message) {
     const executeQuery = require("../../../tools/mysql.mjs").default;
+    const parseConfigModule = (await import("../../../tools/parseConfig.mjs")).default;
+    const parseConfig = await parseConfigModule;
+    const appConfig = await parseConfig();
+    const verbose = appConfig.ai?.verbose_logging || false;
+    const ignoredCategories = appConfig.ai?.ignored_categories || [];
+    
+    anonymizeOldLogs();
     
     const settings = await executeQuery("SELECT value FROM settings WHERE name = 'ai_moderation_enabled'");
     if (!settings?.[0] || settings[0].value !== '1') return;
 
-    if (message.member?.permissions.has(PermissionFlagsBits.Administrator)) return;
+    if (message.member?.permissions.has(PermissionFlagsBits.Administrator)) {
+        if (verbose) log(`[AI-Mod] Skipping admin: ${message.author.tag}`, 'info');
+        return;
+    }
     
     const bypassRoles = await executeQuery("SELECT role_id FROM moderation_bypass WHERE is_active = 1");
     const bypassRoleIds = bypassRoles.map(r => r.role_id);
-    if (message.member?.roles.cache.some(role => bypassRoleIds.includes(role.id))) return;
+    if (message.member?.roles.cache.some(role => bypassRoleIds.includes(role.id))) {
+        if (verbose) log(`[AI-Mod] Skipping bypassed role: ${message.author.tag}`, 'info');
+        return;
+    }
 
-    if (message.content.length < MIN_MESSAGE_LENGTH) return;
+    if (message.content.length < MIN_MESSAGE_LENGTH) {
+        if (verbose) log(`[AI-Mod] Skipping short message from ${message.author.tag}: ${message.content.length} chars`, 'info');
+        return;
+    }
 
-    const initialResult = await quickAnalyze(message);
-    if (!initialResult || !initialResult.unsafe) return;
+    if (verbose) log(`[AI-Mod] Analyzing message from ${message.author.tag} in #${message.channel.name}`, 'info');
+    
+    const initialResult = await quickAnalyze(message, verbose);
+    if (!initialResult || !initialResult.unsafe) {
+        if (verbose) log(`[AI-Mod] Initial scan SAFE for ${message.author.tag}`, 'info');
+        return;
+    }
+    
+    // Verificar si la categoría está en la lista de ignoradas
+    if (initialResult.category && ignoredCategories.includes(initialResult.category)) {
+        if (verbose) log(`[AI-Mod] Category ${initialResult.category} is ignored, skipping ${message.author.tag}`, 'info');
+        return;
+    }
+    
+    if (verbose) log(`[AI-Mod] Initial scan UNSAFE (${initialResult.category}) for ${message.author.tag}, fetching context...`, 'warn');
     
     const contextMessages = await fetchUserMessageHistory(message, CONTEXT_MESSAGE_COUNT);
-    const finalResult = await analyzeWithContext(message, contextMessages);
-    if (!finalResult) return;
+    if (verbose) log(`[AI-Mod] Fetched ${contextMessages.length} context messages for ${message.author.tag}`, 'info');
+    
+    const finalResult = await analyzeWithContext(message, contextMessages, verbose);
+    if (!finalResult || !finalResult.unsafe || !finalResult.category) {
+        if (verbose) log(`[AI-Mod] Context analysis SAFE for ${message.author.tag}`, 'info');
+        return;
+    }
+    
+    // Verificar de nuevo después del análisis con contexto
+    if (ignoredCategories.includes(finalResult.category)) {
+        if (verbose) log(`[AI-Mod] Category ${finalResult.category} is ignored after context analysis, skipping ${message.author.tag}`, 'info');
+        return;
+    }
+    
+    if (verbose) log(`[AI-Mod] CONFIRMED UNSAFE: ${message.author.tag} - Category: ${finalResult.category} (${CATEGORY_DESCRIPTIONS[finalResult.category]})`, 'warn');
     
     await logAIModerationResult(message, finalResult, contextMessages);
-    
-    if (finalResult.unsafe && finalResult.category) {
-        await applyAIModerationAction(client, message, finalResult);
-    }
+    await applyAIModerationAction(client, message, finalResult, verbose);
 }
 
-async function quickAnalyze(message) {
-    try {
-        const { Ollama } = await import('ollama');
-        
-        const parseConfigModule = (await import("../../../tools/parseConfig.mjs")).default;
-        const parseConfig = await parseConfigModule;
-        const appConfig = await parseConfig();
-        
-        const ollama = new Ollama({ host: appConfig.ai.ollama_host || 'http://127.0.0.1:11434' });
-
-        const response = await ollama.chat({
-            model: appConfig.ai.ollama_model || 'llama-guard3',
-            messages: [{ role: 'user', content: message.content }],
-            stream: false
-        });
-        
-        return parseGuardResponse(response.message?.content || '');
-    } catch (error) {
-        log(`Quick analysis error: ${error.message}`, 'err');
+async function quickAnalyze(message, verbose = false) {
+    const parseConfigModule = (await import("../../../tools/parseConfig.mjs")).default;
+    const parseConfig = await parseConfigModule;
+    const appConfig = await parseConfig();
+    
+    const chatRequest = {
+        model: appConfig.ai.ollama_model || 'llama-guard3',
+        messages: [{ role: 'user', content: message.content }],
+        stream: false
+    };
+    
+    const startTime = Date.now();
+    const response = await executeOllamaWithRetry(chatRequest, appConfig, verbose);
+    
+    if (!response) {
         return null;
     }
+    
+    if (verbose) log(`[AI-Mod] Quick analysis completed in ${Date.now() - startTime}ms`, 'info');
+    
+    return parseGuardResponse(response.message?.content || '');
 }
 
 async function fetchUserMessageHistory(message, count) {
@@ -305,45 +383,93 @@ async function fetchUserMessageHistory(message, count) {
     }
 }
 
-async function analyzeWithContext(message, contextMessages) {
+async function analyzeWithContext(message, contextMessages, verbose = false) {
     const cacheKey = `${message.author.id}:${message.content.substring(0, 100)}:ctx`;
     const cached = aiModerationCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < AI_CACHE_TTL) {
+        if (verbose) log(`[AI-Mod] Using cached result for ${message.author.tag}`, 'info');
         return cached.result;
     }
 
-    try {
-        const { Ollama } = await import('ollama');
-        
-        const parseConfigModule = (await import("../../../tools/parseConfig.mjs")).default;
-        const parseConfig = await parseConfigModule;
-        const appConfig = await parseConfig();
-        
-        const ollama = new Ollama({ host: appConfig.ai.ollama_host || 'http://127.0.0.1:11434' });
-        
-        const messages = [
-            ...contextMessages.map(m => ({
-                role: 'user',
-                content: m.content
-            })),
-            { role: 'user', content: message.content }
-        ];
+    const parseConfigModule = (await import("../../../tools/parseConfig.mjs")).default;
+    const parseConfig = await parseConfigModule;
+    const appConfig = await parseConfig();
+    
+    const messages = [
+        ...contextMessages.map(m => ({
+            role: 'user',
+            content: m.content
+        })),
+        { role: 'user', content: message.content }
+    ];
 
-        const response = await ollama.chat({
-            model: appConfig.ai.ollama_model || 'llama-guard3',
-            messages: messages,
-            stream: false
-        });
-        
-        const result = parseGuardResponse(response.message?.content || '');
-        
-        aiModerationCache.set(cacheKey, { result, timestamp: Date.now() });
-        
-        return result;
-    } catch (error) {
-        log(`Context analysis error: ${error.message}`, 'err');
+    const chatRequest = {
+        model: appConfig.ai.ollama_model || 'llama-guard3',
+        messages: messages,
+        stream: false
+    };
+
+    const startTime = Date.now();
+    const response = await executeOllamaWithRetry(chatRequest, appConfig, verbose);
+    
+    if (!response) {
         return null;
     }
+    
+    if (verbose) log(`[AI-Mod] Context analysis completed in ${Date.now() - startTime}ms (${messages.length} messages)`, 'info');
+    
+    const result = parseGuardResponse(response.message?.content || '');
+    
+    aiModerationCache.set(cacheKey, { result, timestamp: Date.now() });
+    
+    return result;
+}
+
+async function executeOllamaWithRetry(chatRequest, appConfig, verbose = false) {
+    const { Ollama } = await import('ollama');
+    
+    let lastError = null;
+    
+    for (let attempt = 1; attempt <= OLLAMA_MAX_RETRIES; attempt++) {
+        try {
+            const ollama = new Ollama({ host: appConfig.ai.ollama_host || 'http://127.0.0.1:11434' });
+            
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => reject(new Error('Timeout: Ollama no respondió a tiempo')), OLLAMA_TIMEOUT);
+            });
+            
+            const chatPromise = ollama.chat(chatRequest);
+            
+            const response = await Promise.race([chatPromise, timeoutPromise]);
+            
+            return response;
+        } catch (error) {
+            lastError = error;
+            
+            const isRetryable = 
+                error.message.includes('ECONNREFUSED') ||
+                error.message.includes('ETIMEDOUT') ||
+                error.message.includes('ENOTFOUND') ||
+                error.message.includes('Timeout') ||
+                error.message.includes('socket hang up') ||
+                error.message.includes('network') ||
+                error.code === 'ECONNRESET';
+            
+            if (!isRetryable) {
+                log(`[AI-Mod] Error no recuperable de Ollama: ${error.message}`, 'err');
+                return null;
+            }
+            
+            if (attempt < OLLAMA_MAX_RETRIES) {
+                const delay = OLLAMA_INITIAL_DELAY * Math.pow(2, attempt - 1);
+                if (verbose) log(`[AI-Mod] Intento ${attempt}/${OLLAMA_MAX_RETRIES} fallido, reintentando en ${delay}ms...`, 'warn');
+                await new Promise(resolve => setTimeout(resolve, delay));
+            }
+        }
+    }
+    
+    log(`[AI-Mod] Ollama no disponible después de ${OLLAMA_MAX_RETRIES} intentos: ${lastError?.message}`, 'err');
+    return null;
 }
 
 function parseGuardResponse(response) {
@@ -387,7 +513,7 @@ async function logAIModerationResult(message, result, contextMessages = []) {
     }
 }
 
-async function applyAIModerationAction(client, message, result) {
+async function applyAIModerationAction(client, message, result, verbose = false) {
     const punishment = CATEGORY_PUNISHMENT_MAP[result.category];
     if (!punishment) return;
 
@@ -395,29 +521,190 @@ async function applyAIModerationAction(client, message, result) {
         const parseConfigModule = (await import("../../../tools/parseConfig.mjs")).default;
         const parseConfig = await parseConfigModule;
         const appConfig = await parseConfig();
+        const executeQuery = require("../../../tools/mysql.mjs").default;
 
-        const { applyPunishment } = await import("../../../tools/punishment.mjs");
+        const { applyPunishment, getUserVigentPunishments, updateExpirationStatusByUserAndType } = await import("../../../tools/punishment.mjs");
         
         const reason = `[LOGITOOLS -AI_AUTOMOD] ${CATEGORY_DESCRIPTIONS[result.category] || 'Contenido detectado como inseguro'}`;
+        
+        if (verbose) log(`[AI-Mod] Applying ${punishment} to ${message.author.tag} for ${result.category}`, 'warn');
+        
+        let limitAction = null;
         
         if (punishment === 'ban') {
             await sendModerationNotification(message, result, punishment, appConfig);
             await message.member?.ban({ reason, deleteMessageSeconds: 86400 });
+            if (verbose) log(`[AI-Mod] Banned ${message.author.tag}`, 'warn');
+            await sendEvidenceLog(client, message, result, punishment, appConfig);
+            await sendWarnsChannelNotification(client, message, result, punishment, appConfig);
         } else {
             await applyPunishment(message.author.id, punishment, reason, 'AI-Moderation');
             await sendModerationNotification(message, result, punishment, appConfig);
+            await sendEvidenceLog(client, message, result, punishment, appConfig);
+            await sendWarnsChannelNotification(client, message, result, punishment, appConfig);
+            
+            limitAction = await checkWarnLimitAndApply(client, message, punishment, result, appConfig, verbose);
+            
+            if (verbose) log(`[AI-Mod] Applied ${punishment} to ${message.author.tag}`, 'warn');
         }
-
-        await sendEvidenceLog(client, message, result, punishment, appConfig);
-        await sendWarnsChannelNotification(client, message, result, punishment, appConfig);
+        
+        if (verbose) log(`[AI-Mod] Logged evidence and notification for ${message.author.tag}`, 'info');
         
         try {
             await message.delete();
+            if (verbose) log(`[AI-Mod] Deleted message from ${message.author.tag}`, 'info');
         } catch {}
         
     } catch (error) {
-        log(`Error applying AI moderation action: ${error.message}`, 'err');
+        log(`[AI-Mod] Error applying action: ${error.message}`, 'err');
     }
+}
+
+async function checkWarnLimitAndApply(client, message, warnType, result, appConfig, verbose = false) {
+    try {
+        const executeQuery = require("../../../tools/mysql.mjs").default;
+        const { applyPunishment, updateExpirationStatusByUserAndType } = await import("../../../tools/punishment.mjs");
+        
+        const warnCounts = await executeQuery(`
+            SELECT punishment_type, COUNT(*) as count 
+            FROM punishment_history 
+            WHERE discord_id = ? AND expired = 0 AND punishment_type IN ('warn_mild', 'warn_middle', 'warn_severe')
+            GROUP BY punishment_type
+        `, [message.author.id]);
+        
+        const counts = {
+            warn_mild: 0,
+            warn_middle: 0,
+            warn_severe: 0
+        };
+        
+        warnCounts.forEach(row => {
+            counts[row.punishment_type] = row.count;
+        });
+        
+        const limits = {
+            warn_mild: parseInt(appConfig.punishments?.limit_warns_mild) || 3,
+            warn_middle: parseInt(appConfig.punishments?.limit_warns_milddle) || 3,
+            warn_severe: parseInt(appConfig.punishments?.limit_warns_severe) || 3
+        };
+        
+        const punishmentActions = {
+            warn_mild: appConfig.punishments?.punishment_limit_warn_mild || 'timeout',
+            warn_middle: appConfig.punishments?.punishment_limit_warn_milddle || 'timeout',
+            warn_severe: appConfig.punishments?.punishment_limit_warn_severe || 'ban'
+        };
+        
+        const durations = {
+            warn_mild: appConfig.punishments?.punishment_limit_warn_mild_duration || '3d',
+            warn_middle: appConfig.punishments?.punishment_limit_warn_milddle_duration || '7d',
+            warn_severe: null
+        };
+        
+        const resetAndUpgrade = appConfig.punishments?.reset_cnt_add_nextlvl_warn_on_limit !== false;
+        
+        if (verbose) log(`[AI-Mod] Warn counts for ${message.author.tag}: mild=${counts.warn_mild}, middle=${counts.warn_middle}, severe=${counts.warn_severe}`, 'info');
+        
+        for (const type of ['warn_severe', 'warn_middle', 'warn_mild']) {
+            if (counts[type] >= limits[type]) {
+                const action = punishmentActions[type];
+                const duration = durations[type];
+                
+                if (verbose) log(`[AI-Mod] Limit exceeded for ${type} (${counts[type]}/${limits[type]}), applying ${action}`, 'warn');
+                
+                if (action === 'ban') {
+                    const banReason = `[LOGITOOLS -AI_AUTOMOD] Límite de warns ${type} superado`;
+                    
+                    const limitResult = { 
+                        ...result, 
+                        category: result.category,
+                        limitExceeded: true,
+                        limitType: type
+                    };
+                    
+                    await sendLimitExceededNotification(message, limitResult, 'ban', type, appConfig);
+                    await sendEvidenceLog(client, message, limitResult, 'ban', appConfig);
+                    await sendWarnsChannelNotification(client, message, limitResult, 'ban', appConfig);
+                    
+                    await message.member?.ban({ reason: banReason, deleteMessageSeconds: 86400 });
+                    if (verbose) log(`[AI-Mod] Banned ${message.author.tag} for exceeding ${type} limit`, 'warn');
+                    return { appliedPunishment: 'ban', warnType: type };
+                } else if (action === 'timeout') {
+                    const ms = parseDuration(duration);
+                    if (ms && message.member?.moderatable) {
+                        await message.member.timeout(ms, `[LOGITOOLS -AI_AUTOMOD] Límite de warns ${type} superado`);
+                        if (verbose) log(`[AI-Mod] Timed out ${message.author.tag} for ${duration}`, 'warn');
+                    }
+                }
+                
+                if (resetAndUpgrade && type !== 'warn_severe') {
+                    await updateExpirationStatusByUserAndType(message.author.id, type);
+                    const nextLevel = type === 'warn_mild' ? 'warn_middle' : 'warn_severe';
+                    await applyPunishment(message.author.id, nextLevel, `[LOGITOOLS -AI_AUTOMOD] Upgrade por superar límite de ${type}`, 'AI-Moderation');
+                    if (verbose) log(`[AI-Mod] Upgraded ${message.author.tag} from ${type} to ${nextLevel}`, 'warn');
+                } else {
+                    await updateExpirationStatusByUserAndType(message.author.id, type);
+                }
+                
+                return { appliedPunishment: action, warnType: type };
+            }
+        }
+        
+        return null;
+    } catch (error) {
+        log(`[AI-Mod] Error checking warn limits: ${error.message}`, 'err');
+        return null;
+    }
+}
+
+async function sendLimitExceededNotification(message, result, punishment, limitType, appConfig) {
+    try {
+        const warnTypeLabels = {
+            'warn_mild': 'warns leves',
+            'warn_middle': 'warns medios',
+            'warn_severe': 'warns graves'
+        };
+
+        const appealInfo = `Si considera que esta sanción ha sido aplicada de forma incorrecta o injusta, puede apelar en:\n${appConfig.ai?.ban_appeal_link || 'https://dyno.gg/form/bcbd876e'}`;
+
+        const embed = new EmbedBuilder()
+            .setColor('#ff0000')
+            .setTitle("Mensaje de la moderación de Logikk's Discord")
+            .setDescription(
+                `Hola, <@${message.author.id}>. Nos ponemos en contacto con usted mediante el presente comunicado para informarle sobre las medidas que se han tomado debido a su conducta.
+                \n
+                Sanción impuesta: **Ban permanente**
+                Razón: **Límite de ${warnTypeLabels[limitType] || limitType} superado**
+                Último warn por: **${CATEGORY_DESCRIPTIONS[result.category] || 'Contenido detectado como inseguro'}**
+                \n
+                ⚠️ **Esta sanción fue aplicada automáticamente por nuestro sistema de IA.**
+                \n
+                ${appealInfo}
+                \n
+                Un saludo,
+                **Equipo administrativo de Logikk's Discord**`
+            )
+            .setTimestamp();
+
+        await message.author.send({ embeds: [embed] });
+    } catch {}
+}
+
+function parseDuration(duration) {
+    if (!duration) return null;
+    const match = duration.match(/^(\d+)([smhd])$/i);
+    if (!match) return null;
+    
+    const value = parseInt(match[1]);
+    const unit = match[2].toLowerCase();
+    
+    const multipliers = {
+        's': 1000,
+        'm': 60 * 1000,
+        'h': 60 * 60 * 1000,
+        'd': 24 * 60 * 60 * 1000
+    };
+    
+    return value * multipliers[unit];
 }
 
 async function sendModerationNotification(message, result, punishment, appConfig) {
@@ -436,7 +723,10 @@ async function sendModerationNotification(message, result, punishment, appConfig
             appealInfo = 'Si considera que esta sanción ha sido aplicada de forma incorrecta o injusta, abra un ticket en <#928733150467735642> en la categoría "Apelar una sanción"';
         }
 
-        const aiName = appConfig.ai?.assistant_name || 'AI-Moderation';
+        let rulesReminder = '';
+        if (punishment !== 'ban') {
+            rulesReminder = '\nLe recomendamos que visite el canal de <#901587290093158442> y eche un vistazo para evitar posibles sanciones en el futuro.\nPuede encontrar su historial del servidor en [aquí](https://logikk.crujera.net/history).';
+        }
 
         const embed = new EmbedBuilder()
             .setColor('#ff0000')
@@ -447,10 +737,9 @@ async function sendModerationNotification(message, result, punishment, appConfig
                 Sanción impuesta: **${punishmentLabels[punishment] || punishment}**
                 Razón: **${CATEGORY_DESCRIPTIONS[result.category] || 'Contenido detectado como inseguro'}**
                 \n
-                ⚠️ **Esta sanción fue aplicada automáticamente por nuestro sistema de IA (${aiName}).**
+                ⚠️ **Esta sanción fue aplicada automáticamente por nuestro sistema de IA.**
+                ${rulesReminder}
                 \n
-                Le recomendamos que visite el canal de <#901587290093158442> y eche un vistazo para evitar posibles sanciones en el futuro.
-                Puede encontrar su historial del servidor en [aquí](https://logikk.crujera.net/history).
                 ${appealInfo}
                 \n
                 Un saludo,

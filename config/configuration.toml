@@ -102,9 +102,12 @@ apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"
 [ai]
 enabled=true
 assistant_name="LogikkGuard"
-ollama_host="http://localhost:11434"
-ollama_model="llama-guard3"
+ollama_host="http://127.0.0.1:11434"
+ollama_model="llama-guard3:8b"
 min_message_length=10
 context_messages=5
 context_time_window=300000
 ban_appeal_link="https://dyno.gg/form/bcbd876e"
+verbose_logging=true
+ignored_categories=["S2", "S6", "S13"] # Categorías que el automod ignorará completamente (no moderará)
+anonymize_after_days=30 # Días después de los cuales se anonimizarán los logs (0 para desactivar)

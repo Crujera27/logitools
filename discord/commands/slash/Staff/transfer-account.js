@@ -34,22 +34,23 @@ const {
   PermissionFlagsBits,
 } = require("discord.js");
 const config = require('../../../config.js');
+const executeQuery = require('../../../../tools/mysql.mjs').default;
 
 module.exports = {
   structure: new SlashCommandBuilder()
-    .setName("transfer-roles")
-    .setDescription("[ADMIN] Transferir roles de un usuario a otro")
+    .setName("transfer-account")
+    .setDescription("[ADMIN] Transferir roles y historial de moderación de un usuario a otro")
     .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
     .addUserOption((option) =>
       option
         .setName("from")
-        .setDescription("Usuario del que transferir roles")
+        .setDescription("Usuario del que transferir roles e historial")
         .setRequired(true)
     )
     .addUserOption((option) =>
       option
         .setName("to")
-        .setDescription("Usuario al que transferir roles")
+        .setDescription("Usuario al que transferir roles e historial")
         .setRequired(true)
     ),
 
@@ -126,12 +127,69 @@ module.exports = {
     const finalNewRoles = toMember.roles.cache.filter(role => role.id !== guild.id).map(role => role.id);
 
     if (success && finalNewRoles.length === oldRoles.length && finalOldRoles.length === 0) {
-      const embed = new EmbedBuilder()
-        .setTitle("Transferencia de Roles Exitosa")
-        .setDescription(`Se transfirieron exitosamente ${oldRoles.length} roles de ${fromUser.username} a ${toUser.username}.`)
-        .setColor("Green");
+      // Transfer moderation history
+      let historyTransferred = 0;
+      let historySuccess = true;
+      try {
+        const historyRecords = await executeQuery('SELECT punishment_type, punishment_reason, issue_date, punishment_issuer, expired FROM punishment_history WHERE discord_id = ?', [fromUser.id]);
+        
+        if (historyRecords.length > 0) {
+          for (const record of historyRecords) {
+            await executeQuery('INSERT INTO punishment_history (discord_id, punishment_type, punishment_reason, issue_date, punishment_issuer, expired) VALUES (?, ?, ?, ?, ?, ?)', [
+              toUser.id,
+              record.punishment_type,
+              record.punishment_reason,
+              record.issue_date,
+              record.punishment_issuer,
+              record.expired
+            ]);
+          }
+          historyTransferred = historyRecords.length;
+        }
+      } catch (error) {
+        console.error('Error transferring moderation history:', error);
+        historySuccess = false;
+      }
 
-      await interaction.reply({ embeds: [embed] });
+      if (historySuccess) {
+        const embed = new EmbedBuilder()
+          .setTitle("Transferencia de Cuenta Exitosa")
+          .setDescription(`Se transfirieron exitosamente ${oldRoles.length} roles de ${fromUser.username} a ${toUser.username}.` + (historyTransferred > 0 ? ` También se transfirió el historial de moderación (${historyTransferred} registros).` : ''))
+          .setColor("Green");
+
+        await interaction.reply({ embeds: [embed] });
+      } else {
+        // Revert roles
+        for (const roleId of addedRoles) {
+          try {
+            await toMember.roles.remove(roleId);
+          } catch (error) {
+            console.error(`Error reverting role ${roleId} from new user:`, error);
+          }
+        }
+        for (const roleId of removedRoles) {
+          try {
+            await fromMember.roles.add(roleId);
+          } catch (error) {
+            console.error(`Error reverting role ${roleId} to old user:`, error);
+          }
+        }
+        // Restore original roles to new user
+        for (const roleId of newRoles) {
+          try {
+            await toMember.roles.add(roleId);
+          } catch (error) {
+            console.error(`Error restoring role ${roleId} to new user:`, error);
+          }
+        }
+
+        const embed = new EmbedBuilder()
+          .setTitle("Transferencia de Cuenta Fallida")
+          .setDescription("La transferencia de historial de moderación falló y se ha revertido al estado original.")
+          .setColor("Red");
+
+        await interaction.reply({ embeds: [embed], ephemeral: true });
+      }
     } else {
       // Revert
       for (const roleId of addedRoles) {
@@ -158,7 +216,7 @@ module.exports = {
       }
 
       const embed = new EmbedBuilder()
-        .setTitle("Transferencia de Roles Fallida")
+        .setTitle("Transferencia de Cuenta Fallida")
         .setDescription("La transferencia de roles falló y se ha revertido al estado original.")
         .setColor("Red");
 

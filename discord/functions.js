@@ -30,6 +30,7 @@
 const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
+const fs = require('fs');
 
 // Define log levels
 const levels = {
@@ -48,6 +49,13 @@ const colors = {
 };
 
 winston.addColors(colors);
+
+const logsDir = path.join(process.cwd(), 'logs');
+
+// Ensure logs directory exists
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
 
 // Create winston logger
 const logger = winston.createLogger({
@@ -70,7 +78,7 @@ const logger = winston.createLogger({
     }),
     // File transport with daily rotation
     new DailyRotateFile({
-      filename: path.join(__dirname, '..', '..', 'logs', 'discord-%DATE%.log'),
+      filename: path.join(logsDir, 'discord-%DATE%.log'),
       datePattern: 'YYYY-MM-DD',
       maxSize: '20m',
       maxFiles: '30d',

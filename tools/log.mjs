@@ -31,11 +31,17 @@ import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const logsDir = path.join(__dirname, '..', 'logs');
+const logsDir = path.join(process.cwd(), 'logs');
+
+// Ensure logs directory exists
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
 
 // Define log levels
 const levels = {

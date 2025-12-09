@@ -34,6 +34,7 @@ const {
 } = require("discord.js");
 const ExtendedClient = require("../../../class/ExtendedClient.js");
 const { time } = require("../../../functions");
+const config = require('../../../config.js');
 
 module.exports = {
   structure: new SlashCommandBuilder()
@@ -64,6 +65,20 @@ module.exports = {
     const interactionlevel = interaction.options.get("level").value;
     const reason = interaction.options.get("reason").value;
     const member = interaction.guild.members.cache.get(target.id);
+
+    const staffRoles = config.roles?.staff || [];
+    
+    const hasStaffRole = interaction.member.roles.cache.some(role => 
+        staffRoles.includes(role.id)
+    ) || interaction.member.permissions.has('Administrator');
+
+    if (!hasStaffRole) {
+        return await interaction.reply({
+            content: 'No tienes permisos para usar este comando.',
+            ephemeral: true,
+        });
+    }
+
     let level = null;
 
     if (interactionlevel == "leve") {

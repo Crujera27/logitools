@@ -78,6 +78,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  log(`WEB REQUEST: ${req.method} ${req.originalUrl} from ${req.ip} - User-Agent: ${req.get('User-Agent')}`, 'info');
+  next();
+});
 app.use(localeMiddleware);
 const BASE_PATH = path.resolve();
 app.use('/public', express.static(path.join(BASE_PATH, 'public')));

@@ -266,9 +266,10 @@ module.exports = {
                     }
                 }
 
+                log(`BOT PREFIX COMMAND: ${commandInput} executed by ${message.author.tag} (${message.author.id}) in ${message.guild?.name || 'DM'}`, 'info');
                 command.run(client, message, args);
             } catch (error) {
-                log(error, "err");
+                log(`BOT PREFIX COMMAND FAILED: ${commandInput} executed by ${message.author.tag} (${message.author.id}) in ${message.guild?.name || 'DM'} - Error: ${error}`, "err");
             }
         }
     },

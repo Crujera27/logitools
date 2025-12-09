@@ -58,10 +58,11 @@ module.exports = {
             
             if (!(await componentPermission(component))) return;
 
+            log(`BOT COMPONENT: Button ${interaction.customId} interacted by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild?.name || 'DM'}`, 'info');
             try {
                 component.run(client, interaction);
             } catch (error) {
-                log(error, 'error');
+                log(`BOT COMPONENT FAILED: Button ${interaction.customId} by ${interaction.user.tag} - ${error}`, 'err');
             }
 
             return;
@@ -74,10 +75,11 @@ module.exports = {
 
             if (!(await componentPermission(component))) return;
 
+            log(`BOT COMPONENT: Select ${interaction.customId} interacted by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild?.name || 'DM'}`, 'info');
             try {
                 component.run(client, interaction);
             } catch (error) {
-                log(error, 'error');
+                log(`BOT COMPONENT FAILED: Select ${interaction.customId} by ${interaction.user.tag} - ${error}`, 'err');
             }
 
             return;
@@ -88,10 +90,11 @@ module.exports = {
 
             if (!component) return;
 
+            log(`BOT COMPONENT: Modal ${interaction.customId} submitted by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild?.name || 'DM'}`, 'info');
             try {
                 component.run(client, interaction);
             } catch (error) {
-                log(error, 'error');
+                log(`BOT COMPONENT FAILED: Modal ${interaction.customId} by ${interaction.user.tag} - ${error}`, 'err');
             };
 
             return;
@@ -102,10 +105,11 @@ module.exports = {
 
             if (!component) return;
 
+            log(`BOT COMPONENT: Autocomplete ${interaction.commandName} requested by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild?.name || 'DM'}`, 'info');
             try {
                 component.run(client, interaction);
             } catch (error) {
-                log(error, 'error');
+                log(`BOT COMPONENT FAILED: Autocomplete ${interaction.commandName} by ${interaction.user.tag} - ${error}`, 'err');
             }
 
             return;

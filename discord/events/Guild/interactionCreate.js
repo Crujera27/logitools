@@ -135,9 +135,10 @@ module.exports = {
                 }
             }
 
+            log(`BOT COMMAND: ${interaction.commandName} executed by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild?.name || 'DM'}`, 'info');
             command.run(client, interaction);
         } catch (error) {
-            log(error, "err");
+            log(`BOT COMMAND FAILED: ${interaction.commandName} executed by ${interaction.user.tag} (${interaction.user.id}) in ${interaction.guild?.name || 'DM'} - Error: ${error}`, "err");
         }
     },
 };

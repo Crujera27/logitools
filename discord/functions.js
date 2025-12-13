@@ -27,24 +27,88 @@
 
 */
 
+const winston = require('winston');
+const DailyRotateFile = require('winston-daily-rotate-file');
+const path = require('path');
+const fs = require('fs');
+
+// Define log levels
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  debug: 3,
+};
+
+// Define colors for console output
+const colors = {
+  error: 'red',
+  warn: 'yellow',
+  info: 'green',
+  debug: 'blue',
+};
+
+winston.addColors(colors);
+
+const logsDir = path.join(process.cwd(), 'logs');
+
+// Ensure logs directory exists
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// Create winston logger
+const logger = winston.createLogger({
+  level: 'info',
+  levels,
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports: [
+    // Console transport
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize({ all: true }),
+        winston.format.printf(({ timestamp, level, message }) => {
+          return `${timestamp} ${level}: ${message}`;
+        })
+      )
+    }),
+    // File transport with daily rotation
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'discord-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
+      maxSize: '20m',
+      maxFiles: '30d',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      )
+    })
+  ],
+});
+
 /**
  * Logs a message with optional styling.
  *
  * @param {string} string - The message to log.
  * @param {'info' | 'err' | 'warn' | 'done' | undefined} style - The style of the log.
  */
-let logPromise = (async () => {
-  const remotelogpromise = import('../tools/log.mjs');
-  const remotelog = await remotelogpromise;
-  return (string, style) => {
-    remotelog.default(string, style);
-  };
-})();
-
-(async () => {
-  const log = await logPromise;
-  
-})();
+const log = (string, style) => {
+    if(style === "info"){
+      logger.info(string);
+    } else if(style === "err"){
+      logger.error(string);
+    } else if(style === "warn"){
+      logger.warn(string);
+    } else if(style === "done"){
+      logger.info(string); // Map 'done' to info
+    } else {
+      logger.info(string);
+    }
+};
 
 /**
  * Formats a timestamp.
@@ -70,10 +134,7 @@ const isSnowflake = (id) => {
 
 
 module.exports = {
-  log: async (string, style) => {
-    const log = await logPromise;
-    log(string, style);
-  },
+  log,
   time,
   isSnowflake
 };

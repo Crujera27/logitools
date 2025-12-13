@@ -27,6 +27,73 @@
 
 */
 
+import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const logsDir = path.join(process.cwd(), 'logs');
+
+// Ensure logs directory exists
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// Define log levels
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  debug: 3,
+};
+
+// Define colors for console output
+const colors = {
+  error: 'red',
+  warn: 'yellow',
+  info: 'green',
+  debug: 'blue',
+};
+
+winston.addColors(colors);
+
+// Create winston logger
+const logger = winston.createLogger({
+  level: 'info',
+  levels,
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports: [
+    // Console transport
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize({ all: true }),
+        winston.format.printf(({ timestamp, level, message }) => {
+          return `${timestamp} ${level}: ${message}`;
+        })
+      )
+    }),
+    // File transport with daily rotation
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'app-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
+      maxSize: '20m',
+      maxFiles: '30d',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+      )
+    })
+  ],
+});
+
 /**
  * Logs a message with optional styling.
  *
@@ -35,15 +102,15 @@
  */
 const log = (string, style) => {
     if(style === "info"){
-      console.warn('[INFO] ', string);
+      logger.info(string);
     } else if(style === "err"){
-      console.error('[ERROR] ', string);
+      logger.error(string);
     } else if(style === "warn"){
-      console.warn('[WARN] ', string);
+      logger.warn(string);
     } else if(style === "done"){
-      console.log('[OK] ', string);
+      logger.info(string); // Map 'done' to info
     } else {
-      console.log(string);
+      logger.info(string);
     }
 };
 

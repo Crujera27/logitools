@@ -427,6 +427,7 @@ async function analyzeWithContext(message, contextMessages, verbose = false) {
 }
 
 async function executeOllamaWithRetry(chatRequest, appConfig, verbose = false) {
+    if(config.ai.enabled === false) return null;
     const { Ollama } = await import('ollama');
     
     let lastError = null;

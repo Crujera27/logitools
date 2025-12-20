@@ -32,8 +32,14 @@ const executeQuery = require('../../../tools/mysql.mjs');
 const { log } = require('../../functions.js');
 
 module.exports = {
-    name: Events.GuildMemberAdd,
-    async execute(member) {
+    event: Events.GuildMemberAdd,
+    once: false,
+    /**
+     *
+     * @param {import('discord.js').GuildMember} member
+     * @returns
+     */
+    run: async (member) => {
         // Only process if this is in our configured guild
         if (member.guild.id !== config.development.guild) return;
 
@@ -48,5 +54,5 @@ module.exports = {
                 log(`Error updating staff status for new member: ${error.message}`, 'err');
             }
         }
-    },
+    }
 };

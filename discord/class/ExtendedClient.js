@@ -33,7 +33,8 @@ const commands = require("../handlers/commands.js");
 const events = require("../handlers/events.js");
 const deploy = require("../handlers/deploy.js");
 const components = require("../handlers/components.js");
-const executeQuery = require("../../tools/mysql.mjs");
+// Import executeQuery the same way as in admin routes
+const { default: executeQuery } = require("../../tools/mysql.mjs");
 const { log } = require('../functions.js');
 
 module.exports = class extends Client {

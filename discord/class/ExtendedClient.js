@@ -33,6 +33,8 @@ const commands = require("../handlers/commands.js");
 const events = require("../handlers/events.js");
 const deploy = require("../handlers/deploy.js");
 const components = require("../handlers/components.js");
+const executeQuery = require("../../tools/mysql.mjs");
+const { log } = require('../functions.js');
 
 module.exports = class extends Client {
     collection = {
@@ -70,5 +72,71 @@ module.exports = class extends Client {
         await this.login(process.env.DISCORD_BOT_TOKEN);
 
         if (config.handler.deploy) deploy(this, config);
+
+        // Start staff role synchronization
+        this.startStaffRoleSync();
+    };
+
+    /**
+     * Sync staff roles from Discord to database
+     */
+    syncStaffRoles = async () => {
+        try {
+            if (!config.roles.staff || config.roles.staff.length === 0) {
+                log('No staff roles configured, skipping sync', 'warn');
+                return;
+            }
+
+            const guild = this.guilds.cache.get(config.development.guild);
+            if (!guild) {
+                log('Guild not found, skipping staff role sync', 'warn');
+                return;
+            }
+
+            // Get all members with staff roles
+            const staffMembers = new Set();
+
+            for (const roleId of config.roles.staff) {
+                const role = guild.roles.cache.get(roleId);
+                if (role) {
+                    role.members.forEach(member => {
+                        staffMembers.add(member.id);
+                    });
+                }
+            }
+
+            // Update database: set isStaff=1 for users with staff roles
+            if (staffMembers.size > 0) {
+                const staffIds = Array.from(staffMembers);
+                const placeholders = staffIds.map(() => '?').join(',');
+
+                // First, set isStaff=0 for all users (clear old staff)
+                await executeQuery('UPDATE users SET isStaff = 0');
+
+                // Then set isStaff=1 for current staff members
+                await executeQuery(`UPDATE users SET isStaff = 1 WHERE discord_id IN (${placeholders})`, staffIds);
+            } else {
+                // No staff roles found, clear all staff status
+                await executeQuery('UPDATE users SET isStaff = 0');
+            }
+
+            log(`Synced ${staffMembers.size} staff members to database`, 'info');
+
+        } catch (error) {
+            log(`Error syncing staff roles: ${error.message}`, 'err');
+        }
+    };
+
+    /**
+     * Start periodic staff role synchronization
+     */
+    startStaffRoleSync = () => {
+        // Initial sync
+        this.syncStaffRoles();
+
+        // Sync every 5 minutes
+        setInterval(() => {
+            this.syncStaffRoles();
+        }, 5 * 60 * 1000);
     };
 };

@@ -26,6 +26,8 @@
     Website: https://crujera.net
 
 */
+import log from '../tools/log.mjs';
+
 const isStaff = (req, res, next) => {
     if (req.isAuthenticated()) {
         if(req.user.isStaff=="1"){
@@ -37,5 +39,5 @@ const isStaff = (req, res, next) => {
       req.session.returnTo = req.originalUrl;
       res.redirect('/login');
     }
-  };
+};
     export default isStaff;

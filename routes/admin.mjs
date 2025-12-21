@@ -177,39 +177,23 @@ router.post('/admin/staffmanager/removeadmin/:id', isAuthenticated, isAdmin, asy
 router.post('/admin/staffmanager/removestaff/:id', isAuthenticated, isAdmin, async (req, res) => {
     try {
         const { id } = req.params;
-        const updateQuery = 'UPDATE users SET isStaff = 0, isAdmin = 0 WHERE discord_id = ?';
-        await sendLog('Staff eliminado', req.user.discord_id, id, `Acción realizada a través del panel de administración`);
+        // Note: Staff status is now managed automatically via Discord roles
+        // This route is kept for legacy purposes but staff status will be re-synced by the bot
+        const updateQuery = 'UPDATE users SET isAdmin = 0 WHERE discord_id = ?';
+        await sendLog('Admin permissions removed (staff status managed by Discord roles)', req.user.discord_id, id, `Acción realizada a través del panel de administración`);
         await executeQuery(updateQuery, [id]);
         return res.redirect('/admin/staffmanager');
     } catch (error) {
-        log(`Error removing staff user: ${error}`, 'err');
+        log(`Error removing admin permissions: ${error}`, 'err');
         return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
     }
 });
 
 
 router.post('/admin/staffmanager/addstaff', isAuthenticated, isAdmin, async (req, res) => {
-    try {
-        const { discord_id } = req.body;
-        if (!discord_id) {
-            return res.redirect('/admin/staffmanager');
-        }
-        if (isNaN(discord_id)) {
-            return res.redirect('/admin/staffmanager');
-        }
-        const staffQuery = 'SELECT isStaff FROM users WHERE discord_id = ?';
-        const [existingStaff] = await executeQuery(staffQuery, [discord_id]);
-        if (existingStaff && existingStaff.isStaff === "1") {
-            return res.redirect('/admin/staffmanager');
-        }
-        const updateQuery = 'UPDATE users SET isStaff = 1 WHERE discord_id = ?';
-        await sendLog('Staff añadido', req.user.discord_id, discord_id, `Acción realizada a través del panel de administración`);
-        await executeQuery(updateQuery, [discord_id]);
-        return res.redirect('/admin/staffmanager');
-    } catch (error) {
-        log(`Error updating user status: ${error}`, 'err');
-        return res.status(500).render('error', { error : 'HTTP 500 - Internal Server Error.'});
-    }
+    // Staff management is now automatic via Discord roles - this route is disabled
+    log('Manual staff addition attempted but staff is now managed via Discord roles', 'warn');
+    return res.redirect('/admin/staffmanager');
 });
 
 

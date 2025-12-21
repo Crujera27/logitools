@@ -42,7 +42,7 @@ module.exports = {
         developers: ["905124554303762552"],
     },
     roles: {
-        staff: [], // Array of Discord role IDs that have staff permissions
+        staff: ["1452085335751131136"], // Array of Discord role IDs that have staff permissions
     },
     development: { 
         enabled: true,

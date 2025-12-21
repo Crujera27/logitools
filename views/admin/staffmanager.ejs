@@ -14,19 +14,16 @@
 
             <div class="card bg-dark mb-4">
                 <div class="card-body">
-                    <form action="/admin/staffmanager/addstaff" method="post">
-                        <div class="form-group">
-                            <label for="discord_id" class="form-label"><%= t.form.user_id %></label>
-                            <input type="text" class="form-control" id="discord_id" name="discord_id" 
-                                   placeholder="<%= t.form.user_id_placeholder %>" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary mt-3"><%= t.form.add_staff %></button>
-                    </form>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        Staff permissions are now managed automatically via Discord roles.
+                        Users with configured staff roles will be granted access automatically.
+                    </div>
                 </div>
             </div>
-            
+
             <div class="mb-4">
-                <input type="text" id="live-search" class="form-control" 
+                <input type="text" id="live-search" class="form-control"
                        placeholder="<%= t.form.search_staff %>">
             </div>
 

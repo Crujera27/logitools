@@ -57,6 +57,9 @@ async function sendEmbedWithDetails(webhookUrl, embedDetails) {
 
 async function sendLog(action, moderator, user, reason) {
     try {
+        // Log to console
+        log(`[MODLOG] Action: ${action} | Moderator: ${moderator} | User: ${user} | Reason: ${reason}`, 'info');
+
         const parseConfig = await parseConfigModule();
 
         const embedDetails = {

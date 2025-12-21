@@ -90,8 +90,9 @@ module.exports = class extends Client {
 
     /**
      * Sync staff roles from Discord to database
+     * @param {import('discord.js').GuildMember} targetMember - Optional: Only sync this specific member instead of all members
      */
-    syncStaffRoles = async () => {
+    syncStaffRoles = async (targetMember = null) => {
         try {
             log(`Starting staff role sync. Configured roles: ${JSON.stringify(config.roles.staff)}`, 'info');
 
@@ -150,6 +151,37 @@ module.exports = class extends Client {
             // Get all members with staff roles by scanning each role's members
             const staffMembers = new Set();
 
+            // If a specific member is provided, only check that member (avoid fetching all members)
+            if (targetMember) {
+                log(`Syncing staff roles for specific member: ${targetMember.user.username} (${targetMember.id})`, 'info');
+                
+                for (const roleId of config.roles.staff) {
+                    if (targetMember.roles.cache.has(roleId)) {
+                        staffMembers.add(targetMember.id);
+                        const role = guild.roles.cache.get(roleId);
+                        log(`Staff role found: ${targetMember.user.username} (${targetMember.id}) has role ${role?.name || roleId}`, 'info');
+                        break; // No need to check other roles if user already has one
+                    }
+                }
+                
+                // Update only this member in the database
+                try {
+                    if (staffMembers.has(targetMember.id)) {
+                        await executeQuery('UPDATE users SET isStaff = 1 WHERE discord_id = ?', [targetMember.id]);
+                        log(`Updated staff status to 1 for ${targetMember.user.username}`, 'info');
+                    } else {
+                        await executeQuery('UPDATE users SET isStaff = 0 WHERE discord_id = ?', [targetMember.id]);
+                        log(`Updated staff status to 0 for ${targetMember.user.username}`, 'info');
+                    }
+                } catch (error) {
+                    log(`Error updating staff status for ${targetMember.user.username}: ${error.message}`, 'err');
+                }
+                
+                log(`Completed staff role sync for ${targetMember.user.username}`, 'info');
+                return;
+            }
+
+            // Original full sync logic when no specific member is provided
             for (const roleId of config.roles.staff) {
                 try {
                     let role = guild.roles.cache.get(roleId);

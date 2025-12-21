@@ -44,7 +44,9 @@ async function fetchVersionRelease() {
     }
 
     try {
-        const response = await fetch(`https://api.github.com/repos/Crujera27/logitools/releases/tags/v${version}`);
+        // Remove 'v' prefix if it exists in the version string
+        const cleanVersion = version.startsWith('v') ? version : `v${version}`;
+        const response = await fetch(`https://api.github.com/repos/Crujera27/logitools/releases/tags/${cleanVersion}`);
         const data = await response.json();
         
         if (response.ok) {

@@ -50,9 +50,9 @@ module.exports = {
         }
 
         try {
-            log('Member update detected, triggering staff role resync...', 'info');
+            log('Member update detected, triggering staff role resync for affected member...', 'info');
             const client = newMember.guild.client;
-            await client.syncStaffRoles();
+            await client.syncStaffRoles(newMember);
             log('Staff role resync completed after member update', 'info');
         } catch (error) {
             log(`Error during staff role resync after member update: ${error.message}`, 'err');

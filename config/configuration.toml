@@ -78,7 +78,7 @@ evidence_channel = "" # ID del canal donde se enviarán las evidencias (capturas
   message = true
 [discord_development]
 enabled = true
-guild = "" # ID del servidor de desarollo
+guild = "905124554303762552" # ID del servidor de desarollo
 developers = "" # IDs de los desarolladores
 
 [punishments]

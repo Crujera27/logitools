@@ -32,25 +32,29 @@ const executeQuery = require('../../../tools/mysql.mjs');
 const { log } = require('../../functions.js');
 
 module.exports = {
-    event: Events.GuildMemberAdd,
+    event: Events.GuildRoleUpdate,
     once: false,
     /**
      *
-     * @param {import('discord.js').GuildMember} member
+     * @param {import('discord.js').Role} oldRole
+     * @param {import('discord.js').Role} newRole
      * @returns
      */
-    run: async (member) => {
-        // Only process if this is in our configured guild
-        if (member.guild.id !== config.development.guild) return;
+    run: async (oldRole, newRole) => {
+        if (newRole.guild.id !== config.development.guild) return;
 
-        // When a new member joins, trigger a staff role resync to check if they have staff roles
+        if (!config.roles.staff.includes(newRole.id)) return;
+
+        log(`Staff role updated: ${newRole.name} (${newRole.id})`, 'info');
+
+        // When a staff role is updated, resync all staff roles
+        // This ensures we catch any member changes due to role updates
         try {
-            log(`New member joined: ${member.user.username}, triggering staff role resync...`, 'info');
-            const client = member.guild.client;
+            const client = newRole.guild.client;
             await client.syncStaffRoles();
-            log('Staff role resync completed after new member joined', 'info');
+            log('Resynced staff roles after role update', 'info');
         } catch (error) {
-            log(`Error during staff role resync after member join: ${error.message}`, 'err');
+            log(`Error resyncing staff roles after role update: ${error.message}`, 'err');
         }
     }
 };

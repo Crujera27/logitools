@@ -31,7 +31,7 @@ const { log } = require("../../functions");
 const ExtendedClient = require('../../class/ExtendedClient.js');
 
 module.exports = {
-    event: 'ready',
+    event: 'clientReady',
     once: true,
     /**
      * 

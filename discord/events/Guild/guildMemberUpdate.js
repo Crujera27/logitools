@@ -41,25 +41,21 @@ module.exports = {
      * @returns
      */
     run: async (oldMember, newMember) => {
+        log(`Member update event triggered for ${newMember.user?.username || 'unknown'}`, 'info');
+
         // Only process if this is in our configured guild
-        if (newMember.guild.id !== config.development.guild) return;
+        if (newMember.guild.id !== config.development.guild) {
+            log(`Ignoring member update for different guild: ${newMember.guild.id}`, 'info');
+            return;
+        }
 
-        // Check if staff roles changed
-        const oldStaffRoles = oldMember.roles.cache.filter(role => config.roles.staff.includes(role.id));
-        const newStaffRoles = newMember.roles.cache.filter(role => config.roles.staff.includes(role.id));
-
-        const hadStaffRole = oldStaffRoles.size > 0;
-        const hasStaffRole = newStaffRoles.size > 0;
-
-        // If staff status changed, update database
-        if (hadStaffRole !== hasStaffRole) {
-            try {
-                const isStaff = hasStaffRole ? 1 : 0;
-                await executeQuery('UPDATE users SET isStaff = ? WHERE discord_id = ?', [isStaff, newMember.id]);
-                log(`Updated staff status for ${newMember.user.username} (${newMember.id}): ${isStaff}`, 'info');
-            } catch (error) {
-                log(`Error updating staff status on role change: ${error.message}`, 'err');
-            }
+        try {
+            log('Member update detected, triggering staff role resync...', 'info');
+            const client = newMember.guild.client;
+            await client.syncStaffRoles();
+            log('Staff role resync completed after member update', 'info');
+        } catch (error) {
+            log(`Error during staff role resync after member update: ${error.message}`, 'err');
         }
     }
 };

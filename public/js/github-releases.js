@@ -69,7 +69,6 @@ async function fetchVersionRelease() {
     }
 }
 
-// Ensure DOM is fully loaded before running
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', fetchVersionRelease);
 } else {

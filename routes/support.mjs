@@ -37,6 +37,11 @@ const router = express.Router();
 
 router.get('/support', isAuthenticated, async (req, res) => {
     try {
+        const config = req.app.locals.config;
+        if (!config.ticketing.enabled) {
+            return res.status(403).render('error', { error: req.app.locals.config?.ticketing?.disabled ? req.app.locals.config.ticketing.disabled : 'Ticketing system is currently disabled.' });
+        }
+        
         const tickets = await executeQuery(`
             SELECT t.*, 
                    COUNT(m.message_id) as message_count 
@@ -46,7 +51,7 @@ router.get('/support', isAuthenticated, async (req, res) => {
             GROUP BY t.ticket_id 
             ORDER BY t.created_at DESC`, 
             [req.user.id]);
-        res.render('tickets/index', { user: req.user, tickets });
+        res.render('tickets/index', { user: req.user, tickets, config: req.app.locals.config });
     } catch (error) {
         log(error, 'err');
         res.status(500).render('error', { error: 'Failed to load tickets' });
@@ -54,10 +59,19 @@ router.get('/support', isAuthenticated, async (req, res) => {
 });
 
 router.get('/support/new', isAuthenticated, async (req, res) => {
-    res.render('tickets/new', { user: req.user });
+    const config = req.app.locals.config;
+    if (!config.ticketing.enabled || config.ticketing.read_only) {
+        return res.status(403).render('error', { error: 'Ticketing system is currently disabled. You can view existing tickets but cannot create new ones.' });
+    }
+    res.render('tickets/new', { user: req.user, config: req.app.locals.config });
 });
 
 router.post('/support/new', isAuthenticated, async (req, res) => {
+    const config = req.app.locals.config;
+    if (!config.ticketing.enabled || config.ticketing.read_only) {
+        return res.status(403).render('error', { error: 'Ticketing system is currently disabled. Cannot create new tickets.' });
+    }
+    
     const { subject, message } = req.body;
     
     // Generate random ticket ID (8 characters)
@@ -93,7 +107,7 @@ router.get('/support/view/:id', isAuthenticated, async (req, res) => {
             WHERE ticket_id = ? 
             ORDER BY created_at ASC`, [req.params.id]);
             
-        res.render('tickets/view', { user: req.user, ticket: ticket[0], messages });
+        res.render('tickets/view', { user: req.user, ticket: ticket[0], messages, config: req.app.locals.config });
     } catch (error) {
         log(error, 'err');
         res.status(500).render('error', { error: 'Failed to load ticket' });
@@ -101,6 +115,11 @@ router.get('/support/view/:id', isAuthenticated, async (req, res) => {
 });
 
 router.post('/support/reply/:id', isAuthenticated, async (req, res) => {
+    const config = req.app.locals.config;
+    if (!config.ticketing.enabled || config.ticketing.read_only) {
+        return res.status(403).render('error', { error: 'Ticketing system is currently disabled. You can view your tickets but cannot reply to them.' });
+    }
+    
     const { message } = req.body;
     try {
         // Verify ticket ownership

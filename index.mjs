@@ -78,6 +78,17 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+
+// Load config and make it available to routes
+const parseConfigModule = (await import("./tools/parseConfig.mjs")).default;
+const parseConfig = await parseConfigModule;
+const appConfig = await parseConfig();
+// Ensure ticketing config exists with defaults
+if (!appConfig.ticketing) {
+  appConfig.ticketing = { enabled: true, read_only: false };
+}
+app.locals.config = appConfig;
+
 app.use((req, res, next) => {
   log(`WEB REQUEST: ${req.method} ${req.originalUrl} from ${req.ip} - User-Agent: ${req.get('User-Agent')}`, 'info');
   next();
@@ -191,11 +202,6 @@ routeModules.forEach((route) => {
 
 const startWebServer = async () => {
   try {
-    const parseConfigModule = (
-      await import("./tools/parseConfig.mjs")
-    ).default;
-    const parseConfig = await parseConfigModule;
-    const appConfig = await parseConfig();
     const PORT = appConfig.port || 3000;
     const BIND_ADDRESS = appConfig.bind_address || '0.0.0.0';
     

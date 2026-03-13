@@ -98,6 +98,10 @@ reset_cnt_add_nextlvl_warn_on_limit= true # Si está activado una vez que el lí
 [staffpage]
 apply_link="https://forms.gle/9GRNkhR9NiBdAS8SA"
 
+[ticketing]
+enabled = true
+read_only = true
+
 
 [ai]
 enabled=true

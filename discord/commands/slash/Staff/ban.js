@@ -27,7 +27,7 @@
 
 */
 
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
 const ExtendedClient = require('../../../class/ExtendedClient.js');
 const { log } = require('../../../functions.js');
 
@@ -51,8 +51,11 @@ module.exports = {
             option.setName('reason')
                 .setDescription('Razón de la suspensión temporal')
                 .setRequired(true)
-        ),
+        )
+        .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers),
     run: async (client, interaction) => {
+        await interaction.deferReply();
+
         try {
             const mentionable = interaction.options.getUser('user');
             const reason = interaction.options.get('reason')?.value || 'No razón proporcionada';
@@ -85,19 +88,33 @@ module.exports = {
 
             const tools = await toolsPromise;
             const bannedEmbed = new EmbedBuilder()
-                .setColor()
+                .setColor("#ff0000")
                 .setTitle('Mensaje de la moderación de Logikk\'s Discord')
-                .setDescription(`Hola, ${targetUser}. Nos ponemos en contacto contigo para informarte sobre las medidas que se han tomado debido a tu conducta.\n\n Sanción impuesta: **Suspensión permanente (Ban)**\nRazón: ${reason}\n\nSi consideras que esta sanción ha sido aplicada incorrectamente o de manera injusta, puedes enviar una solicitud de apelación en [este enlace](https://logikk.crujera.net/support).\n\nUn saludo, **Departamento de Certidumbre y Seguridad de Logikk's Discord**`)
+                .setDescription(`Hola, ${targetUser}. Nos ponemos en contacto con usted mediante el presente comunicado para informarle sobre las medidas que se han tomado debido a su conducta.
+
+Sanción impuesta: **Suspensión permanente (Ban)**
+Razón: **${reason}**
+
+Puede encontrar su historial del servidor en [aquí](https://logikk.crujera.net/history).
+Si considera que esta sanción ha sido aplicada de forma incorrecta o injusta, abra un ticket en <#928733150467735642>
+
+Un saludo,
+**Equipo administrativo de Logikk's Discord**`)
                 .setTimestamp();
 
-            await targetUser.send({ embeds: [bannedEmbed] });
+            let dmSent = true;
+            try {
+                await targetUser.send({ embeds: [bannedEmbed] });
+            } catch (error) {
+                dmSent = false;
+                await interaction.followUp(`No se pudo enviar el mensaje directo al usuario ${targetUser.user.tag} (${targetUser.id}). Procediendo con el ban.`);
+            }
 
             const punishmentApplied = await tools.applyPunishment(targetUser.id, 'ban', reason, interaction.user.id);
 
             if (!punishmentApplied.success) {
-                await interaction.reply({
+                await interaction.editReply({
                     content: 'Ha ocurrido un error al intentar registrar la sanción en el historial del usuario.',
-                    ephemeral: true
                 });
                 return;
             }
@@ -105,12 +122,11 @@ module.exports = {
             const finalReason = `${reason} | ID del Staff: ${interaction.user.id}`;
 
             await targetUser.ban({ reason: finalReason });
-            await interaction.reply(`${targetUser.tag} (${targetUser.id}) ha sido suspendido/a **permanentemente** con la razón: \`${reason}\``);
+            await interaction.editReply(`${targetUser.user.tag} (${targetUser.id}) ha sido suspendido/a **permanentemente** con la razón: \`${reason}\`${dmSent ? '' : ' (No se pudo enviar DM al usuario)'}`);
         } catch (error) {
             log(`Hubo un error al intentar banear: ${error}`, 'err');
-            await interaction.reply({
+            await interaction.editReply({
                 content: `Ha ocurrido un error desconocido al intentar aplicar el ban al usuario. (${error})`,
-                ephemeral: true
             });
         }
     }

@@ -31,6 +31,7 @@ const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
 const fs = require('fs');
+const crypto = require("crypto");
 
 // Define log levels
 const levels = {

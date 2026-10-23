@@ -31,6 +31,7 @@ const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
 const fs = require('fs');
+const crypto = require("crypto");
 
 // Define log levels
 const levels = {
@@ -130,11 +131,25 @@ const time = (time, style) => {
 const isSnowflake = (id) => {
   return /^\d+$/.test(id);
 };
-
+/**
+ * Generates a random CAPTCHA string of the specified length.
+ *
+ * @param {number} [length=4] - The length of the CAPTCHA string.
+ * @returns {string} - The generated CAPTCHA string.
+ */
+const CAPTCHA_CHARS = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+function makeCaptcha(length = 4) {
+  let out = "";
+  for (let i = 0; i < length; i++) {
+    out += CAPTCHA_CHARS[crypto.randomInt(CAPTCHA_CHARS.length)];
+  }
+  return out;
+}
 
 
 module.exports = {
   log,
   time,
-  isSnowflake
+  isSnowflake,
+  makeCaptcha
 };
